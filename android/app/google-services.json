@@ -1,0 +1,115 @@
+{
+  "project_info": {
+    "project_number": "1038799458160",
+    "firebase_url": "https://wpmfirebaseproject.firebaseio.com",
+    "project_id": "wpmfirebaseproject",
+    "storage_bucket": "wpmfirebaseproject.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1038799458160:android:4d2ee5dc44d07cef",
+        "android_client_info": {
+          "package_name": "com.waldonmgmt.wpm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1038799458160-0qlf35r4hvgd92t8li1rl24de02fi3de.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.waldonmgmt.wpm",
+            "certificate_hash": "80bdde2eff6fc3150c0b778527674e3b4c30cd37"
+          }
+        },
+        {
+          "client_id": "1038799458160-o49ueoq11nprfpj891j0gsku9eupac51.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.waldonmgmt.wpm",
+            "certificate_hash": "b22ee25eb3c1e660af1e7c97eca16a67cd4697c6"
+          }
+        },
+        {
+          "client_id": "1038799458160-icctee64envjl02sork3d00vub383om6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjXpmVblOYMk7Kv3oO2r-uueIIvmd_nhk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1038799458160-icctee64envjl02sork3d00vub383om6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1038799458160:android:892e78f0762a5178",
+        "android_client_info": {
+          "package_name": "com.yourcompany.testflutterapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1038799458160-lsm0q110i6ueu2lud4bbbicjhn0hc7b5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.yourcompany.testflutterapp",
+            "certificate_hash": "80bdde2eff6fc3150c0b778527674e3b4c30cd37"
+          }
+        },
+        {
+          "client_id": "1038799458160-urvrge7iei3il2jimdp1ndmsgdad7ppc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.yourcompany.testflutterapp",
+            "certificate_hash": "b22ee25eb3c1e660af1e7c97eca16a67cd4697c6"
+          }
+        },
+        {
+          "client_id": "1038799458160-icctee64envjl02sork3d00vub383om6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjXpmVblOYMk7Kv3oO2r-uueIIvmd_nhk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1038799458160-icctee64envjl02sork3d00vub383om6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
