@@ -42,7 +42,7 @@ class MasterDetailContainer extends StatefulWidget {
 class _MasterDetailContainerState extends State<MasterDetailContainer> {
   Property _selectedProperty;
 
-  static const int kTabletBreakPoint = 800;
+  static const int kTabletBreakPoint = 650;
 
   unSelectProperty() {
     print('running in unSelectProperty..');
@@ -75,7 +75,7 @@ class _MasterDetailContainerState extends State<MasterDetailContainer> {
     print('building Tablet layout..');
     return new Row(
       children: <Widget>[
-        Flexible(
+        new Flexible(
           child: new PropertyListContainer(
             unSelectProperty: unSelectProperty,
             propertySelectedCallback: (Property property) {
@@ -105,15 +105,18 @@ class _MasterDetailContainerState extends State<MasterDetailContainer> {
         title: new Text('WPM master/detail'),
       ),
       body: new LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-        final double minDimension =
-            min(constraints.maxWidth, constraints.maxHeight);
+        builder: (BuildContext context, BoxConstraints constraints) {
+          final double minDimension =
+              min(constraints.maxWidth, constraints.maxHeight);
 
-        if (minDimension < kTabletBreakPoint) {
-          return _buildPhoneLayout();
-        }
-        return _buildTabletLayout();
-      }),
+          // print('Constraints: maxWidth=[${constraints.maxWidth}], maxHeight=[${constraints.maxHeight}] min=[$minDimension]');
+
+          if (minDimension < kTabletBreakPoint) {
+            return _buildPhoneLayout();
+          }
+          return _buildTabletLayout();
+        },
+      ),
     );
   }
 }
@@ -250,10 +253,8 @@ class _AddPropertyState extends State<AddProperty> {
   Future<Null> _addPropertyAsync() async {
     var trimStr = _controller.text.trim();
     if (trimStr.length > 0) {
-      Firestore.instance
-          .collection('properties')
-          .document()
-          .setData(<String, String>{'name': trimStr});
+      Firestore.instance.collection('properties').document().setData(
+          <String, String>{'name': trimStr}).then((_) => _controller.clear());
     }
   }
 
@@ -264,15 +265,14 @@ class _AddPropertyState extends State<AddProperty> {
       children: <Widget>[
         new Expanded(
           child: new TextField(
+            keyboardType: TextInputType.text,
             controller: _controller,
+            onSubmitted: (_) => _addPropertyAsync(),
             decoration: new InputDecoration(hintText: 'Enter property name'),
           ),
         ),
         new RaisedButton(
-          onPressed: () {
-            print('You typed: [${_controller.text}]');
-            _addPropertyAsync().then((_) => _controller.clear());
-          },
+          onPressed: () => _addPropertyAsync(),
           child: new Text('Add Property'),
         )
       ],

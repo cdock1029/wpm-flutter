@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class Model {
@@ -21,8 +23,29 @@ class Property extends Model {
 
   int get unitCount => _unitCount;
 
-  Property.fromSnapshot(DocumentSnapshot snapshot) : super(id: snapshot.documentID) {
+  Property.fromSnapshot(DocumentSnapshot snapshot)
+      : super(id: snapshot.documentID) {
     _name = snapshot['name'] as String;
     _unitCount = (snapshot['unitCount'] as int) ?? 0;
+  }
+}
+
+class Unit extends Model {
+  String _label;
+  DocumentReference _propertyRef;
+  Property _property;
+
+  Future<Property> get property async {
+    if (_property != null) {
+      return new Future<Property>.value(_property);
+    }
+    DocumentSnapshot propSnap = await _propertyRef.get();
+    _property = new Property.fromSnapshot(propSnap);
+    return _property;
+  }
+
+  Unit.fromSnapshot(DocumentSnapshot snap) : super(id: snap.documentID) {
+    _label = snap['label'] as String;
+    _propertyRef = snap['property'] as DocumentReference;
   }
 }
