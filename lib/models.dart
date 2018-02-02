@@ -1,51 +1,81 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:meta/meta.dart';
 
 abstract class Model {
-  String _id;
+  Model({this.snapshot});
 
-  String get id => _id;
+  String get id => snapshot?.documentID;
 
-  Model({String id}) : _id = id;
+  final DocumentSnapshot snapshot;
 
-  T withId<T extends Model>(String id) {
-    _id = id;
-    return this as T;
-  }
+  call(DocumentSnapshot snap);
+
+  Future<List<T>> getTypedCollection<T extends Model>(
+    List<T> cached,
+    CollectionReference collectionRef,
+    T instanceCall,// Function getModelInstance,
+  ) async =>
+      cached != null
+          ? new Future<T>.value(cached)
+          : await collectionRef.snapshots
+              .map((QuerySnapshot querySnap) => querySnap.documents)
+              .expand((List<DocumentSnapshot> docSnapList) =>
+                  docSnapList.map((DocumentSnapshot snap) => snap))
+              .map((DocumentSnapshot snap) => instanceCall(snap))
+              .toList();
 }
 
 class Property extends Model {
-  String _name;
-  int _unitCount;
+  final String name;
+  final int unitCount;
+  CollectionReference unitsRef;
+  List<Unit> _units;
 
-  String get name => _name;
-
-  int get unitCount => _unitCount;
+  Property({@required this.name, this.unitCount = 0});
 
   Property.fromSnapshot(DocumentSnapshot snapshot)
-      : super(id: snapshot.documentID) {
-    _name = snapshot['name'] as String;
-    _unitCount = (snapshot['unitCount'] as int) ?? 0;
+      : name = snapshot['name'],
+        unitCount = snapshot['unitCount'] ?? 0,
+        unitsRef = snapshot.reference.getCollection('unitsRef'),
+        super(snapshot: snapshot)
+
+  @override
+  call(DocumentSnapshot snap) => new Property.fromSnapshot(snap);
+
+  Future<List<Unit>> get units async {
+    final List<Unit> updated = await getTypedCollection(
+      _units,
+      unitsRef,
+      this,
+      // (DocumentSnapshot snap) => new Unit.fromSnapshot(snap),
+    );
+    _units = updated;
+    return updated;
   }
+
+// Property withSnap(DocumentSnapshot snap) => new Property.fromSnapshot(snap);
 }
 
 class Unit extends Model {
-  String _label;
-  DocumentReference _propertyRef;
+  final String address;
+  final DocumentReference propertyRef;
   Property _property;
 
-  Future<Property> get property async {
-    if (_property != null) {
-      return new Future<Property>.value(_property);
-    }
-    DocumentSnapshot propSnap = await _propertyRef.get();
-    _property = new Property.fromSnapshot(propSnap);
-    return _property;
-  }
+  Unit.fromSnapshot(DocumentSnapshot snapshot)
+      : address = snapshot['address'],
+        propertyRef = snapshot['propertyRef'],
+        super(snapshot: snapshot);
 
-  Unit.fromSnapshot(DocumentSnapshot snap) : super(id: snap.documentID) {
-    _label = snap['label'] as String;
-    _propertyRef = snap['property'] as DocumentReference;
+  @override
+  call(DocumentSnapshot snap) => new Unit.fromSnapshot(snap);
+
+  Future<Property> get property async {
+    if (_property == null) {
+      final DocumentSnapshot propSnap = await propertyRef.get();
+      _property = new Property.fromSnapshot(propSnap);
+    }
+    return _property;
   }
 }

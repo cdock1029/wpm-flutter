@@ -10,27 +10,23 @@ void main() => runApp(new MyApp());
 
 int snapCount = 0;
 
+//final routes = <String, WidgetBuilder>{
+//  '/new_property': (BuildContext context) {
+//    return new ModalRoute(const RouteSettings(name: ''))
+//  }
+//};
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(
-      title: 'Flutter Demo',
-      theme: new ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
-        // counter didn't reset back to zero; the application is not restarted.
-        primarySwatch: Colors.deepPurple,
-        accentColor: Colors.tealAccent,
-      ),
-      home: new MasterDetailContainer(),
-    );
-  }
+  Widget build(BuildContext context) => new MaterialApp(
+        title: 'Flutter Demo',
+        theme: new ThemeData(
+          primarySwatch: Colors.deepPurple,
+          accentColor: Colors.tealAccent,
+        ),
+        home: new MasterDetailContainer(),
+      );
 }
 
 class MasterDetailContainer extends StatefulWidget {
@@ -44,7 +40,7 @@ class _MasterDetailContainerState extends State<MasterDetailContainer> {
 
   static const int kTabletBreakPoint = 650;
 
-  unSelectProperty() {
+  void unSelectProperty() {
     print('running in unSelectProperty..');
     setState(() {
       _selectedProperty = null;
@@ -58,13 +54,11 @@ class _MasterDetailContainerState extends State<MasterDetailContainer> {
       propertySelectedCallback: (Property property) {
         Navigator.push(
           context,
-          new MaterialPageRoute(
-            builder: (BuildContext context) {
-              return new PropertyDetail(
-                property: property,
-                isTablet: false,
-              );
-            },
+          new MaterialPageRoute<PropertyDetail>(
+            builder: (BuildContext context) => new PropertyDetail(
+                  property: property,
+                  isTablet: false,
+                ),
           ),
         );
       },
@@ -99,30 +93,28 @@ class _MasterDetailContainerState extends State<MasterDetailContainer> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('WPM master/detail'),
-      ),
-      body: new LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          final double minDimension =
-              min(constraints.maxWidth, constraints.maxHeight);
+  Widget build(BuildContext context) => new Scaffold(
+        appBar: new AppBar(
+          title: const Text('WPM master/detail'),
+        ),
+        body: new LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            final double minDimension =
+                min(constraints.maxWidth, constraints.maxHeight);
 
-          // print('Constraints: maxWidth=[${constraints.maxWidth}], maxHeight=[${constraints.maxHeight}] min=[$minDimension]');
+            // print('Constraints: maxWidth=[${constraints.maxWidth}], maxHeight=[${constraints.maxHeight}] min=[$minDimension]');
 
-          if (minDimension < kTabletBreakPoint) {
-            return _buildPhoneLayout();
-          }
-          return _buildTabletLayout();
-        },
-      ),
-    );
-  }
+            if (minDimension < kTabletBreakPoint) {
+              return _buildPhoneLayout();
+            }
+            return _buildTabletLayout();
+          },
+        ),
+      );
 }
 
 class PropertyList extends StatelessWidget {
-  PropertyList(
+  const PropertyList(
       {@required this.propertySelectedCallback,
       @required this.unSelectProperty,
       this.selectedProperty});
@@ -130,43 +122,45 @@ class PropertyList extends StatelessWidget {
   final ValueChanged<Property> propertySelectedCallback;
   final Property selectedProperty;
   final VoidCallback unSelectProperty;
+  final Text loading = const Text('Loading...');
 
-  dismissCallbackForProperty(String propertyId) {
-    return (DismissDirection direction) {
-      Firestore.instance
-          .collection('properties')
-          .document(propertyId)
-          .delete()
-          .then((_) {
-        print('dismissCallback... unSelecting now..');
-        unSelectProperty();
-      }).catchError((error) {
-        print('Error deleting id=[$propertyId] ==> ' + error.toString());
-      });
-    };
-  }
+  Function dismissCallbackForProperty(String propertyId) =>
+      (DismissDirection direction) {
+        Firestore.instance
+            .collection('properties')
+            .document(propertyId)
+            .delete()
+            .then((_) {
+          print('dismissCallback... unSelecting now..');
+          unSelectProperty();
+        }).catchError((Object error) {
+          print('Error deleting id=[$propertyId] ==> ${error.toString()}');
+        });
+      };
 
   @override
-  Widget build(BuildContext context) {
-    return new StreamBuilder(
-      stream:
-          Firestore.instance.collection('properties').orderBy('name').snapshots,
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (!snapshot.hasData) return const Text('Loading...');
-        return new ListView(
-          children: snapshot.data.documents
-              .map((document) => new PropertyListItem(
-                    snapShot: document,
-                    propertySelectedCallback: propertySelectedCallback,
-                    dismissCallback:
-                        dismissCallbackForProperty(document.documentID),
-                    selected: selectedProperty?.id == document.documentID,
-                  ))
-              .toList(),
-        );
-      },
-    );
-  }
+  Widget build(BuildContext context) => new StreamBuilder<QuerySnapshot>(
+        stream: Firestore.instance
+            .collection('properties')
+            .orderBy('name')
+            .snapshots,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return loading;
+          }
+          return new ListView(
+            children: snapshot.data.documents
+                .map((DocumentSnapshot document) => new PropertyListItem(
+                      snapShot: document,
+                      propertySelectedCallback: propertySelectedCallback,
+                      dismissCallback:
+                          dismissCallbackForProperty(document.documentID),
+                      selected: selectedProperty?.id == document.documentID,
+                    ))
+                .toList(),
+          );
+        },
+      );
 }
 
 class PropertyListItem extends StatelessWidget {
@@ -175,64 +169,97 @@ class PropertyListItem extends StatelessWidget {
   final bool _selected;
   final DismissDirectionCallback dismissCallback;
 
-  PropertyListItem(
-      {DocumentSnapshot snapShot,
-      @required this.propertySelectedCallback,
-      @required this.dismissCallback,
-      Key key,
-      bool selected = false})
+  PropertyListItem({
+    @required this.propertySelectedCallback,
+    @required this.dismissCallback,
+    DocumentSnapshot snapShot,
+    Key key,
+    bool selected = false,
+  })
       : _property = new Property.fromSnapshot(snapShot),
         _selected = selected,
         super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return new Dismissible(
-      key: new Key(_property.id),
-      direction: DismissDirection.endToStart,
-      onDismissed: (_) {
-        dismissCallback(_);
-      },
-      child: new ListTile(
-        title: new Text(_property.name),
-        subtitle: new Text("units: ${_property.unitCount}"),
-        leading: new CircleAvatar(
-          backgroundColor: Theme.of(context).accentColor,
-          child: new Text(_property.name.substring(0, 1)),
+  Widget build(BuildContext context) => new Dismissible(
+        key: new Key(_property.id),
+        direction: DismissDirection.endToStart,
+        onDismissed: dismissCallback,
+        child: new ListTile(
+          title: new Text(_property.name),
+          subtitle: new Text('units: ${_property.unitCount}'),
+          leading: new CircleAvatar(
+            backgroundColor: Theme.of(context).accentColor,
+            child: new Text(_property.name.substring(0, 1)),
+          ),
+          onTap: () => propertySelectedCallback(_property),
+          selected: _selected,
         ),
-        onTap: () => propertySelectedCallback(_property),
-        selected: _selected,
-      ),
-    );
-  }
+      );
 }
 
-class PropertyDetail extends StatelessWidget {
-  PropertyDetail({@required this.property, @required this.isTablet});
+class PropertyDetail extends StatefulWidget {
+  const PropertyDetail({@required this.property, @required this.isTablet});
 
   final Property property;
   final bool isTablet;
 
   @override
+  _PropertyDetailState createState() => new _PropertyDetailState();
+}
+
+class _PropertyDetailState extends State<PropertyDetail> {
+
+  Widget _unitsList(CollectionReference unitsRef) {
+    if (unitsRef != null) {
+      print('unitsRef is NOT NULL');
+      return new StreamBuilder<QuerySnapshot>(
+            stream: widget.property.unitsRef.snapshots,
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (!snapshot.hasData) {
+                return const Text('Loading..');
+              }
+              return new ListView(
+                  children: snapshot.data.documents
+                      .map((DocumentSnapshot doc) => new ListTile(
+                            key: new Key(doc.documentID),
+                            title: new Text(doc['address']),
+                          ))
+                      .toList());
+            }
+      );
+    }
+    print('unitsRef is NULL');
+    return const Text('No Units.');
+  }
+
+  @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final Widget content = new Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         new Text(
-          property?.name ?? 'Select a Property',
+          widget.property?.name ?? 'Select a Property',
           style: textTheme.headline,
         ),
         new Text(
-          property?.name != null ? "Unit count: ${property.unitCount}" : '',
+          widget.property?.name != null
+              ? 'Unit count: ${widget.property
+              .unitCount}'
+              : '',
           style: textTheme.subhead,
-        )
+        ),
+        new Expanded(
+          child: _unitsList(widget.property?.unitsRef),
+        ),
       ],
     );
     return new Scaffold(
-      appBar: property != null
+      appBar: widget.property != null
           ? new AppBar(
-              title: new Text(property.name),
+              title: new Text(widget.property.name),
             )
           : null,
       body: new Center(
@@ -251,41 +278,44 @@ class _AddPropertyState extends State<AddProperty> {
   final TextEditingController _controller = new TextEditingController();
 
   Future<Null> _addPropertyAsync() async {
-    var trimStr = _controller.text.trim();
-    if (trimStr.length > 0) {
-      Firestore.instance.collection('properties').document().setData(
-          <String, String>{'name': trimStr}).then((_) => _controller.clear());
+    final String trimStr = _controller.text.trim();
+    if (trimStr.isNotEmpty) {
+      await Firestore.instance
+          .collection('properties')
+          .document()
+          .setData(<String, String>{'name': trimStr});
+      _controller.clear();
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return new Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[
-        new Expanded(
-          child: new TextField(
-            keyboardType: TextInputType.text,
-            controller: _controller,
-            onSubmitted: (_) => _addPropertyAsync(),
-            decoration: new InputDecoration(hintText: 'Enter property name'),
+  Widget build(BuildContext context) => new Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          new Expanded(
+            child: new TextField(
+              keyboardType: TextInputType.text,
+              controller: _controller,
+              onSubmitted: (_) => _addPropertyAsync(),
+              decoration:
+                  const InputDecoration(hintText: 'Enter property name'),
+            ),
           ),
-        ),
-        new RaisedButton(
-          onPressed: () => _addPropertyAsync(),
-          child: new Text('Add Property'),
-        )
-      ],
-    );
-  }
+          new RaisedButton(
+            onPressed: _addPropertyAsync,
+            child: const Text('Add Property'),
+          )
+        ],
+      );
 }
 
 class PropertyListContainer extends StatefulWidget {
-  PropertyListContainer(
-      {Key key,
-      this.propertySelectedCallback,
-      this.selectedProperty,
-      @required this.unSelectProperty})
+  const PropertyListContainer({
+    @required this.unSelectProperty,
+    this.propertySelectedCallback,
+    this.selectedProperty,
+    Key key,
+  })
       : super(key: key);
 
   final ValueChanged<Property> propertySelectedCallback;
@@ -299,19 +329,17 @@ class PropertyListContainer extends StatefulWidget {
 
 class _PropertyListContainerState extends State<PropertyListContainer> {
   @override
-  Widget build(BuildContext context) {
-    return new Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        new AddProperty(),
-        new Expanded(
-          child: new PropertyList(
-            unSelectProperty: widget.unSelectProperty,
-            propertySelectedCallback: widget.propertySelectedCallback,
-            selectedProperty: widget.selectedProperty,
+  Widget build(BuildContext context) => new Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          new AddProperty(),
+          new Expanded(
+            child: new PropertyList(
+              unSelectProperty: widget.unSelectProperty,
+              propertySelectedCallback: widget.propertySelectedCallback,
+              selectedProperty: widget.selectedProperty,
+            ),
           ),
-        ),
-      ],
-    );
-  }
+        ],
+      );
 }
