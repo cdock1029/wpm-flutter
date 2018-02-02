@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
 
 abstract class Model {
-  Model({this.snapshot});
+  const Model({this.snapshot});
 
   String get id => snapshot?.documentID;
 
@@ -39,7 +39,7 @@ class Property extends Model {
       : name = snapshot['name'],
         unitCount = snapshot['unitCount'] ?? 0,
         unitsRef = snapshot.reference.getCollection('unitsRef'),
-        super(snapshot: snapshot)
+        super(snapshot: snapshot);
 
   @override
   call(DocumentSnapshot snap) => new Property.fromSnapshot(snap);
@@ -61,7 +61,9 @@ class Property extends Model {
 class Unit extends Model {
   final String address;
   final DocumentReference propertyRef;
-  Property _property;
+  // Property _property;
+
+  const Unit({this.address, this.propertyRef});
 
   Unit.fromSnapshot(DocumentSnapshot snapshot)
       : address = snapshot['address'],
@@ -71,11 +73,41 @@ class Unit extends Model {
   @override
   call(DocumentSnapshot snap) => new Unit.fromSnapshot(snap);
 
-  Future<Property> get property async {
-    if (_property == null) {
-      final DocumentSnapshot propSnap = await propertyRef.get();
-      _property = new Property.fromSnapshot(propSnap);
-    }
-    return _property;
-  }
+//  Future<Property> get property async {
+//    if (_property == null) {
+//      final DocumentSnapshot propSnap = await propertyRef.get();
+//      _property = new Property.fromSnapshot(propSnap);
+//    }
+//    return _property;
+//  }
 }
+
+class Tenant extends Model {
+  final String firstName;
+  final String lastName;
+
+  Tenant({this.firstName, this.lastName});
+
+  Tenant.fromSnapshot(DocumentSnapshot snapshot)
+    : firstName = snapshot['firstName'],
+      lastName = snapshot['lastName'],
+      super(snapshot: snapshot);
+
+  @override
+  call(DocumentSnapshot snap) => new Tenant.fromSnapshot(snap);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
