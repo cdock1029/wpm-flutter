@@ -4,10 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:wpm/models.dart';
 import 'package:wpm/property_detail.dart';
 import 'package:wpm/property_list.dart';
+import 'package:wpm/wpm_drawer.dart';
 
-void main() => runApp(new MyApp());
+void main() => runApp(new WPMApp());
 
-class MyApp extends StatelessWidget {
+class WPMApp extends StatefulWidget {
+  @override
+  _WPMAppState createState() => new _WPMAppState();
+}
+
+class _WPMAppState extends State<WPMApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) => new MaterialApp(
@@ -30,6 +36,15 @@ class _MasterDetailContainerState extends State<MasterDetailContainer> {
   Property _selectedProperty;
 
   static const int kTabletBreakPoint = 650;
+
+  final List<Widget> _drawerWidgets = <Widget>[
+    const DrawerHeader(child: const Text('This is the Header')),
+    const AboutListTile(
+      applicationName: 'WPM Flutter',
+      applicationIcon: const Icon(Icons.home),
+      applicationVersion: '0.0.1',
+    ),
+  ];
 
   void unSelectProperty() {
     print('running in unSelectProperty..');
@@ -92,6 +107,7 @@ class _MasterDetailContainerState extends State<MasterDetailContainer> {
         appBar: new AppBar(
           title: const Text('WPM master/detail'),
         ),
+        drawer: const WPMDrawerView(),
         body: new LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             final double minDimension =
