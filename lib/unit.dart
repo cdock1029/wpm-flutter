@@ -1,19 +1,30 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wpm/models.dart';
 
 class UnitListView extends StatelessWidget {
-  final List<Unit> units;
+  final Stream<QuerySnapshot> stream;
+  final Property property;
 
-  const UnitListView({this.units, Key key}) : super(key: key);
+  const UnitListView({this.property, this.stream, Key key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => new ListView(
-        children: units
-            .map((Unit u) => new ListTile(
-                  key: new Key(u.id),
-                  title: new Text(u.address),
-                ))
-            .toList(),
+  Widget build(BuildContext context) => new StreamBuilder<QuerySnapshot>(
+        stream: stream,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snap) =>
+            new ListView.builder(
+              itemCount: snap.data.documents.length,
+              itemBuilder: (BuildContext ctx, int index) {
+                final DocumentSnapshot doc = snap.data.documents[index];
+                final Unit unit = new Unit.fromSnapshot(doc);
+                return new ListTile(
+                  key: new Key(unit.id),
+                  title: new Text(unit.address),
+                );
+              },
+            ),
       );
 }

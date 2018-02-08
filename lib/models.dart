@@ -44,6 +44,9 @@ class Property extends Model {
   @override
   call(DocumentSnapshot snap) => new Property.fromSnapshot(snap);
 
+  @override
+  String toString() => 'Property(id: $id, name: $name, unitCount: $unitCount, unitsRef: $unitsRef)';
+
   Future<List<Unit>> get units async {
     final List<Unit> updated = await getTypedCollection(
       _units,

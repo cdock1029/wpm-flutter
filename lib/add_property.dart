@@ -24,25 +24,29 @@ class _AddPropertyState extends State<AddProperty> {
   }
 
   @override
-  Widget build(BuildContext context) => new Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          new Expanded(
-            child: new TextField(
-              keyboardType: TextInputType.text,
-              controller: _controller,
-              onSubmitted: (_) => _addPropertyAsync(),
-              decoration:
-                  const InputDecoration(hintText: 'Enter property name'),
+  Widget build(BuildContext context) => new Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: new Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            new Expanded(
+              child: new TextField(
+                keyboardType: TextInputType.text,
+                controller: _controller,
+                onSubmitted: (_) => _addPropertyAsync(),
+                decoration:
+                    const InputDecoration(hintText: 'Enter property name'),
+              ),
             ),
-          ),
-          new Container(
-            padding: const EdgeInsets.all(2.0),
-            child: new RaisedButton(
-              onPressed: _addPropertyAsync,
-              child: const Text('Add Property'),
+            new Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 4.0, 4.0, 4.0),
+              child: new RaisedButton(
+                color: Theme.of(context).accentColor,
+                onPressed: _addPropertyAsync,
+                child: const Text('Add Property'),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
 }

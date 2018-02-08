@@ -11,6 +11,9 @@ dependencies:
 
   cloud_firestore: ^0.2.6
 
+  rxdart: ^0.15.0
+  flutter_stream_friends: ^0.6.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

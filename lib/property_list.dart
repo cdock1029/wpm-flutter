@@ -3,20 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:wpm/add_property.dart';
+import 'package:wpm/app_state.dart';
 import 'package:wpm/models.dart';
 
 class PropertyListContainer extends StatefulWidget {
   const PropertyListContainer({
-    @required this.unSelectProperty,
+    @required this.model,
+    /* @required this.unSelectProperty,
     this.propertySelectedCallback,
-    this.selectedProperty,
+    this.selectedProperty, */
     Key key,
   })
       : super(key: key);
 
-  final ValueChanged<Property> propertySelectedCallback;
-  final Property selectedProperty;
-  final VoidCallback unSelectProperty;
+  final AppModel model;
+
+  // final ValueChanged<Property> propertySelectedCallback;
+  // final Property selectedProperty;
+  // final VoidCallback unSelectProperty;
 
   @override
   _PropertyListContainerState createState() =>
@@ -31,9 +35,10 @@ class _PropertyListContainerState extends State<PropertyListContainer> {
           new AddProperty(),
           new Expanded(
             child: new PropertyList(
-              unSelectProperty: widget.unSelectProperty,
+              model: widget.model,
+              /* unSelectProperty: widget.unSelectProperty,
               propertySelectedCallback: widget.propertySelectedCallback,
-              selectedProperty: widget.selectedProperty,
+              selectedProperty: widget.selectedProperty, */
             ),
           ),
         ],
@@ -41,49 +46,45 @@ class _PropertyListContainerState extends State<PropertyListContainer> {
 }
 
 class PropertyListItem extends StatelessWidget {
-  final Property _property;
+  final Property property;
   final ValueChanged<Property> propertySelectedCallback;
   final bool _selected;
   final DismissDirectionCallback dismissCallback;
 
-  PropertyListItem({
+  const PropertyListItem({
+    @required this.property,
     @required this.propertySelectedCallback,
     @required this.dismissCallback,
-    DocumentSnapshot snapShot,
     Key key,
     bool selected = false,
   })
-      : _property = new Property.fromSnapshot(snapShot),
-        _selected = selected,
+      : _selected = selected,
         super(key: key);
 
   @override
   Widget build(BuildContext context) => new Dismissible(
-        key: new Key(_property.id),
+        key: new Key(property?.id),
         direction: DismissDirection.endToStart,
         onDismissed: dismissCallback,
-        child: new ListTile(
-          title: new Text(_property.name),
-          subtitle: new Text('units: ${_property.unitCount}'),
-          leading: new CircleAvatar(
-            backgroundColor: Theme.of(context).accentColor,
-            child: new Text(_property.name.substring(0, 1)),
+        child: new Card(
+          child: new ListTile(
+            title: new Text(property.name),
+            subtitle: new Text('units: ${property.unitCount}'),
+            leading: new CircleAvatar(
+              backgroundColor: Theme.of(context).accentColor,
+              child: new Text(property.name.substring(0, 1)),
+            ),
+            onTap: () => propertySelectedCallback(property),
+            selected: _selected,
           ),
-          onTap: () => propertySelectedCallback(_property),
-          selected: _selected,
         ),
       );
 }
 
 class PropertyList extends StatelessWidget {
-  const PropertyList(
-      {@required this.propertySelectedCallback,
-      @required this.unSelectProperty,
-      this.selectedProperty});
+  const PropertyList({@required this.model});
 
-  final ValueChanged<Property> propertySelectedCallback;
-  final Property selectedProperty;
-  final VoidCallback unSelectProperty;
+  final AppModel model;
   final Text loading = const Text('Loading...');
 
   Function dismissCallbackForProperty(String propertyId) =>
@@ -94,33 +95,27 @@ class PropertyList extends StatelessWidget {
             .delete()
             .then((_) {
           print('dismissCallback... unSelecting now..');
-          unSelectProperty();
+          model.onSelectProperty(null);
         }).catchError((Object error) {
           print('Error deleting id=[$propertyId] ==> ${error.toString()}');
         });
       };
 
   @override
-  Widget build(BuildContext context) => new StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance
-            .collection('properties')
-            .orderBy('name')
-            .snapshots,
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) {
-            return loading;
-          }
-          return new ListView(
-            children: snapshot.data.documents
-                .map((DocumentSnapshot document) => new PropertyListItem(
-                      snapShot: document,
-                      propertySelectedCallback: propertySelectedCallback,
-                      dismissCallback:
-                          dismissCallbackForProperty(document.documentID),
-                      selected: selectedProperty?.id == document.documentID,
-                    ))
-                .toList(),
-          );
-        },
-      );
+  Widget build(BuildContext context) {
+    print('PropertyList model=[\n$model\n]');
+    return model.properties.isEmpty
+      ? loading
+      : new ListView.builder(
+          itemCount: model.properties.length,
+          itemBuilder: (BuildContext context, int index) =>
+              new PropertyListItem(
+                propertySelectedCallback: model.onSelectProperty,
+                dismissCallback: (_) => model.onSelectProperty(null),
+                property: model.properties.isNotEmpty
+                    ? model.properties[index]
+                    : null,
+              ),
+        );
+  }
 }
