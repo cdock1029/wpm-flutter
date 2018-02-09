@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:wpm/app_state.dart';
 import 'package:wpm/models.dart';
@@ -57,8 +58,14 @@ class WPMDrawerView extends StatelessWidget {
                         leading: const Icon(Icons.add),
                         selected: true,
                         title: const Text('ADD PROPERTY'),
-                        onTap: () {
-                          Navigator.pushNamed(ctx, '/add_property');
+                        onTap: () async {
+                          // TODO look into popping values back, when that's better.. (creating here vs in added route..)
+                          final Property newProperty = await Navigator.popAndPushNamed(ctx, '/add_property');
+                          if (newProperty != null) {
+                            print('after pop, property is not null: name=[${newProperty.name}]');
+                            appState.propertyStreamCallback(newProperty);
+                            Navigator.pop(ctx);
+                          }
                         },
                       );
                     }
