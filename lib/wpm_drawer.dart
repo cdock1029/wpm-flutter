@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:wpm/app_state.dart';
@@ -29,7 +31,14 @@ class WPMDrawerView extends StatelessWidget {
         ) =>
             new Drawer(
               child: new ListView.builder(
-                  itemCount: snap.data.properties.length + 3, // items + header + Add Property + Divider
+                  /*
+                  Header
+                  Add Property
+                  Divider
+                  Label
+                  [items]
+                   */
+                  itemCount: snap.data.properties.length + 4,
                   itemBuilder: (BuildContext ctx, int index) {
                     /* DRAWER HEADER index: 0 */
                     if (index == 0) {
@@ -60,9 +69,12 @@ class WPMDrawerView extends StatelessWidget {
                         title: const Text('ADD PROPERTY'),
                         onTap: () async {
                           // TODO look into popping values back, when that's better.. (creating here vs in added route..)
-                          final Property newProperty = await Navigator.popAndPushNamed(ctx, '/add_property');
+                          final Property newProperty =
+                              await Navigator.pushNamed(ctx, '/add_property');
                           if (newProperty != null) {
-                            print('after pop, property is not null: name=[${newProperty.name}]');
+                            print(
+                                'after pop, property is not null: name=[${newProperty
+                                .name}]');
                             appState.propertyStreamCallback(newProperty);
                             Navigator.pop(ctx);
                           }
@@ -73,7 +85,18 @@ class WPMDrawerView extends StatelessWidget {
                     if (index == 2) {
                       return const Divider();
                     }
-                    final Property property = snap.data.properties[index - 3];
+                    /* LABEL */
+                    if (index == 3) {
+                      return new ListTile(
+                        dense: true,
+                        key: const Key('properties_label'),
+                        title: new Text(
+                          'Properties',
+                          style: Theme.of(ctx).textTheme.caption,
+                        ),
+                      );
+                    }
+                    final Property property = snap.data.properties[index - 4];
                     return new ListTile(
                       key: new Key(property.id),
                       /*leading: new CircleAvatar(
@@ -86,6 +109,40 @@ class WPMDrawerView extends StatelessWidget {
                       onTap: () {
                         appState.propertyStreamCallback(property);
                         Navigator.pop(ctx);
+                      },
+                      onLongPress: () async {
+                        final bool shouldDelete = await showDialog<bool>(
+                          context: context,
+                          barrierDismissible: false,
+                          child: new AlertDialog(
+                            title: const Text('Delete Property'),
+                            content: new Text(
+                                'Are you sure you want to delete property: "${property
+                                .name}"'),
+                            actions: <Widget>[
+                              new FlatButton(
+                                child: const Text('DELETE'),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
+                                textColor: Colors.white,
+                                color: Theme.of(ctx).errorColor,
+                              ),
+                              new FlatButton(
+                                child: const Text('CANCEL'),
+                                onPressed: () =>
+                                    Navigator.of(ctx).pop(false),
+                                textColor: Colors.black45,
+                              ),
+                            ],
+                          ),
+                        );
+                        //print('Alert Dialog result shouldDelete=[$shouldDelete]');
+                        if (shouldDelete) {
+                          // TODO use cloud functions to throw error if property has any sub-data..
+                          // or refactor to check this on client..
+                          // too many steps.. prob easier on server..
+                          await Firestore.instance.document('/properties/${property.id}').delete();
+                        }
                       },
                     );
                   }),
