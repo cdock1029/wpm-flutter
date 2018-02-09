@@ -8,21 +8,74 @@ import 'package:wpm/models.dart';
 
 class ContextGetter {
   BuildContext context;
+
   ContextGetter();
+
   BuildContext call() => context;
+}
+
+class AppState extends Stream<AppModel> {
+  static final Stream<List<Property>> _propertiesStream = Firestore.instance
+      .collection('properties')
+      .snapshots
+      .map((QuerySnapshot querySnap) => querySnap.documents)
+      .map((List<DocumentSnapshot> docList) => docList
+          .map((DocumentSnapshot docSnap) => new Property.fromSnapshot(docSnap))
+          .toList());
+
+  ContextGetter contextGetter;
+  PropertyStreamCallback _propertyStreamCallback;
+
+  Stream<AppModel> _internalStream;
+  StreamController<AppModel> _streamController;
+
+  AppState(this.contextGetter) {
+    _propertyStreamCallback = new PropertyStreamCallback(contextGetter);
+    _internalStream = new CombineLatestStream<AppModel>(
+      <Stream<List<Property>>>[
+        new Observable<Property>(_propertyStreamCallback)
+            .map((Property property) => <Property>[property])
+            .startWith(<Property>[null]),
+        new Observable<List<Property>>(_propertiesStream)
+            .startWith(<Property>[])
+      ],
+      (List<Property> selected, List<Property> properties) => new AppModel(
+          selectedProperty: selected[0],
+          properties: properties,
+          propertyStreamCallback: _propertyStreamCallback),
+    );
+    _streamController =
+        new BehaviorSubject<AppModel>(seedValue: new AppModel(properties: <Property>[], propertyStreamCallback: _propertyStreamCallback))
+          ..addStream(_internalStream);
+  }
+
+  PropertyStreamCallback get propertyStreamCallback => _propertyStreamCallback;
+
+  @override
+  StreamSubscription<AppModel> listen(
+    void onData(AppModel event), {
+    Function onError,
+    void onDone(),
+    bool cancelOnError,
+  }) =>
+      _streamController.stream.listen(
+        onData,
+        onError: onError,
+        onDone: onDone,
+        cancelOnError: cancelOnError,
+      );
+
+  // TODO when?
+  Future<Null> close() => _streamController?.close();
 }
 
 class AppModel {
   final Property selectedProperty;
   final List<Property> properties;
-  final ValueChanged<Property> onSelectProperty;
-  final String createdWhere;
+  final PropertyStreamCallback propertyStreamCallback;
 
   const AppModel(
-      {this.selectedProperty,
-      this.properties,
-      this.onSelectProperty,
-      this.createdWhere});
+      {this.selectedProperty, this.properties, this.propertyStreamCallback});
 
   factory AppModel.initial() => const AppModel(properties: const <Property>[]);
 
@@ -32,77 +85,20 @@ class AppModel {
       other is AppModel &&
           selectedProperty == other.selectedProperty &&
           properties == other.properties &&
-          onSelectProperty == other.onSelectProperty;
+          propertyStreamCallback == other.propertyStreamCallback;
 
   @override
   int get hashCode =>
-      selectedProperty.hashCode ^
-      properties.hashCode ^
-      onSelectProperty.hashCode;
+      selectedProperty.hashCode ^ properties.hashCode ^ propertyStreamCallback.hashCode;
 
   @override
   String toString() => '''
       AppModel{
-        createdWhere: $createdWhere,
         selectedProperty: $selectedProperty,
         properties: $properties,
-        onSelectProperty: $onSelectProperty
+        propertyStreamCallback: $propertyStreamCallback
       }
       ''';
-}
-
-class AppModelStream extends Stream<AppModel> {
-  final Stream<AppModel> _stream;
-  final ContextGetter getContext;
-
-  AppModelStream([
-    this.getContext,
-    ValueStreamCallback<Property> onPropertySelected,
-    Property initial,
-  ])
-      : this._stream = createStream(
-          // this is a *callable* class...
-          onPropertySelected ?? new PropertyStreamCallback(getContext),
-          initial,
-        );
-
-  static final Stream<List<Property>> _propertiesStream = Firestore.instance
-      .collection('properties')
-      .snapshots
-      .map((QuerySnapshot querySnap) => querySnap.documents)
-      .map((List<DocumentSnapshot> docList) => docList
-          .map((DocumentSnapshot docSnap) => new Property.fromSnapshot(docSnap))
-          .toList());
-
-  @override
-  StreamSubscription<AppModel> listen(
-    void onData(AppModel event), {
-    Function onError,
-    void onDone(),
-    bool cancelOnError,
-  }) =>
-      _stream.listen(onData,
-          onError: onError, onDone: onDone, cancelOnError: cancelOnError);
-
-  static Stream<AppModel> createStream(
-    PropertyStreamCallback onPropertySelected,
-    Property initialValue,
-  ) =>
-      new CombineLatestStream<AppModel>(
-        <Stream<List<Property>>>[
-          new Observable<Property>(onPropertySelected)
-              .map((Property property) => <Property>[property])
-              .startWith(<Property>[initialValue]),
-          new Observable<List<Property>>(_propertiesStream)
-              .startWith(<Property>[]),
-        ],
-        // TODO hack to have same stream types?
-        (List<Property> selected, List<Property> properties) => new AppModel(
-            createdWhere: 'CombineLatestStream CALLBACK',
-            selectedProperty: selected[0],
-            properties: properties,
-            onSelectProperty: onPropertySelected),
-      ).asBroadcastStream(onListen: ((StreamSubscription<AppModel> sub) => print('onListen sub=[$sub]')));
 }
 
 class PropertyStreamCallback extends ValueStreamCallback<Property> {
@@ -113,7 +109,9 @@ class PropertyStreamCallback extends ValueStreamCallback<Property> {
 
   @override
   void call(Property p) {
-    Navigator.pushNamed(getContext(), propDetailRoute);
     streamController.add(p);
+    Navigator.pushNamed(getContext(), propDetailRoute).then((_) {
+      // streamController.add(p);
+    });
   }
 }

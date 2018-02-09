@@ -47,13 +47,13 @@ class _PropertyListContainerState extends State<PropertyListContainer> {
 
 class PropertyListItem extends StatelessWidget {
   final Property property;
-  final ValueChanged<Property> propertySelectedCallback;
+  final PropertyStreamCallback propertyStreamCallback;
   final bool _selected;
   final DismissDirectionCallback dismissCallback;
 
   const PropertyListItem({
     @required this.property,
-    @required this.propertySelectedCallback,
+    @required this.propertyStreamCallback,
     @required this.dismissCallback,
     Key key,
     bool selected = false,
@@ -74,7 +74,7 @@ class PropertyListItem extends StatelessWidget {
               backgroundColor: Theme.of(context).accentColor,
               child: new Text(property.name.substring(0, 1)),
             ),
-            onTap: () => propertySelectedCallback(property),
+            onTap: () => print('TAPPED!\n\n'),// propertyStreamCallback(property),
             selected: _selected,
           ),
         ),
@@ -95,7 +95,7 @@ class PropertyList extends StatelessWidget {
             .delete()
             .then((_) {
           print('dismissCallback... unSelecting now..');
-          model.onSelectProperty(null);
+          model.propertyStreamCallback(null);
         }).catchError((Object error) {
           print('Error deleting id=[$propertyId] ==> ${error.toString()}');
         });
@@ -105,17 +105,17 @@ class PropertyList extends StatelessWidget {
   Widget build(BuildContext context) {
     print('PropertyList model=[\n$model\n]');
     return model.properties.isEmpty
-      ? loading
-      : new ListView.builder(
-          itemCount: model.properties.length,
-          itemBuilder: (BuildContext context, int index) =>
-              new PropertyListItem(
-                propertySelectedCallback: model.onSelectProperty,
-                dismissCallback: (_) => model.onSelectProperty(null),
-                property: model.properties.isNotEmpty
-                    ? model.properties[index]
-                    : null,
-              ),
-        );
+        ? loading
+        : new ListView.builder(
+            itemCount: model.properties.length,
+            itemBuilder: (BuildContext context, int index) =>
+                new PropertyListItem(
+                  propertyStreamCallback: model.propertyStreamCallback,
+                  dismissCallback: (_) => model.propertyStreamCallback(null),
+                  property: model.properties.isNotEmpty
+                      ? model.properties[index]
+                      : null,
+                ),
+          );
   }
 }

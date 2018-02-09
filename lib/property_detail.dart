@@ -1,22 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
 import 'package:wpm/app_state.dart';
-import 'package:wpm/models.dart';
 import 'package:wpm/unit.dart';
 
 class PropertyDetail extends StatelessWidget {
-  final AppModelStream appModelStream;
 
-  const PropertyDetail({@required this.appModelStream, Key key})
-      : super(key: key);
+  final AppState appState;
+  const PropertyDetail({this.appState, Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return new StreamBuilder<AppModel>(
-      stream: appModelStream,
+      stream: appState,
       builder: (
         BuildContext context,
         AsyncSnapshot<AppModel> appSnap,
