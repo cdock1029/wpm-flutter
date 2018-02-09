@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:wpm/add_property.dart';
 import 'package:wpm/app_state.dart';
 import 'package:wpm/property_detail.dart';
 import 'package:wpm/property_list.dart';
@@ -53,17 +54,16 @@ class WPMAppState extends State<WPMApp> {
             appBar: new AppBar(
               title: const Text('WPM ??'),
             ),
-            drawer: const WPMDrawerView(),
+            drawer: new WPMDrawerView(appState),
             body: new Builder(
               builder: (BuildContext ctx) {
                 contextGetter.context = ctx;
-                return new PropertyListContainer(model: model);
+                return new PropertyDetail(appState: appState);
               },
             ),
           ),
           routes: <String, WidgetBuilder>{
-            '/property_detail': (BuildContext context) =>
-                new PropertyDetail(appState: appState),
+            '/add_property': (BuildContext context) => new AddProperty(),
           },
         );
       });

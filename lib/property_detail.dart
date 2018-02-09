@@ -4,8 +4,8 @@ import 'package:wpm/app_state.dart';
 import 'package:wpm/unit.dart';
 
 class PropertyDetail extends StatelessWidget {
-
   final AppState appState;
+
   const PropertyDetail({this.appState, Key key}) : super(key: key);
 
   @override
@@ -17,36 +17,43 @@ class PropertyDetail extends StatelessWidget {
         BuildContext context,
         AsyncSnapshot<AppModel> appSnap,
       ) {
-        Widget content;
         final AppModel model = appSnap.data;
-        if (appSnap.data == null) {
-          content = new Container();
+
+        String _titleText, _subTitleText;
+        MainAxisAlignment _align;
+        if (model?.selectedProperty?.name != null) {
+          _titleText = model?.selectedProperty?.name;
+          _subTitleText = 'Unit count: ${model.selectedProperty.unitCount}';
+          _align = MainAxisAlignment.start;
         } else {
-          content = new UnitListView(property: model.selectedProperty, stream: model.selectedProperty.unitsRef?.snapshots);
+          _titleText = '↑ Select a Property what?';
+          _subTitleText = '';
+          _align = MainAxisAlignment.center;
         }
-        final Text headingText = new Text(
-          model?.selectedProperty?.name ?? 'Select a Property',
-          style: textTheme.headline,
-        );
+        final Text title = new Text(_titleText, style: textTheme.headline);
+        final Text subTitle = new Text(_subTitleText, style: textTheme.subhead);
+
+        final List<Widget> _children = <Widget>[
+          title,
+          subTitle,
+        ];
+
+        if (model != null) {
+          _children.add(
+            new Expanded(
+                child: new UnitListView(
+                    property: model.selectedProperty,
+                    stream: model.selectedProperty?.unitsRef?.snapshots)),
+          );
+        }
+
         return new Scaffold(
           key: const Key('property_detail'),
-          appBar: new AppBar(
+          /*appBar: new AppBar(
             key: const Key('property_detail_app_bar'),
-          ),
-          body: new Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              headingText,
-              //new RaisedButton(onPressed: () => model.onSelectProperty())
-              new Text(
-                model?.selectedProperty?.name != null
-                    ? 'Unit count: ${model.selectedProperty.unitCount}'
-                    : '',
-                style: textTheme.subhead,
-              ),
-              new Expanded(child: content),
-            ],
-          ),
+          ),*/
+          // TODO fix alignment and such..
+          body: new Column(mainAxisAlignment: _align, children: _children),
         );
       },
     );

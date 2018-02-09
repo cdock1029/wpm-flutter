@@ -25,6 +25,14 @@ abstract class Model {
                   docSnapList.map((DocumentSnapshot snap) => snap))
               .map((DocumentSnapshot snap) => instanceCall(snap))
               .toList();
+
+  // TODO good enough?
+  @override
+  bool operator ==(Object other) => identical(this, other) || other is Model && other.id == id;
+
+  @override
+  int get hashCode => id.hashCode;
+
 }
 
 class Property extends Model {

@@ -17,6 +17,7 @@ class ContextGetter {
 class AppState extends Stream<AppModel> {
   static final Stream<List<Property>> _propertiesStream = Firestore.instance
       .collection('properties')
+      .orderBy('name')
       .snapshots
       .map((QuerySnapshot querySnap) => querySnap.documents)
       .map((List<DocumentSnapshot> docList) => docList
@@ -110,9 +111,10 @@ class PropertyStreamCallback extends ValueStreamCallback<Property> {
   @override
   void call(Property p) {
     streamController.add(p);
-    Navigator.pushNamed(getContext(), propDetailRoute).then((_) {
+    // TODO get rid of navigating in here ?
+    /* Navigator.pushNamed(getContext(), propDetailRoute).then((_) {
       // streamController.add(p);
-    });
+    });*/
     // TODO when hitting back button.. "selected property" is still chosen..
   }
 }

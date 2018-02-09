@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:wpm/app_state.dart';
+import 'package:wpm/models.dart';
 
 //class WPMDrawerContainer extends StatefulWidget {
 //  @override
@@ -10,42 +12,76 @@ import 'package:flutter/material.dart';
 //}
 
 class WPMDrawerView extends StatelessWidget {
-  static const List<String> _items = const <String>['one', 'two', 'three'];
+  final AppState appState;
 
-  const WPMDrawerView({
-    Key key,
+  // final Widget _header = const DrawerHeader(child: const Text('Drawer Header'));
 
-  }) : super(key: key);
-
-  List<Widget> _children(BuildContext context) => <List<Widget>>[
-    <Widget>[
-      const DrawerHeader(
-        child: const Center(
-          child: const Icon(Icons.attach_money),
-        ),
-      ),
-    ],
-    ListTile
-        .divideTiles(
-      context: context,
-      tiles: _items
-          .map<Widget>((String item) => new ListTile(
-        title: new Text(item),
-      ))
-          .toList(),
-    )
-        .toList(),
-    <Widget>[
-      const AboutListTile(
-        icon: const Icon(Icons.home),
-      ),
-    ],
-  ].expand((List<Widget> list) => list).toList();
+  const WPMDrawerView(this.appState);
 
   @override
-  Widget build(BuildContext context) => new Drawer(
-    child: new ListView(
-      children: _children(context),
-    ),
-  );
+  Widget build(BuildContext context) => new StreamBuilder<AppModel>(
+        stream: appState,
+        initialData: new AppModel.initial(),
+        builder: (
+          BuildContext context,
+          AsyncSnapshot<AppModel> snap,
+        ) =>
+            new Drawer(
+              child: new ListView.builder(
+                  itemCount: snap.data.properties.length + 3, // items + header + Add Property + Divider
+                  itemBuilder: (BuildContext ctx, int index) {
+                    /* DRAWER HEADER index: 0 */
+                    if (index == 0) {
+                      return new UserAccountsDrawerHeader(
+                        accountName: const Text('Conor Dockry'),
+                        accountEmail: const Text('conordockry@gmail.com'),
+                        currentAccountPicture: new CircleAvatar(
+                          backgroundColor: Theme.of(context).accentColor,
+                          child: new Text('cd'.toUpperCase()),
+                        ),
+                        decoration: new BoxDecoration(
+                          gradient: new LinearGradient(
+                            colors: <Color>[
+                              Theme.of(ctx).primaryColor,
+                              Theme.of(ctx).accentColor,
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                    /* ADD PROPERTY TILE */
+                    if (index == 1) {
+                      return new ListTile(
+                        key: const Key('add_new'),
+                        dense: true,
+                        leading: const Icon(Icons.add),
+                        selected: true,
+                        title: const Text('ADD PROPERTY'),
+                        onTap: () {
+                          Navigator.pushNamed(ctx, '/add_property');
+                        },
+                      );
+                    }
+                    /* DIVIDER */
+                    if (index == 2) {
+                      return const Divider();
+                    }
+                    final Property property = snap.data.properties[index - 3];
+                    return new ListTile(
+                      key: new Key(property.id),
+                      /*leading: new CircleAvatar(
+                        child: new Text(property.name.substring(0, 1)),
+                      ),*/
+                      selected: snap.data.selectedProperty == property,
+                      leading: new Icon(Icons.home),
+                      title: new Text(property.name),
+                      dense: true,
+                      onTap: () {
+                        appState.propertyStreamCallback(property);
+                        Navigator.pop(ctx);
+                      },
+                    );
+                  }),
+            ),
+      );
 }
