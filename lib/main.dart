@@ -35,6 +35,7 @@ class WPMAppState extends State<WPMApp> {
   @override
   Widget build(BuildContext context) => new StreamBuilder<AppModel>(
       stream: appState,
+      initialData: new AppModel.initial(),
       builder: (
         BuildContext context,
         AsyncSnapshot<AppModel> snapshot,

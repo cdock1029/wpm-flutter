@@ -16,7 +16,7 @@ class UnitListView extends StatelessWidget {
         stream: stream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snap) =>
             new ListView.builder(
-              itemCount: snap.data.documents.length,
+              itemCount: snap.data?.documents?.length ?? 0,
               itemBuilder: (BuildContext ctx, int index) {
                 final DocumentSnapshot doc = snap.data.documents[index];
                 final Unit unit = new Unit.fromSnapshot(doc);

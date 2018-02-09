@@ -74,7 +74,7 @@ class PropertyListItem extends StatelessWidget {
               backgroundColor: Theme.of(context).accentColor,
               child: new Text(property.name.substring(0, 1)),
             ),
-            onTap: () => print('TAPPED!\n\n'),// propertyStreamCallback(property),
+            onTap: () => propertyStreamCallback(property),
             selected: _selected,
           ),
         ),

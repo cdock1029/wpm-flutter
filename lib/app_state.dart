@@ -45,7 +45,7 @@ class AppState extends Stream<AppModel> {
           propertyStreamCallback: _propertyStreamCallback),
     );
     _streamController =
-        new BehaviorSubject<AppModel>(seedValue: new AppModel(properties: <Property>[], propertyStreamCallback: _propertyStreamCallback))
+        new BehaviorSubject<AppModel>()//TODO does this work? (seedValue:..)
           ..addStream(_internalStream);
   }
 
@@ -113,5 +113,6 @@ class PropertyStreamCallback extends ValueStreamCallback<Property> {
     Navigator.pushNamed(getContext(), propDetailRoute).then((_) {
       // streamController.add(p);
     });
+    // TODO when hitting back button.. "selected property" is still chosen..
   }
 }
