@@ -3,16 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_stream_friends/flutter_stream_friends.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:flutter/material.dart';
 import 'package:wpm/models.dart';
-
-class ContextGetter {
-  BuildContext context;
-
-  ContextGetter();
-
-  BuildContext call() => context;
-}
 
 class AppState extends Stream<AppModel> {
   static final Stream<List<Property>> _propertiesStream = Firestore.instance
@@ -24,14 +15,13 @@ class AppState extends Stream<AppModel> {
           .map((DocumentSnapshot docSnap) => new Property.fromSnapshot(docSnap))
           .toList());
 
-  ContextGetter contextGetter;
-  PropertyStreamCallback _propertyStreamCallback;
+  ValueStreamCallback<Property> _propertyStreamCallback;
 
   Stream<AppModel> _internalStream;
   StreamController<AppModel> _streamController;
 
-  AppState(this.contextGetter) {
-    _propertyStreamCallback = new PropertyStreamCallback(contextGetter);
+  AppState() {
+    _propertyStreamCallback = new ValueStreamCallback<Property>();
     _internalStream = new CombineLatestStream<AppModel>(
       <Stream<List<Property>>>[
         new Observable<Property>(_propertyStreamCallback)
@@ -50,7 +40,7 @@ class AppState extends Stream<AppModel> {
           ..addStream(_internalStream);
   }
 
-  PropertyStreamCallback get propertyStreamCallback => _propertyStreamCallback;
+  ValueStreamCallback<Property> get propertyStreamCallback => _propertyStreamCallback;
 
   @override
   StreamSubscription<AppModel> listen(
@@ -73,7 +63,7 @@ class AppState extends Stream<AppModel> {
 class AppModel {
   final Property selectedProperty;
   final List<Property> properties;
-  final PropertyStreamCallback propertyStreamCallback;
+  final ValueStreamCallback<Property> propertyStreamCallback;
 
   const AppModel(
       {this.selectedProperty, this.properties, this.propertyStreamCallback});
@@ -102,19 +92,3 @@ class AppModel {
       ''';
 }
 
-class PropertyStreamCallback extends ValueStreamCallback<Property> {
-  final ContextGetter getContext;
-  static const String propDetailRoute = '/property_detail';
-
-  PropertyStreamCallback(this.getContext);
-
-  @override
-  void call(Property p) {
-    streamController.add(p);
-    // TODO get rid of navigating in here ?
-    /* Navigator.pushNamed(getContext(), propDetailRoute).then((_) {
-      // streamController.add(p);
-    });*/
-    // TODO when hitting back button.. "selected property" is still chosen..
-  }
-}

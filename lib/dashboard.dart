@@ -1,16 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wpm/app_state.dart';
+import 'package:wpm/lease_list.dart';
 import 'package:wpm/unit.dart';
 import 'package:wpm/wpm_drawer.dart';
 
-class PropertyDetail extends StatelessWidget {
+class Dashboard extends StatelessWidget {
   final AppState appState;
 
-  const PropertyDetail({this.appState, Key key}) : super(key: key);
+  const Dashboard(this.appState);
 
   @override
   Widget build(BuildContext context) {
+    print('Dashboard');
     final TextTheme textTheme = Theme.of(context).textTheme;
     return new StreamBuilder<AppModel>(
       stream: appState,
@@ -39,22 +42,28 @@ class PropertyDetail extends StatelessWidget {
           subTitle,
         ];
 
-        if (model != null) {
+        if (model?.selectedProperty != null) {
+          print('model.selectedProperty: [${model.selectedProperty}]');
+          final DocumentReference propRef = Firestore.instance.collection('properties').document(model.selectedProperty.id);
           _children.add(
             new Expanded(
-                child: new UnitListView(
-                    property: model.selectedProperty,
-                    stream: model.selectedProperty?.unitsRef?.snapshots)),
+              child: new LeaseList(
+                propertyRef: propRef,
+              ),
+            ),
           );
         }
 
         return new Scaffold(
           key: const Key('property_detail'),
           appBar: new AppBar(
-            title: new Text(model?.selectedProperty?.name?? 'WPM'),
+            title: new Text(model?.selectedProperty?.name ?? 'WPM'),
           ),
           drawer: new WPMDrawerView(appState),
-          body: new Column(mainAxisAlignment: _align, children: _children),
+          body: new Column(
+            mainAxisAlignment: _align,
+            children: _children,
+          ),
         );
       },
     );

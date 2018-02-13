@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_stream_friends/flutter_stream_friends.dart';
 import 'package:meta/meta.dart';
 import 'package:wpm/add_property.dart';
 import 'package:wpm/app_state.dart';
@@ -47,7 +48,7 @@ class _PropertyListContainerState extends State<PropertyListContainer> {
 
 class PropertyListItem extends StatelessWidget {
   final Property property;
-  final PropertyStreamCallback propertyStreamCallback;
+  final ValueStreamCallback<Property> propertyStreamCallback;
   final bool _selected;
   final DismissDirectionCallback dismissCallback;
 

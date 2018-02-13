@@ -9,7 +9,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.0
 
-  cloud_firestore: ^0.2.6
+  cloud_firestore: ^0.2.8
 
   rxdart: ^0.15.0
   flutter_stream_friends: ^0.6.2

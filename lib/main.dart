@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:wpm/add_property.dart';
 import 'package:wpm/app_state.dart';
+import 'package:wpm/dashboard.dart';
 import 'package:wpm/property_detail.dart';
 import 'package:wpm/property_list.dart';
 import 'package:wpm/wpm_drawer.dart';
@@ -16,14 +17,13 @@ class WPMApp extends StatefulWidget {
 
 class WPMAppState extends State<WPMApp> {
 
-  ContextGetter contextGetter;
   AppState appState;
 
   @override
   void initState() {
     super.initState();
-    contextGetter = new ContextGetter();
-    appState = new AppState(contextGetter);
+    // contextGetter = new ContextGetter();
+    appState = new AppState();
   }
 
   @override
@@ -34,37 +34,26 @@ class WPMAppState extends State<WPMApp> {
   }
 
   @override
-  Widget build(BuildContext context) => new StreamBuilder<AppModel>(
+  Widget build(BuildContext context) => /*new StreamBuilder<AppModel>(
       stream: appState,
       initialData: new AppModel.initial(),
       builder: (
         BuildContext context,
         AsyncSnapshot<AppModel> snapshot,
       ) {
-        print('WPMAppState build. snappshot.data=[${snapshot.data}]');
         final AppModel model = snapshot.data;
-        return new MaterialApp(
+        print('WPMAppState build. snappshot.data=[$model]');
+        return */ new MaterialApp(
           title: '* WPM *',
           theme: new ThemeData(
             primarySwatch: Colors.deepPurple,
             accentColor: Colors.tealAccent,
             scaffoldBackgroundColor: Colors.grey[200],
           ),
-          home: new Scaffold(
-            appBar: new AppBar(
-              title: const Text('WPM ??'),
-            ),
-            drawer: new WPMDrawerView(appState),
-            body: new Builder(
-              builder: (BuildContext ctx) {
-                contextGetter.context = ctx;
-                return new PropertyDetail(appState: appState);
-              },
-            ),
-          ),
+          home: new Dashboard(appState),
           routes: <String, WidgetBuilder>{
             '/add_property': (BuildContext context) => new AddProperty(),
           },
         );
-      });
+      // });
 }

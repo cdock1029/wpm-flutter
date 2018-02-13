@@ -31,6 +31,8 @@ class WPMDrawerView extends StatelessWidget {
         ) =>
             new Drawer(
               child: new ListView.builder(
+                  // gets rid of light-colored top bar..
+                  padding: const EdgeInsets.only(top: 0.0),
                   /*
                   Header
                   Add Property

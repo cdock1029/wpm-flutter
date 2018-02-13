@@ -15,7 +15,7 @@ abstract class Model {
   Future<List<T>> getTypedCollection<T extends Model>(
     List<T> cached,
     CollectionReference collectionRef,
-    T instanceCall,// Function getModelInstance,
+    T instanceCall, // Function getModelInstance,
   ) async =>
       cached != null
           ? new Future<T>.value(cached)
@@ -28,11 +28,11 @@ abstract class Model {
 
   // TODO good enough?
   @override
-  bool operator ==(Object other) => identical(this, other) || other is Model && other.id == id;
+  bool operator ==(Object other) =>
+      identical(this, other) || other is Model && other.id == id;
 
   @override
   int get hashCode => id.hashCode;
-
 }
 
 class Property extends Model {
@@ -53,7 +53,8 @@ class Property extends Model {
   call(DocumentSnapshot snap) => new Property.fromSnapshot(snap);
 
   @override
-  String toString() => 'Property(id: $id, name: $name, unitCount: $unitCount, unitsRef: $unitsRef)';
+  String toString() =>
+      'Property(id: $id, name: $name, unitCount: $unitCount, unitsRef: $unitsRef)';
 
   Future<List<Unit>> get units async {
     final List<Unit> updated = await getTypedCollection(
@@ -72,6 +73,7 @@ class Property extends Model {
 class Unit extends Model {
   final String address;
   final DocumentReference propertyRef;
+
   // Property _property;
 
   const Unit({this.address, this.propertyRef});
@@ -97,28 +99,47 @@ class Tenant extends Model {
   final String firstName;
   final String lastName;
 
+  // TODO think about Lease queries using name-concatenation w/ tenantId
+
+  // String get normalizedName => '${lastName.toLowerCase()}|${firstName.toLowerCase()}';
+
   Tenant({this.firstName, this.lastName});
 
   Tenant.fromSnapshot(DocumentSnapshot snapshot)
-    : firstName = snapshot['firstName'],
-      lastName = snapshot['lastName'],
-      super(snapshot: snapshot);
+      : firstName = snapshot['firstName'],
+        lastName = snapshot['lastName'],
+        super(snapshot: snapshot);
 
   @override
-  call(DocumentSnapshot snap) => new Tenant.fromSnapshot(snap);
+  Tenant call(DocumentSnapshot snap) => new Tenant.fromSnapshot(snap);
 }
 
+class Lease extends Model {
+  final DocumentReference propertyRef;
+  final DocumentReference unitRef;
+  List<Tenant> tenants;
+  Map<String, dynamic> _tenants;
+  String propertyUnit;
 
+  Lease({this.propertyRef, this.unitRef, this.tenants});
 
+  Lease.fromSnapshot(DocumentSnapshot snapshot)
+      : propertyRef = snapshot['propertRef'],
+        unitRef = snapshot['unitRef'],
+        propertyUnit = snapshot['propertyUnit'],
+        _tenants = snapshot['tenants'],
+        super(snapshot: snapshot);
 
+  @override
+  Lease call(DocumentSnapshot snap) => new Lease.fromSnapshot(snap);
 
-
-
-
-
-
-
-
-
-
-
+  @override
+  String toString() => '''
+    Lease(
+      id: $id,
+      propertyRef: $propertyRef,
+      unitRef: $unitRef,  
+      _tenants: $_tenants,
+    )   
+  ''';
+}
