@@ -10,7 +10,10 @@ class AppState extends Stream<AppModel> {
       .collection('properties')
       .orderBy('name')
       .snapshots
-      .map((QuerySnapshot querySnap) => querySnap.documents)
+      .map((QuerySnapshot querySnap) {
+        print('querySnap properties=[${querySnap.documents.length}]');
+        return querySnap.documents;
+      })
       .map((List<DocumentSnapshot> docList) => docList
           .map((DocumentSnapshot docSnap) => new Property.fromSnapshot(docSnap))
           .toList());

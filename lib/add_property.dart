@@ -6,6 +6,11 @@ import 'package:flutter/widgets.dart';
 import 'package:wpm/models.dart';
 
 class AddProperty extends StatefulWidget {
+
+  const AddProperty({Key key}) : super(key: key);
+
+  static const String routeName = '/add_property';
+
   @override
   _AddPropertyState createState() => new _AddPropertyState();
 }

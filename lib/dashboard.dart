@@ -41,14 +41,17 @@ class Dashboard extends StatelessWidget {
           title,
           subTitle,
         ];
+        print('model=$model');
 
         if (model?.selectedProperty != null) {
           print('model.selectedProperty: [${model.selectedProperty}]');
-          final DocumentReference propRef = Firestore.instance.collection('properties').document(model.selectedProperty.id);
+          // TODO: use STRING key for now, until refs are supported..
+          // final DocumentReference propRef = Firestore.instance.collection('properties').document(model.selectedProperty.id);
+          final String propRefSTRING = model.selectedProperty.id;
           _children.add(
             new Expanded(
               child: new LeaseList(
-                propertyRef: propRef,
+                propertyRef: propRefSTRING,
               ),
             ),
           );
@@ -64,6 +67,14 @@ class Dashboard extends StatelessWidget {
             mainAxisAlignment: _align,
             children: _children,
           ),
+          floatingActionButton: model?.selectedProperty != null
+              ? new FloatingActionButton(
+                  child: new Center(child: new Icon(Icons.add),),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/add_property');
+                  },
+                )
+              : null,
         );
       },
     );

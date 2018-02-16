@@ -5,6 +5,7 @@ import 'package:wpm/app_state.dart';
 import 'package:wpm/dashboard.dart';
 import 'package:wpm/property_detail.dart';
 import 'package:wpm/property_list.dart';
+import 'package:wpm/tenant_add.dart';
 import 'package:wpm/wpm_drawer.dart';
 
 void main() => runApp(new WPMApp());
@@ -52,7 +53,8 @@ class WPMAppState extends State<WPMApp> {
           ),
           home: new Dashboard(appState),
           routes: <String, WidgetBuilder>{
-            '/add_property': (BuildContext context) => new AddProperty(),
+            AddProperty.routeName: (BuildContext context) => const AddProperty(),
+            AddTenant.routeName: (BuildContext context) => const AddTenant(),
           },
         );
       // });

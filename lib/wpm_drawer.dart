@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:wpm/add_property.dart';
 import 'package:wpm/app_state.dart';
 import 'package:wpm/models.dart';
+import 'package:wpm/tenant_add.dart';
 
 //class WPMDrawerContainer extends StatefulWidget {
 //  @override
@@ -15,6 +17,15 @@ import 'package:wpm/models.dart';
 //}
 
 class WPMDrawerView extends StatelessWidget {
+  /*
+  Header
+  Add Property
+  Add Tenant
+  Divider
+  Label
+  [items]
+  */
+  static const int extraTileCount = 5;
   final AppState appState;
 
   // final Widget _header = const DrawerHeader(child: const Text('Drawer Header'));
@@ -33,14 +44,7 @@ class WPMDrawerView extends StatelessWidget {
               child: new ListView.builder(
                   // gets rid of light-colored top bar..
                   padding: const EdgeInsets.only(top: 0.0),
-                  /*
-                  Header
-                  Add Property
-                  Divider
-                  Label
-                  [items]
-                   */
-                  itemCount: snap.data.properties.length + 4,
+                  itemCount: snap.data.properties.length + extraTileCount,
                   itemBuilder: (BuildContext ctx, int index) {
                     /* DRAWER HEADER index: 0 */
                     if (index == 0) {
@@ -64,7 +68,7 @@ class WPMDrawerView extends StatelessWidget {
                     /* ADD PROPERTY TILE */
                     if (index == 1) {
                       return new ListTile(
-                        key: const Key('add_new'),
+                        key: const Key('add_property'),
                         dense: true,
                         leading: const Icon(Icons.add),
                         selected: true,
@@ -72,7 +76,7 @@ class WPMDrawerView extends StatelessWidget {
                         onTap: () async {
                           // TODO look into popping values back, when that's better.. (creating here vs in added route..)
                           final Property newProperty =
-                              await Navigator.pushNamed(ctx, '/add_property');
+                              await Navigator.pushNamed(ctx, AddProperty.routeName);
                           if (newProperty != null) {
                             print(
                                 'after pop, property is not null: name=[${newProperty
@@ -83,12 +87,23 @@ class WPMDrawerView extends StatelessWidget {
                         },
                       );
                     }
-                    /* DIVIDER */
                     if (index == 2) {
+                      return new ListTile(
+                        key: const Key('add_tenant'),
+                        dense: true,
+                        leading: const Icon(Icons.add),
+                        title: const Text('ADD TENANT'),
+                        onTap: () {
+                          Navigator.pushNamed(ctx, AddTenant.routeName);
+                        }
+                      );
+                    }
+                    /* DIVIDER */
+                    if (index == 3) {
                       return const Divider();
                     }
                     /* LABEL */
-                    if (index == 3) {
+                    if (index == 4) {
                       return new ListTile(
                         dense: true,
                         key: const Key('properties_label'),
@@ -98,7 +113,7 @@ class WPMDrawerView extends StatelessWidget {
                         ),
                       );
                     }
-                    final Property property = snap.data.properties[index - 4];
+                    final Property property = snap.data.properties[index - extraTileCount];
                     return new ListTile(
                       key: new Key(property.id),
                       /*leading: new CircleAvatar(
