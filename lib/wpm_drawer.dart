@@ -6,6 +6,7 @@ import 'package:wpm/add_property.dart';
 import 'package:wpm/app_state.dart';
 import 'package:wpm/models.dart';
 import 'package:wpm/tenant_add.dart';
+import 'package:wpm/tenant_list.dart';
 
 //class WPMDrawerContainer extends StatefulWidget {
 //  @override
@@ -21,11 +22,12 @@ class WPMDrawerView extends StatelessWidget {
   Header
   Add Property
   Add Tenant
+  Tenants
   Divider
   Label
   [items]
   */
-  static const int extraTileCount = 5;
+  static const int extraTileCount = 6;
   final AppState appState;
 
   // final Widget _header = const DrawerHeader(child: const Text('Drawer Header'));
@@ -98,12 +100,23 @@ class WPMDrawerView extends StatelessWidget {
                         }
                       );
                     }
-                    /* DIVIDER */
                     if (index == 3) {
+                      return new ListTile(
+                        key: const Key('tenant_list'),
+                        dense: true,
+                        leading: const Icon(Icons.people),
+                        title: const Text('TENANTS'),
+                        onTap: () {
+                          Navigator.popAndPushNamed(ctx, TenantList.routeName);
+                        },
+                      );
+                    }
+                    /* DIVIDER */
+                    if (index == 4) {
                       return const Divider();
                     }
                     /* LABEL */
-                    if (index == 4) {
+                    if (index == 5) {
                       return new ListTile(
                         dense: true,
                         key: const Key('properties_label'),

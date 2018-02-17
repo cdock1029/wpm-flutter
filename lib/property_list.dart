@@ -33,7 +33,7 @@ class _PropertyListContainerState extends State<PropertyListContainer> {
   Widget build(BuildContext context) => new Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          new AddProperty(),
+          const AddProperty(),
           new Expanded(
             child: new PropertyList(
               model: widget.model,
