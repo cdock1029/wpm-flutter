@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:wpm/add_property.dart';
 import 'package:wpm/app_state.dart';
 import 'package:wpm/dashboard.dart';
+import 'package:wpm/lease_create.dart';
 import 'package:wpm/property_detail.dart';
 import 'package:wpm/property_list.dart';
 import 'package:wpm/tenant_add.dart';
@@ -57,6 +58,7 @@ class WPMAppState extends State<WPMApp> {
             AddProperty.routeName: (_) => const AddProperty(),
             AddTenant.routeName: (_) => const AddTenant(),
             TenantList.routeName: (_) => const TenantList(),
+            CreateLease.routeName: (_) => const CreateLease(),
           },
         );
       // });

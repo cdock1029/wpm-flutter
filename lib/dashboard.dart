@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wpm/app_state.dart';
+import 'package:wpm/lease_create.dart';
 import 'package:wpm/lease_list.dart';
 import 'package:wpm/unit.dart';
 import 'package:wpm/wpm_drawer.dart';
@@ -68,7 +69,7 @@ class Dashboard extends StatelessWidget {
               ? new FloatingActionButton(
                   child: new Center(child: new Icon(Icons.add),),
                   onPressed: () {
-                    Navigator.pushNamed(context, '/add_property');
+                    Navigator.pushNamed(context, CreateLease.routeName);
                   },
                 )
               : null,

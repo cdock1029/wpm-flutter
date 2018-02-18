@@ -105,7 +105,7 @@ class Tenant extends Model {
 
   Tenant({this.firstName, this.lastName});
 
-  Tenant.fromSnapshot(DocumentSnapshot snapshot)
+  Tenant.fromSnapshot(snapshot)
       : firstName = snapshot['firstName'],
         lastName = snapshot['lastName'],
         super(snapshot: snapshot);
