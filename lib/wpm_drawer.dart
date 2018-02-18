@@ -20,14 +20,12 @@ import 'package:wpm/tenant_list.dart';
 class WPMDrawerView extends StatelessWidget {
   /*
   Header
-  Add Property
-  Add Tenant
   Tenants
   Divider
-  Label
+  Label / Add Property Button
   [items]
   */
-  static const int extraTileCount = 6;
+  static const int extraTileCount = 4;
   final AppState appState;
 
   // final Widget _header = const DrawerHeader(child: const Text('Drawer Header'));
@@ -47,7 +45,7 @@ class WPMDrawerView extends StatelessWidget {
                   // gets rid of light-colored top bar..
                   padding: const EdgeInsets.only(top: 0.0),
                   itemCount: snap.data.properties.length + extraTileCount,
-                  itemBuilder: (BuildContext ctx, int index) {
+                  itemBuilder: (BuildContext context, int index) {
                     /* DRAWER HEADER index: 0 */
                     if (index == 0) {
                       return new UserAccountsDrawerHeader(
@@ -60,73 +58,59 @@ class WPMDrawerView extends StatelessWidget {
                         decoration: new BoxDecoration(
                           gradient: new LinearGradient(
                             colors: <Color>[
-                              Theme.of(ctx).primaryColor,
-                              Theme.of(ctx).accentColor,
+                              Theme.of(context).primaryColor,
+                              Theme.of(context).accentColor,
                             ],
                           ),
                         ),
                       );
                     }
-                    /* ADD PROPERTY TILE */
+                    /* TENANTS Route */
                     if (index == 1) {
-                      return new ListTile(
-                        key: const Key('add_property'),
-                        dense: true,
-                        leading: const Icon(Icons.add),
-                        selected: true,
-                        title: const Text('ADD PROPERTY'),
-                        onTap: () async {
-                          // TODO look into popping values back, when that's better.. (creating here vs in added route..)
-                          final Property newProperty =
-                              await Navigator.pushNamed(ctx, AddProperty.routeName);
-                          if (newProperty != null) {
-                            print(
-                                'after pop, property is not null: name=[${newProperty
-                                .name}]');
-                            appState.propertyStreamCallback(newProperty);
-                            Navigator.pop(ctx);
-                          }
-                        },
-                      );
-                    }
-                    if (index == 2) {
-                      return new ListTile(
-                        key: const Key('add_tenant'),
-                        dense: true,
-                        leading: const Icon(Icons.add),
-                        title: const Text('ADD TENANT'),
-                        onTap: () {
-                          Navigator.pushNamed(ctx, AddTenant.routeName);
-                        }
-                      );
-                    }
-                    if (index == 3) {
                       return new ListTile(
                         key: const Key('tenant_list'),
                         dense: true,
                         leading: const Icon(Icons.people),
                         title: const Text('TENANTS'),
                         onTap: () {
-                          Navigator.popAndPushNamed(ctx, TenantList.routeName);
+                          Navigator.popAndPushNamed(
+                              context, TenantList.routeName);
                         },
                       );
                     }
                     /* DIVIDER */
-                    if (index == 4) {
+                    if (index == 2) {
                       return const Divider();
                     }
                     /* LABEL */
-                    if (index == 5) {
+                    if (index == 3) {
                       return new ListTile(
-                        dense: true,
+                        dense: false,
                         key: const Key('properties_label'),
                         title: new Text(
                           'Properties',
-                          style: Theme.of(ctx).textTheme.caption,
+                          style: Theme.of(context).textTheme.caption,
+                        ),
+                        trailing: new IconButton(
+                          icon: const Icon(Icons.create),
+                          color: Theme.of(context).accentColor,
+                          onPressed: () async {
+                            // TODO look into popping values back, when that's better.. (creating here vs in added route..)
+                            final Property newProperty = await Navigator
+                                .pushNamed(context, AddProperty.routeName);
+                            if (newProperty != null) {
+                              print(
+                                  'after pop, property is not null: name=[${newProperty
+                                  .name}]');
+                              appState.propertyStreamCallback(newProperty);
+                              Navigator.pop(context);
+                            }
+                          },
                         ),
                       );
                     }
-                    final Property property = snap.data.properties[index - extraTileCount];
+                    final Property property =
+                        snap.data.properties[index - extraTileCount];
                     return new ListTile(
                       key: new Key(property.id),
                       /*leading: new CircleAvatar(
@@ -138,7 +122,7 @@ class WPMDrawerView extends StatelessWidget {
                       dense: true,
                       onTap: () {
                         appState.propertyStreamCallback(property);
-                        Navigator.pop(ctx);
+                        Navigator.pop(context);
                       },
                       onLongPress: () async {
                         final bool shouldDelete = await showDialog<bool>(
@@ -155,12 +139,12 @@ class WPMDrawerView extends StatelessWidget {
                                 onPressed: () =>
                                     Navigator.of(context).pop(true),
                                 textColor: Colors.white,
-                                color: Theme.of(ctx).errorColor,
+                                color: Theme.of(context).errorColor,
                               ),
                               new FlatButton(
                                 child: const Text('CANCEL'),
                                 onPressed: () =>
-                                    Navigator.of(ctx).pop(false),
+                                    Navigator.of(context).pop(false),
                                 textColor: Colors.black45,
                               ),
                             ],
@@ -171,7 +155,9 @@ class WPMDrawerView extends StatelessWidget {
                           // TODO use cloud functions to throw error if property has any sub-data..
                           // or refactor to check this on client..
                           // too many steps.. prob easier on server..
-                          await Firestore.instance.document('/properties/${property.id}').delete();
+                          await Firestore.instance
+                              .document('/properties/${property.id}')
+                              .delete();
                         }
                       },
                     );

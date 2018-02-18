@@ -18,10 +18,11 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="wpm"
         android:icon="@mipmap/ic_launcher">
-        <meta-data android:name="WindowManagerPreference:FreeformWindowSize"
-                   android:value="[phone|tablet|maximize]" />
-        <meta-data android:name="WindowManagerPreference:FreeformWindowOrientation"
-                   android:value="[portrait|landscape]" />
+        <!-- add later when focusing on chrome os compat -->
+        <!--<meta-data android:name="WindowManagerPreference:FreeformWindowSize"-->
+                   <!--android:value="[phone|tablet|maximize]" />-->
+        <!--<meta-data android:name="WindowManagerPreference:FreeformWindowOrientation"-->
+                   <!--android:value="[portrait|landscape]" />-->
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

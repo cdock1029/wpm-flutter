@@ -49,7 +49,7 @@ class WPMAppState extends State<WPMApp> {
           title: '* WPM *',
           theme: new ThemeData(
             primarySwatch: Colors.deepPurple,
-            accentColor: Colors.tealAccent,
+            accentColor: Colors.deepOrangeAccent,
             scaffoldBackgroundColor: Colors.grey[200],
           ),
           home: new Dashboard(appState),

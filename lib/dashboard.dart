@@ -13,7 +13,6 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Dashboard');
     final TextTheme textTheme = Theme.of(context).textTheme;
     return new StreamBuilder<AppModel>(
       stream: appState,
@@ -41,8 +40,6 @@ class Dashboard extends StatelessWidget {
           title,
           subTitle,
         ];
-        print('model=$model');
-
         if (model?.selectedProperty != null) {
           print('model.selectedProperty: [${model.selectedProperty}]');
           // TODO: use STRING key for now, until refs are supported..
