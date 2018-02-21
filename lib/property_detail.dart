@@ -1,30 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:wpm/app_state.dart';
+import 'package:wpm/models.dart';
+import 'package:wpm/property_state.dart';
 import 'package:wpm/unit.dart';
 import 'package:wpm/wpm_drawer.dart';
 
 class PropertyDetail extends StatelessWidget {
-  final AppState appState;
 
-  const PropertyDetail({this.appState, Key key}) : super(key: key);
+  const PropertyDetail();
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return new StreamBuilder<AppModel>(
-      stream: appState,
-      builder: (
-        BuildContext context,
-        AsyncSnapshot<AppModel> appSnap,
-      ) {
-        final AppModel model = appSnap.data;
+    final AppState appState = AppState.of(context);
+    final Property selected = appState.selected;
 
         String _titleText, _subTitleText;
         MainAxisAlignment _align;
-        if (model?.selectedProperty?.name != null) {
-          _titleText = model?.selectedProperty?.name;
-          _subTitleText = 'Unit count: ${model.selectedProperty.unitCount}';
+        if (selected?.name != null) {
+          _titleText = selected.name;
+          _subTitleText = 'Unit count: ${selected.unitCount}';
           _align = MainAxisAlignment.start;
         } else {
           _titleText = '↑ Select a Property what?';
@@ -39,24 +34,22 @@ class PropertyDetail extends StatelessWidget {
           subTitle,
         ];
 
-        if (model != null) {
+        if (selected != null) {
           _children.add(
             new Expanded(
                 child: new UnitListView(
-                    property: model.selectedProperty,
-                    stream: model.selectedProperty?.unitsRef?.snapshots)),
+                    property: selected,
+                    stream: selected.unitsRef?.snapshots)),
           );
         }
 
         return new Scaffold(
           key: const Key('property_detail'),
           appBar: new AppBar(
-            title: new Text(model?.selectedProperty?.name?? 'WPM'),
+            title: new Text(selected?.name?? 'WPM'),
           ),
-          drawer: new WPMDrawerView(appState),
+          drawer: const WPMDrawerView(),
           body: new Column(mainAxisAlignment: _align, children: _children),
         );
-      },
-    );
   }
 }

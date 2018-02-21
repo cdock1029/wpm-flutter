@@ -1,21 +1,9 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:wpm/add_property.dart';
-import 'package:wpm/app_state.dart';
 import 'package:wpm/models.dart';
-import 'package:wpm/tenant_add.dart';
+import 'package:wpm/property_state.dart';
 import 'package:wpm/tenant_list.dart';
-
-//class WPMDrawerContainer extends StatefulWidget {
-//  @override
-//  _WPMDrawerState createState() => new _WPMDrawerState();
-//}
-//
-//class _WPMDrawerState extends State<WPMDrawerContainer> {
-//
-//}
 
 class WPMDrawerView extends StatelessWidget {
   /*
@@ -26,25 +14,22 @@ class WPMDrawerView extends StatelessWidget {
   [items]
   */
   static const int extraTileCount = 4;
-  final AppState appState;
 
-  // final Widget _header = const DrawerHeader(child: const Text('Drawer Header'));
-
-  const WPMDrawerView(this.appState);
+  const WPMDrawerView();
 
   @override
-  Widget build(BuildContext context) => new StreamBuilder<AppModel>(
-        stream: appState,
-        initialData: new AppModel.initial(),
-        builder: (
-          BuildContext context,
-          AsyncSnapshot<AppModel> snap,
-        ) =>
-            new Drawer(
+  Widget build(BuildContext context) {
+    final AppState appState = AppState.of(context);
+
+    final List<Property> properties = appState.properties;
+    final Property selected = appState.selected;
+    final ValueChanged<Property> selectProperty = appState.selectProperty;
+
+    return new Drawer(
               child: new ListView.builder(
                   // gets rid of light-colored top bar..
                   padding: const EdgeInsets.only(top: 0.0),
-                  itemCount: snap.data.properties.length + extraTileCount,
+                  itemCount: properties.length + extraTileCount,
                   itemBuilder: (BuildContext context, int index) {
                     /* DRAWER HEADER index: 0 */
                     if (index == 0) {
@@ -102,7 +87,7 @@ class WPMDrawerView extends StatelessWidget {
                               print(
                                   'after pop, property is not null: name=[${newProperty
                                   .name}]');
-                              appState.propertyStreamCallback(newProperty);
+                              selectProperty(newProperty);
                               Navigator.pop(context);
                             }
                           },
@@ -110,18 +95,18 @@ class WPMDrawerView extends StatelessWidget {
                       );
                     }
                     final Property property =
-                        snap.data.properties[index - extraTileCount];
+                        properties[index - extraTileCount];
                     return new ListTile(
                       key: new Key(property.id),
                       /*leading: new CircleAvatar(
                         child: new Text(property.name.substring(0, 1)),
                       ),*/
-                      selected: snap.data.selectedProperty == property,
+                      selected: selected == property,
                       leading: new Icon(Icons.home),
                       title: new Text(property.name),
                       dense: true,
                       onTap: () {
-                        appState.propertyStreamCallback(property);
+                        selectProperty(property);
                         Navigator.pop(context);
                       },
                       onLongPress: () async {
@@ -162,6 +147,6 @@ class WPMDrawerView extends StatelessWidget {
                       },
                     );
                   }),
-            ),
       );
+  }
 }
