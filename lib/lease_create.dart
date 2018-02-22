@@ -4,9 +4,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_stream_friends/flutter_stream_friends.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:wpm/models.dart';
+import 'package:stream_transform/stream_transform.dart';
+import 'package:flutter_stream_friends/flutter_stream_friends.dart';
 
 class CreateLease extends StatefulWidget {
   static const String routeName = '/create_lease';
@@ -22,9 +22,9 @@ class CreateLeaseState extends State<CreateLease> {
 
   final VoidStreamCallback vscb = new VoidStreamCallback();
 
-  Observable<List<Tenant>> ob;
+  Stream<List<Tenant>> str;
 
-  Observable<List<Tenant>> _postAlgolia(String query) {
+  Stream<List<Tenant>> _postAlgolia(String query) {
     final Map<String, String> data = <String, String>{'params': 'query=$query'};
     final String jsonData = JSON.encode(data);
 
@@ -35,8 +35,10 @@ class CreateLeaseState extends State<CreateLease> {
 
     print('algUrl=[${algUrl.toString()}]');
     final Future<HttpClientRequest> futureRequest = client.postUrl(algUrl);
-    return new Observable<HttpClientRequest>.fromFuture(futureRequest)
-        .map<HttpClientResponse>((HttpClientRequest request) {
+
+    final Stream<HttpClientRequest> req = new Stream<HttpClientRequest>.fromFuture(futureRequest);
+
+    return req.asyncMap<HttpClientResponse>((HttpClientRequest request) {
       request.headers
           .add('X-Algolia-API-Key', '0596a34b3766181185a29c9bff3d1256');
       request.headers.add('X-Algolia-Application-Id', '21MICXERPS');
@@ -45,21 +47,18 @@ class CreateLeaseState extends State<CreateLease> {
 
       request.write(jsonData);
       return request.close();
-    }).map<String>((HttpClientResponse response) {
+    }).asyncMap<String>((HttpClientResponse response) {
       final Stream<String> str = response.transform<String>(UTF8.decoder);
       final Future<String> jn = str.join();
       return jn;
-    }).map<Map<String, dynamic>>((String body) {
+    }).asyncMap<Map<String, dynamic>>((String body) {
       print('response body');
       return JSON.decode(body);
-    }).map<List<Tenant>>((Map<String, dynamic> json) {
-      print('response data: ${json.toString()}');
+    }).asyncMap<List<Tenant>>((Map<String, dynamic> json) {
       final List<Map<String, dynamic>> hits = json['hits'];
-      return hits
-          .map((Map<String, dynamic> hit) => new Tenant.fromSnapshot(hit))
-          .toList();
+      print('response data: ${hits.toString()}');
+      return hits.map<Tenant>((Map<String, dynamic> hit) => new Tenant.fromMap(hit)).toList();
     });
-
     /*
     final HttpClientResponse response = await request.close();
 
@@ -77,12 +76,20 @@ class CreateLeaseState extends State<CreateLease> {
     super.initState();
     _searchController.addListener(vscb);
 
-    ob = new Observable<void>(vscb)
-        .map<String>((_) => _searchController.text)
+    str = vscb
+        .map<String>((_) => _searchController.text?.trim())
         .distinct()
         // .where((String text) => text.length > 2)
-        .debounce(new Duration(milliseconds: 450))
-        .flatMapLatest<List<Tenant>>(_postAlgolia);
+        .transform<String>(debounce(new Duration(milliseconds: 450)))
+        .map((String text) {
+          print('distinct, debounced text: $text');
+          return text;
+        })
+        .transform<List<Tenant>>(switchMap<String, List<Tenant>>(_postAlgolia))
+        .map((List<Tenant> tenants) {
+          print('tenants stream: ${tenants.toString()}');
+          return tenants;
+        });
   }
 
   @override
@@ -120,12 +127,12 @@ class CreateLeaseState extends State<CreateLease> {
                     height: 100.0,
                     child: new Card(
                       child: new StreamBuilder<List<Tenant>>(
-                        stream: ob,
+                        stream: str,
                         builder: (
                           BuildContext context,
                           AsyncSnapshot<List<Tenant>> snap,
                         ) {
-                          if (!snap.hasData) {
+                          if (!snap.hasData || snap.data.isEmpty) {
                             return const Text('NO Data');
                           }
                           return new ListView.builder(

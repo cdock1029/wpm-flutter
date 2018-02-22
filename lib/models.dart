@@ -110,6 +110,9 @@ class Tenant extends Model {
         lastName = snapshot['lastName'],
         super(snapshot: snapshot);
 
+  Tenant.fromMap(Map<String, dynamic> map) : firstName = map['firstName'],
+        lastName = map['lastName'];// ,super(snapshot: snapshot)
+
   @override
   Tenant call(DocumentSnapshot snap) => new Tenant.fromSnapshot(snap);
 }
