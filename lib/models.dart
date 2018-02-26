@@ -46,7 +46,7 @@ class Property extends Model {
   Property.fromSnapshot(DocumentSnapshot snapshot)
       : name = snapshot['name'],
         unitCount = snapshot['unitCount'] ?? 0,
-        unitsRef = snapshot.reference.getCollection('unitsRef'),
+        unitsRef = snapshot.reference.getCollection('units'),
         super(snapshot: snapshot);
 
   @override
@@ -73,14 +73,16 @@ class Property extends Model {
 class Unit extends Model {
   final String address;
   final DocumentReference propertyRef;
+  final int ordering;
 
   // Property _property;
 
-  const Unit({this.address, this.propertyRef});
+  const Unit({this.address, this.propertyRef, this.ordering});
 
   Unit.fromSnapshot(DocumentSnapshot snapshot)
       : address = snapshot['address'],
         propertyRef = snapshot['propertyRef'],
+        ordering = snapshot['ordering'],
         super(snapshot: snapshot);
 
   @override
@@ -118,18 +120,22 @@ class Tenant extends Model {
 }
 
 class Lease extends Model {
-  final DocumentReference propertyRef;
-  final DocumentReference unitRef;
+  final String propertyRef;
+  final String unitRef;
+  final String unitPath;
+  final int rent;
   List<Tenant> tenants;
   Map<String, dynamic> _tenants;
   String propertyUnit;
 
-  Lease({this.propertyRef, this.unitRef, this.tenants});
+  // Lease({this.propertyRef, this.unitRef, this.tenants});
 
   Lease.fromSnapshot(DocumentSnapshot snapshot)
       : propertyRef = snapshot['propertRef'],
         unitRef = snapshot['unitRef'],
+        unitPath = snapshot['unitPath'],
         propertyUnit = snapshot['propertyUnit'],
+        rent = snapshot['rent'],
         _tenants = snapshot['tenants'],
         super(snapshot: snapshot);
 

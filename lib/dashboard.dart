@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:wpm/lease_create.dart';
-import 'package:wpm/lease_list.dart';
+import 'package:wpm/leases/lease_create.dart';
+import 'package:wpm/leases/lease_list.dart';
 import 'package:wpm/models.dart';
-import 'package:wpm/property_state.dart';
+import 'package:wpm/app_state.dart';
+import 'package:wpm/properties/add_edit_property.dart';
 import 'package:wpm/wpm_drawer.dart';
 
 class Dashboard extends StatelessWidget {
@@ -51,6 +52,19 @@ class Dashboard extends StatelessWidget {
       key: const Key('property_detail'),
       appBar: new AppBar(
         title: new Text(selected?.name ?? 'WPM'),
+        actions: selected != null ? <Widget>[
+          new IconButton(
+            icon: new Icon(Icons.edit),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute<Null>(
+                    builder: (BuildContext context) =>
+                        new AddEditProperty(property: selected),
+                  ));
+            },
+          ),
+        ] : null,
       ),
       body: new Column(
         mainAxisAlignment: _align,

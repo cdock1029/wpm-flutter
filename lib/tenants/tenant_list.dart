@@ -1,7 +1,9 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:wpm/models.dart';
-import 'package:wpm/tenant_add.dart';
+import 'package:wpm/tenants/tenant_add.dart';
 
 class TenantList extends StatelessWidget {
   const TenantList({Key key}) : super(key: key);
@@ -42,11 +44,8 @@ class TenantList extends StatelessWidget {
                       final ListTile tile = new ListTile(
                         title:
                             new Text('${tenant.lastName}, ${tenant.firstName}'),
-                        trailing: new FlatButton(
-                          onPressed: () {
-                            print('pressed ${tenant.id}');
-                          },
-                          child: const Text('EDIT'),
+                        trailing: new CurrentLeaseSegment(
+                          tenantId: tenant.id,
                         ),
                         onLongPress: () {
                           showDialog(
@@ -97,5 +96,36 @@ class TenantList extends StatelessWidget {
             ),
           );
         },
+      );
+}
+
+class CurrentLeaseSegment extends StatelessWidget {
+  final String tenantId;
+  final Stream<Lease> stream;
+
+  CurrentLeaseSegment({this.tenantId})
+      : stream = Firestore.instance
+            .collection('leases')
+            .where('tenants.$tenantId.startTime', isGreaterThan: 0)
+            .orderBy('tenants.$tenantId.startTime', descending: true)
+            .limit(1)
+            .snapshots
+            .map<List<Lease>>(_convert)
+            .map<Lease>((List<Lease> leases) => leases[0]);
+
+  static List<Lease> _convert(QuerySnapshot querySnap) => querySnap.documents
+      .map<Lease>((DocumentSnapshot doc) => new Lease.fromSnapshot(doc))
+      .toList();
+
+  @override
+  Widget build(BuildContext context) => new StreamBuilder<Lease>(
+        stream: stream,
+        builder: (
+          BuildContext context,
+          AsyncSnapshot<Lease> snap,
+        ) =>
+            new Row(
+              children: <Widget>[new Text(snap.data?.propertyUnit ?? 'no data')],
+            ),
       );
 }

@@ -31,11 +31,12 @@ interface Tenant extends Algolia {
 }
 interface Unit extends Algolia {
   address: string;
-  ordering: number;
+  ordering?: number;
   propertyName?: string;
 }
 interface Property extends Algolia {
   name: string;
+  unitCount?: number;
 }
 
 interface TenantParams {
@@ -57,21 +58,37 @@ interface UnitParams extends PropertyParams {
 export const onUnitCreate = functions.firestore.document('properties/{propertyId}/units/{unitId}').onCreate(async (event) => {
   // TODO: we only should need to scope this for a `Company`.. when data model is changed to multi-user..
   const index = client.initIndex(ALGOLIA_INDEX_UNITS);
-  const { unitId, propertyId } = event.params as UnitParams;
+  const { unitId } = event.params as UnitParams;
 
+  const unitRef: DocumentReference = event.data.ref;
   const unit: Unit = event.data.data();
   unit.objectID = unitId;
 
-  // lookup property name? sheesh...
-  const propertySnapshot: DocumentSnapshot = await admin.firestore().doc(`properties/${propertyId}`).get();
+  // unitId -> units -> propertyId
+  const parentRef: DocumentReference = event.data.ref.parent.parent;
 
-  const docData = propertySnapshot.data();
+  // update unitCount in transaction
+  await admin.firestore().runTransaction(async (transaction: FirebaseFirestore.Transaction) => {
+    const parentData: DocumentSnapshot = await transaction.get(parentRef)
+    const parentProperty: Property = parentData.data() as Property;
+    if (typeof parentProperty !== 'undefined' && parentProperty !== null) {
+      unit.propertyName = parentProperty.name;
+    }
 
-  if (typeof docData !== 'undefined' && docData !== null) {
-    const property = docData as Property;
-    unit.propertyName = property.name;
-  }
-  return index.saveObject(unit);
+    const unitCount: number = parentProperty.unitCount || 0;
+
+    unit.ordering = unitCount;
+
+    transaction.update(parentRef, {
+      unitCount: unitCount + 1,
+    })
+  });
+
+  // to save the 'ordering' property
+  const fbUpdate = unitRef.update(unit)
+  const algoliaUpdate = index.saveObject(unit);
+
+  return Promise.all([fbUpdate, algoliaUpdate]);
 });
 
 export const onTenantCreate = functions.firestore.document('tenants/{tenantId}').onCreate((event) => {

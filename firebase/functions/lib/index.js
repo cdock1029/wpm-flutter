@@ -31,16 +31,28 @@ exports.onUnitCreate = functions.firestore.document('properties/{propertyId}/uni
     // TODO: we only should need to scope this for a `Company`.. when data model is changed to multi-user..
     const index = client.initIndex(ALGOLIA_INDEX_UNITS);
     const { unitId, propertyId } = event.params;
+    const unitRef = event.data.ref;
     const unit = event.data.data();
     unit.objectID = unitId;
-    // lookup property name? sheesh...
-    const propertySnapshot = yield admin.firestore().doc(`properties/${propertyId}`).get();
-    const docData = propertySnapshot.data();
-    if (typeof docData !== 'undefined' && docData !== null) {
-        const property = docData;
-        unit.propertyName = property.name;
-    }
-    return index.saveObject(unit);
+    // unitId -> units -> propertyId
+    const parentRef = event.data.ref.parent.parent;
+    // update unitCount in transaction
+    yield admin.firestore().runTransaction((transaction) => __awaiter(this, void 0, void 0, function* () {
+        const parentData = yield transaction.get(parentRef);
+        const parentProperty = parentData.data();
+        if (typeof parentProperty !== 'undefined' && parentProperty !== null) {
+            unit.propertyName = parentProperty.name;
+        }
+        const unitCount = parentProperty.unitCount || 0;
+        unit.ordering = unitCount;
+        transaction.update(parentRef, {
+            unitCount: unitCount + 1,
+        });
+    }));
+    // to save the 'ordering' property
+    const fbUpdate = unitRef.update(unit);
+    const algoliaUpdate = index.saveObject(unit);
+    return Promise.all([fbUpdate, algoliaUpdate]);
 }));
 exports.onTenantCreate = functions.firestore.document('tenants/{tenantId}').onCreate((event) => {
     const index = client.initIndex(ALGOLIA_INDEX_TENANTS);
