@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:wpm/leases/lease_detail.dart';
 import 'package:wpm/properties/add_edit_property.dart';
 import 'package:wpm/dashboard.dart';
 import 'package:wpm/leases/lease_create.dart';
@@ -25,8 +26,7 @@ class WPMAppState extends State<WPMApp> {
       .snapshots
       .map<List<DocumentSnapshot>>(
           (QuerySnapshot querySnap) => querySnap.documents)
-      .map<List<Property>>((List<DocumentSnapshot> docs) =>
-      docs
+      .map<List<Property>>((List<DocumentSnapshot> docs) => docs
           .map<Property>(
               (DocumentSnapshot doc) => new Property.fromSnapshot(doc))
           .toList());
@@ -40,7 +40,8 @@ class WPMAppState extends State<WPMApp> {
   void initState() {
     super.initState();
 
-    _authSubscription = FirebaseAuth.instance.onAuthStateChanged.listen((FirebaseUser user) {
+    _authSubscription =
+        FirebaseAuth.instance.onAuthStateChanged.listen((FirebaseUser user) {
       print('onAuthStateChanged user=[${user.toString()}]');
       setState(() {
         _user = user;
@@ -55,41 +56,42 @@ class WPMAppState extends State<WPMApp> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      new StreamBuilder<List<Property>>(
+  Widget build(BuildContext context) => new StreamBuilder<List<Property>>(
         stream: _propertiesStream,
         initialData: <Property>[],
-        builder: (BuildContext context,
-            AsyncSnapshot<List<Property>> snapshot,) =>
-        new AppState(
-          user: _user,
-          properties: snapshot.data,
-          selected: _selected,
-          selectProperty: _selectProperty,
-          child: _user != null ? const WPMAppView() : new SignInPage(),
-        ),
+        builder: (
+          BuildContext context,
+          AsyncSnapshot<List<Property>> snapshot,
+        ) =>
+            new AppState(
+              user: _user,
+              properties: snapshot.data,
+              selected: _selected,
+              selectProperty: _selectProperty,
+              child: _user != null ? const WPMAppView() : new SignInPage(),
+            ),
       );
 }
 
 class WPMAppView extends StatelessWidget {
-
   const WPMAppView();
 
   @override
-  Widget build(BuildContext context) =>
-      new MaterialApp(
+  Widget build(BuildContext context) => new MaterialApp(
         title: 'WPM',
         theme: new ThemeData(
           primarySwatch: Colors.deepPurple,
           accentColor: Colors.deepOrangeAccent,
           scaffoldBackgroundColor: Colors.grey[200],
         ),
-        home: const Dashboard(),
+        // home: const Dashboard(),
+        home: const LeaseDetail(),
         routes: <String, WidgetBuilder>{
           AddEditProperty.routeName: (_) => const AddEditProperty(),
           AddTenant.routeName: (_) => const AddTenant(),
           TenantList.routeName: (_) => const TenantList(),
           CreateLease.routeName: (_) => const CreateLease(),
+          LeaseDetail.routeName: (_) => const LeaseDetail(),
         },
       );
 }

@@ -16,12 +16,13 @@ class AddEditProperty extends StatefulWidget {
   _AddEditPropertyState createState() => new _AddEditPropertyState();
 }
 
-class _AddEditPropertyState extends State<AddEditProperty> with TickerProviderStateMixin {
+class _AddEditPropertyState extends State<AddEditProperty>
+    with TickerProviderStateMixin {
   TextEditingController _propertyNameController;
   TextEditingController _unitAddressController;
-  bool _isLoading = false;
+  bool _isLoading;
   Property _property;
-  int _editUnitIndex = -1;
+  int _editUnitIndex;
 
   @override
   void initState() {
@@ -29,6 +30,8 @@ class _AddEditPropertyState extends State<AddEditProperty> with TickerProviderSt
     _property = widget.property;
     _propertyNameController = new TextEditingController(text: _property?.name);
     _unitAddressController = new TextEditingController();
+    _editUnitIndex = -1;
+    _isLoading = false;
   }
 
   @override
@@ -69,7 +72,9 @@ class _AddEditPropertyState extends State<AddEditProperty> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) => new Scaffold(
-        appBar: new AppBar(title: const Text('Add Property')),
+        appBar: new AppBar(
+            title: new Text(
+                widget.property == null ? 'Add Property' : 'Edit Property')),
         body: new Column(
           children: <Widget>[
             new Padding(
@@ -86,14 +91,6 @@ class _AddEditPropertyState extends State<AddEditProperty> with TickerProviderSt
                           hintText: 'Enter property name'),
                     ),
                   ),
-                  /*new Padding(
-                    padding: const EdgeInsets.fromLTRB(16.0, 4.0, 4.0, 4.0),
-                    child: new RaisedButton(
-                      color: Theme.of(context).accentColor,
-                      onPressed: _addPropertyAsync,
-                      child: const Text('Add Property'),
-                    ),
-                  ),*/
                 ],
               ),
             ),
@@ -148,10 +145,13 @@ class _AddEditPropertyState extends State<AddEditProperty> with TickerProviderSt
                                   ? new ListTile(
                                       dense: true,
                                       key: new Key(unit.id),
-                                      title: new Text(unit.address),
-                                      subtitle: new Text(
-                                          unit.ordering?.toString() ??
-                                              'no order'),
+                                      title: new Text(
+                                        unit.address,
+                                        style: Theme
+                                            .of(context)
+                                            .textTheme
+                                            .headline,
+                                      ),
                                       onLongPress: () {
                                         setState(() {
                                           _editUnitIndex = index;
@@ -179,27 +179,32 @@ class _AddEditPropertyState extends State<AddEditProperty> with TickerProviderSt
                                                     validator: null,
                                                   ),
                                                 ),
-                                                new Flexible(
-                                                  child: new TextFormField(
-                                                    initialValue:
-                                                        unit.ordering.toString(),
-                                                    autocorrect: false,
-                                                    decoration:
-                                                        const InputDecoration(
-                                                      isDense: true,
-                                                      icon: const Icon(Icons.list),
-                                                      labelText: 'Ordering',
-                                                    ),
-                                                    validator: null,
-                                                  ),
-                                                ),
-
                                               ],
                                             ),
                                             new Padding(
-                                              padding: const EdgeInsets.all(16.0),
+                                              padding:
+                                                  const EdgeInsets.all(16.0),
                                               child: new ButtonBar(
                                                 children: <Widget>[
+                                                  new FlatButton(
+                                                    child: const Text('DELETE'),
+                                                    textColor: Colors.red,
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _editUnitIndex = -1;
+                                                      });
+                                                      unit.unitRef.delete();
+                                                    },
+                                                  ),
+                                                  new FlatButton(
+                                                    child: const Text('UPDATE'),
+                                                    onPressed: () {
+                                                      print('saved');
+                                                      setState(() {
+                                                        _editUnitIndex = -1;
+                                                      });
+                                                    },
+                                                  ),
                                                   new FlatButton(
                                                     child: const Text('Cancel'),
                                                     onPressed: () {
@@ -207,15 +212,7 @@ class _AddEditPropertyState extends State<AddEditProperty> with TickerProviderSt
                                                         _editUnitIndex = -1;
                                                       });
                                                     },
-                                                  ),
-                                                  new RaisedButton(
-                                                    child: const Text('SAVE'),
-                                                    onPressed: () {
-                                                      print('saved');
-                                                      setState(() {
-                                                        _editUnitIndex = -1;
-                                                      });
-                                                    },
+                                                    textColor: Colors.black54,
                                                   ),
                                                 ],
                                               ),
@@ -234,7 +231,7 @@ class _AddEditPropertyState extends State<AddEditProperty> with TickerProviderSt
                           ),
                     ),
                   )
-                : new Text('property is null'),
+                : const Text('Property is empty'),
           ],
         ),
       );

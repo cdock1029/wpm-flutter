@@ -73,16 +73,18 @@ class Property extends Model {
 class Unit extends Model {
   final String address;
   final DocumentReference propertyRef;
+  final DocumentReference unitRef;
   final int ordering;
 
   // Property _property;
 
-  const Unit({this.address, this.propertyRef, this.ordering});
+  const Unit({this.address, this.propertyRef, this.ordering, this.unitRef});
 
   Unit.fromSnapshot(DocumentSnapshot snapshot)
       : address = snapshot['address'],
         propertyRef = snapshot['propertyRef'],
         ordering = snapshot['ordering'],
+        unitRef = snapshot.reference,
         super(snapshot: snapshot);
 
   @override
@@ -112,8 +114,9 @@ class Tenant extends Model {
         lastName = snapshot['lastName'],
         super(snapshot: snapshot);
 
-  Tenant.fromMap(Map<String, dynamic> map) : firstName = map['firstName'],
-        lastName = map['lastName'];// ,super(snapshot: snapshot)
+  Tenant.fromMap(Map<String, dynamic> map)
+      : firstName = map['firstName'],
+        lastName = map['lastName']; // ,super(snapshot: snapshot)
 
   @override
   Tenant call(DocumentSnapshot snap) => new Tenant.fromSnapshot(snap);
@@ -147,8 +150,8 @@ class Lease extends Model {
     Lease(
       id: $id,
       propertyRef: $propertyRef,
-      unitRef: $unitRef,  
+      unitRef: $unitRef,
       _tenants: $_tenants,
-    )   
+    )
   ''';
 }
