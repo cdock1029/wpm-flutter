@@ -44,32 +44,125 @@ class _LeaseDetailState extends State<LeaseDetail> {
       ),
       body: new ListView(padding: const EdgeInsets.all(8.0), children: <Widget>[
         // heading
-        new Container(
-          child: new Text('Details', style: Theme.of(context).textTheme.subhead,),
-          margin: const EdgeInsets.fromLTRB(
-            4.0,
-            12.0,
-            0.0,
-            8.0,
-          ),
+
+        new MaterialSection(
+          title: 'Details',
+          hideable: true,
+          sectionItems: <MaterialSectionItem>[
+            new MaterialSectionItem(
+              leading: const Icon(Icons.home),
+              title: const Text('Address'),
+              children: <Widget>[
+                new ListTile(
+                  leading: const Icon(Icons.do_not_disturb),
+                  title: new Text('A101'),
+                  subtitle: new Text('Unit'),
+                ),
+                new ListTile(
+                  leading: const Icon(Icons.map),
+                  title: new Text('Columbiana Manor'),
+                  subtitle: new Text('Property'),
+                ),
+              ],
+            ),
+            new MaterialSectionItem(
+              leading: const Icon(Icons.people),
+              title: new Text('Tenants'),
+              children: <Widget>[
+                new ListTile(
+                  leading: const Icon(Icons.person),
+                  title: new Text('Smith, John'),
+                  subtitle: new Text('Primary'),
+                ),
+                new ListTile(
+                  leading: const Icon(Icons.person),
+                  title: new Text('Smith, Jane'),
+                  subtitle: new Text('Co-sign'),
+                ),
+              ],
+            ),
+            new MaterialSectionItem(
+              title: new Text('Dates'),
+              leading: const Icon(Icons.calendar_today),
+              children: <Widget>[
+                new ListTile(
+                  title: new Text('2018-10-09'),
+                  subtitle: new Text('Start'),
+                  trailing: const Icon(Icons.edit),
+                ),
+                new ListTile(
+                  title: new Text('2017-10-10'),
+                  subtitle: new Text('End'),
+                ),
+              ],
+            )
+          ],
         ),
 
-        // simplest, cleanest ?
-        new Card(
-          child: new Builder(
-            builder: (BuildContext context) {
-              final Iterable<Widget> tiles = ListTile.divideTiles(
-                context: context,
-                tiles: _items.map<Widget>((String s) => new ListTile(
-                      title: new Text(s),
+        new MaterialSection(
+          title: 'Actions',
+          sectionItems: <MaterialSectionItem>[
+            new MaterialSectionItem(
+              title: new Text('Payment'),
+              children: <Widget>[
+                // const ListTile(title: const Text('799.43'), subtitle: const Text('Balance'),),
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    new Flexible(
+                        child: new Column(
+                      children: <Widget>[
+                        new Text(
+                          '799.43',
+                          style: Theme.of(context).textTheme.subhead,
+                        ),
+                        new Text(
+                          'Balance',
+                          style: Theme.of(context).textTheme.caption,
+                        )
+                      ],
                     )),
-              );
-              return new ExpansionTile(
-                title: const Text('wowy'),
-                children: tiles.toList(),
-              );
-            },
-          ),
+                    new Flexible(
+                      child: new TextField(
+                        // controller: _payController,
+                        textAlign: TextAlign.center,
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .subhead
+                            .copyWith(color: Colors.green),
+                        // new TextStyle(color: Theme.of(context).accentColor),
+                        decoration: new InputDecoration(
+                          icon: const Icon(Icons.attach_money),
+                        ),
+                      ),
+                    ),
+                    new ButtonBar(
+                      children: <Widget>[
+//                  new FlatButton(
+//                    child: const Text('PAY Other'),
+//                    onPressed: () {},
+//                    textTheme: ButtonTextTheme.accent,
+//                  ),
+                        new FlatButton(
+                          onPressed: () {},
+                          child: const Text('PAY'),
+                          textTheme: ButtonTextTheme.primary,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+              initiallyExpanded: true,
+            ),
+            new MaterialSectionItem(
+              title: new Text('Charge'),
+              children: <Widget>[
+                new ListTile(title: new Text('Late Fee:')),
+              ],
+            ),
+          ],
         ),
 
         new Container(
@@ -297,22 +390,6 @@ class _ControlSectionState extends State<ControlSection> {
               ))
             ],
           ),
-//          new Row(
-//            children: <Widget>[
-//              new ListTile(
-//                leading: const Text('Make Payment:'),
-//                title: const Text('799.43'),
-//              ),
-//            ],
-//          ),
-//          new Row(
-//            children: <Widget>[
-//              new ListTile(
-//                leading: const Text('Apply Charge:'),
-//                title: const Text('799.43'),
-//              ),
-//            ],
-//          ),
         ],
       );
 }
@@ -338,5 +415,91 @@ class _LeaseDetailBottomSectionState extends State<LeaseDetailBottomSection> {
   Widget build(BuildContext context) => new Column(
         children:
             _items.map((String s) => new ListTile(title: new Text(s))).toList(),
+      );
+}
+
+class MaterialSection extends StatefulWidget {
+  final String title;
+  final List<MaterialSectionItem> sectionItems;
+  final bool hideable;
+
+  const MaterialSection({this.title, this.sectionItems, this.hideable = false});
+
+  static const double leftMargin = 4.0;
+  static const double topMargin = 12.0;
+  static const double rightMargin = 0.0;
+  static const double bottomMargin = 8.0;
+
+  @override
+  _MaterialSectionState createState() => new _MaterialSectionState();
+}
+
+class _MaterialSectionState extends State<MaterialSection> {
+  @override
+  Widget build(BuildContext context) {
+    final Widget _titleWidget = new Container(
+      child: new Text(
+        widget.title,
+        style: Theme.of(context).textTheme.subhead,
+      ),
+      margin: const EdgeInsets.fromLTRB(
+          MaterialSection.leftMargin,
+          MaterialSection.topMargin,
+          MaterialSection.rightMargin,
+          MaterialSection.bottomMargin),
+    );
+
+    final Widget _sectionItemsWidget = new Card(
+      child: new Column(
+        children: widget.sectionItems,
+      ),
+    );
+
+    final List<Widget> _outerColumnChildren = <Widget>[
+      _titleWidget,
+      // holds the card-backed items.. white background
+      _sectionItemsWidget,
+    ];
+
+    //..addAll(widget.sectionItems);
+
+    return widget.hideable
+        ? new ExpansionTile(title: _titleWidget, children: <Widget>[_sectionItemsWidget])
+        : new Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: _outerColumnChildren,
+          );
+  }
+}
+
+class MaterialSectionItem extends StatelessWidget {
+  final Widget leading;
+  final Widget title;
+  final List<Widget> children;
+  final bool initiallyExpanded;
+
+  const MaterialSectionItem(
+      {this.leading,
+      this.title,
+      this.children,
+      this.initiallyExpanded = false});
+
+  @override
+  Widget build(BuildContext context) => new ExpansionTile(
+        initiallyExpanded: initiallyExpanded,
+        leading: leading,
+        title: title,
+        children: ListTile
+            .divideTiles(
+              context: context,
+              tiles: children
+                  .map((Widget child) => new Padding(
+                        padding: const EdgeInsets.only(left: 32.0),
+                        child: child,
+                      ))
+                  .toList(),
+            )
+            .toList(),
       );
 }
