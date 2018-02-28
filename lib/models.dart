@@ -10,21 +10,21 @@ abstract class Model {
 
   final DocumentSnapshot snapshot;
 
-  call(DocumentSnapshot snap);
+  // dynamic call(DocumentSnapshot snap);
 
-  Future<List<T>> getTypedCollection<T extends Model>(
-    List<T> cached,
-    CollectionReference collectionRef,
-    T instanceCall, // Function getModelInstance,
-  ) async =>
-      cached != null
-          ? new Future<T>.value(cached)
-          : await collectionRef.snapshots
-              .map((QuerySnapshot querySnap) => querySnap.documents)
-              .expand((List<DocumentSnapshot> docSnapList) =>
-                  docSnapList.map((DocumentSnapshot snap) => snap))
-              .map((DocumentSnapshot snap) => instanceCall(snap))
-              .toList();
+//  Future<List<T>> getTypedCollection<T extends Model>(
+//    List<T> cached,
+//    CollectionReference collectionRef,
+//    T instanceCall, // Function getModelInstance,
+//  ) async =>
+//      cached != null
+//          ? new Future<T>.value(cached)
+//          : await collectionRef.snapshots
+//              .map((QuerySnapshot querySnap) => querySnap.documents)
+//              .expand((List<DocumentSnapshot> docSnapList) =>
+//                  docSnapList.map((DocumentSnapshot snap) => snap))
+//              .map((DocumentSnapshot snap) => instanceCall(snap))
+//              .toList();
 
   // TODO good enough?
   @override
@@ -48,24 +48,24 @@ class Property extends Model {
         unitCount = snapshot['unitCount'] ?? 0,
         unitsRef = snapshot.reference.getCollection('units'),
         super(snapshot: snapshot);
-
-  @override
-  call(DocumentSnapshot snap) => new Property.fromSnapshot(snap);
+//
+//  @override
+//  call(DocumentSnapshot snap) => new Property.fromSnapshot(snap);
 
   @override
   String toString() =>
       'Property(id: $id, name: $name, unitCount: $unitCount, unitsRef: $unitsRef)';
 
-  Future<List<Unit>> get units async {
-    final List<Unit> updated = await getTypedCollection(
-      _units,
-      unitsRef,
-      this,
-      // (DocumentSnapshot snap) => new Unit.fromSnapshot(snap),
-    );
-    _units = updated;
-    return updated;
-  }
+//  Future<List<Unit>> get units async {
+//    final List<Unit> updated = await getTypedCollection(
+//      _units,
+//      unitsRef,
+//      this,
+//      // (DocumentSnapshot snap) => new Unit.fromSnapshot(snap),
+//    );
+//    _units = updated;
+//    return updated;
+//  }
 
 // Property withSnap(DocumentSnapshot snap) => new Property.fromSnapshot(snap);
 }
@@ -87,8 +87,8 @@ class Unit extends Model {
         unitRef = snapshot.reference,
         super(snapshot: snapshot);
 
-  @override
-  call(DocumentSnapshot snap) => new Unit.fromSnapshot(snap);
+//  @override
+//  call(DocumentSnapshot snap) => new Unit.fromSnapshot(snap);
 
 //  Future<Property> get property async {
 //    if (_property == null) {
@@ -109,7 +109,7 @@ class Tenant extends Model {
 
   Tenant({this.firstName, this.lastName});
 
-  Tenant.fromSnapshot(snapshot)
+  Tenant.fromSnapshot(DocumentSnapshot snapshot)
       : firstName = snapshot['firstName'],
         lastName = snapshot['lastName'],
         super(snapshot: snapshot);

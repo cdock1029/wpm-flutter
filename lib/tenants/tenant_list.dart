@@ -48,7 +48,7 @@ class TenantList extends StatelessWidget {
                           tenantId: tenant.id,
                         ),
                         onLongPress: () {
-                          showDialog(
+                          showDialog<Null>(
                             context: context,
                             child: new AlertDialog(
                               content: new Text(

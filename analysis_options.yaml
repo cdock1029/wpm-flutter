@@ -1,6 +1,15 @@
 analyzer:
-  implicit-casts: false
-  implicit-dynamic: false
+  errors:
+      # treat missing required parameters as a warning (not a hint)
+      missing_required_param: warning
+      # treat missing returns as a warning (not a hint)
+      missing_return: warning
+      # allow having TODOs in the code
+      todo: ignore
+  language:
+    enableSuperMixins: true
+  strong-mode:
+      implicit-dynamic: false
 linter:
   rules:
     - always_declare_return_types
