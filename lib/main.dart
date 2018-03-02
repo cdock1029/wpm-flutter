@@ -81,7 +81,7 @@ class WPMAppView extends StatelessWidget {
         title: 'WPM',
         theme: new ThemeData(
           primarySwatch: Colors.deepPurple,
-          accentColor: Colors.deepOrangeAccent,
+          accentColor: Colors.teal,
           scaffoldBackgroundColor: Colors.grey[200],
         ),
         // home: const Dashboard(),
