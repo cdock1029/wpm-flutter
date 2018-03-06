@@ -68,7 +68,7 @@ class WPMAppState extends State<WPMApp> {
               properties: snapshot.data,
               selected: _selected,
               selectProperty: _selectProperty,
-              child: _user != null ? const WPMAppView() : new SignInPage(),
+              child: _user != null ? WPMAppView() : WPMAppView(),// new SignInPage(),
             ),
       );
 }
@@ -77,21 +77,22 @@ class WPMAppView extends StatelessWidget {
   const WPMAppView();
 
   @override
-  Widget build(BuildContext context) => new MaterialApp(
+  Widget build(BuildContext context) => MaterialApp(
         title: 'WPM',
-        theme: new ThemeData(
+        theme: ThemeData(
           primarySwatch: Colors.deepPurple,
-          accentColor: Colors.teal,
-          scaffoldBackgroundColor: Colors.grey[200],
+          accentColor: Colors.tealAccent,
+          // scaffoldBackgroundColor: Colors.grey[200],
+          brightness: Brightness.dark,
         ),
         // home: const Dashboard(),
-        home: const LeaseDetail(),
+        home: LeaseDetail(),
         routes: <String, WidgetBuilder>{
-          AddEditProperty.routeName: (_) => const AddEditProperty(),
-          AddTenant.routeName: (_) => const AddTenant(),
-          TenantList.routeName: (_) => const TenantList(),
-          CreateLease.routeName: (_) => const CreateLease(),
-          LeaseDetail.routeName: (_) => const LeaseDetail(),
+          AddEditProperty.routeName: (_) => AddEditProperty(),
+          AddTenant.routeName: (_) => AddTenant(),
+          TenantList.routeName: (_) => TenantList(),
+          CreateLease.routeName: (_) => CreateLease(),
+          LeaseDetail.routeName: (_) => LeaseDetail(),
         },
       );
 }

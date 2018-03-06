@@ -97,8 +97,8 @@ class _LeaseDetailState extends State<LeaseDetail> {
                       ),
                       const ListTile(
                         leading: const Icon(Icons.merge_type),
-                        title: const Text('Type'),
-                        subtitle: const Text('Apartment'),
+                        title: const Text('Apartment'),
+                        subtitle: const Text('Type'),
                       ),
                     ],
                   ),
@@ -168,17 +168,13 @@ class _LeaseDetailState extends State<LeaseDetail> {
                           color: Colors.red,
                         ),
                         title: new Text(
-                                'Charge',
-                                style: isExpanded
-                                    ? Theme
-                                        .of(context)
-                                        .textTheme
-                                        .subhead
-                                        .copyWith(
-                                          // color: Theme.of(context).primaryColor,
-                                          fontWeight: FontWeight.bold,
-                                        )
-                                    : null,
+                          'Charge',
+                          style: isExpanded
+                              ? Theme.of(context).textTheme.subhead.copyWith(
+                                    // color: Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                  )
+                              : null,
                         ),
                       ),
                   body: new ChargeActionSection(),
@@ -559,8 +555,11 @@ class _PaymentActionSectionState extends State<PaymentActionSection> {
                   child: new Column(
                     // crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      new RaisedButton(
-                        child: new Text(widget.dateFormat.format(_paymentDate)),
+                      new FlatButton(
+                        child: new Text(
+                          widget.dateFormat.format(_paymentDate),
+                        ),
+                        textTheme: ButtonTextTheme.accent,
                         // color: Colors.lightBlue,
                         onPressed: () async {
                           final DateTime newDate = await showDatePicker(
@@ -588,10 +587,14 @@ class _PaymentActionSectionState extends State<PaymentActionSection> {
                     controller: _payController,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.subhead.copyWith(
-                        color: Colors.green, fontWeight: FontWeight.bold),
+                        color: Theme.of(context).accentColor,
+                        fontWeight: FontWeight.bold),
                     // new TextStyle(color: Theme.of(context).accentColor),
                     decoration: new InputDecoration(
-                      icon: const Icon(Icons.attach_money),
+                      prefixIcon: new Icon(
+                        Icons.attach_money,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
                       // labelText: 'Amount L',
                       // hintText: 'Amount H',
                       helperText: 'Amount',
@@ -664,8 +667,10 @@ class _ChargeActionSectionState extends State<ChargeActionSection> {
             new ListTile(
               leading: const Icon(Icons.calendar_today),
               title: const Text('Date'),
-              trailing: new RaisedButton(
-                child: new Text(widget.dateFormat.format(_chargeDate)),
+              trailing: new FlatButton(
+                child: new Text(
+                  widget.dateFormat.format(_chargeDate),
+                ),
                 // color: Colors.lightBlue,
                 onPressed: () async {
                   final DateTime newDate = await showDatePicker(
@@ -676,27 +681,30 @@ class _ChargeActionSectionState extends State<ChargeActionSection> {
                   );
                   _updateDate(newDate);
                 },
+                textTheme: ButtonTextTheme.accent,
+                // color: .withOpacity(0.3),
               ),
             ),
             new ListTile(
-                leading: new Container(),
-                title: const Text('Type'),
-                trailing: new DropdownButton<ChargeType>(
-                  value: _chargeType,
-                  items: ChargeType.values
-                      .map(
-                        (ChargeType type) => new DropdownMenuItem<ChargeType>(
-                              child: new Text(type
-                                  .toString()
-                                  .split(r'.')[1]
-                                  .splitMapJoin('_', onMatch: (_) => ' ')
-                                  .toUpperCase()),
-                              value: type,
-                            ),
-                      )
-                      .toList(),
-                  onChanged: _updateChargeType,
-                )),
+              leading: new Container(),
+              title: const Text('Type'),
+              trailing: new DropdownButton<ChargeType>(
+                value: _chargeType,
+                items: ChargeType.values
+                    .map(
+                      (ChargeType type) => new DropdownMenuItem<ChargeType>(
+                            child: new Text(type
+                                .toString()
+                                .split(r'.')[1]
+                                .splitMapJoin('_', onMatch: (_) => ' ')
+                                .toUpperCase()),
+                            value: type,
+                          ),
+                    )
+                    .toList(),
+                onChanged: _updateChargeType,
+              ),
+            ),
             new ListTile(
               leading: new Container(), //const Icon(Icons.monetization_on),
               title: new Row(
@@ -710,9 +718,15 @@ class _ChargeActionSectionState extends State<ChargeActionSection> {
                       controller: _chargeController,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.subhead.copyWith(
-                          color: Colors.red, fontWeight: FontWeight.bold),
-                      decoration: const InputDecoration(
-                        icon: const Icon(Icons.attach_money),
+                            color: Theme.of(context).accentColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                      decoration: new InputDecoration(
+                        // icon: const Icon(Icons.attach_money),
+                        prefixIcon: new Icon(
+                          Icons.attach_money,
+                          color: Theme.of(context).iconTheme.color,
+                        ),
                       ),
                     ),
                   ),
@@ -730,11 +744,11 @@ class _ChargeActionSectionState extends State<ChargeActionSection> {
                         title: const Text('Confirm charge'),
                         actions: <Widget>[
                           new FlatButton(
-                            child: const Text('Cancel'),
+                            child: const Text('CANCEL'),
                             onPressed: () => Navigator.of(context).pop(false),
                           ),
                           new FlatButton(
-                            child: const Text('Save'),
+                            child: const Text('SAVE'),
                             onPressed: () => Navigator.of(context).pop(true),
                           )
                         ],
@@ -792,7 +806,7 @@ class _ChargeActionSectionState extends State<ChargeActionSection> {
                   },
                   child: const Text('SAVE CHARGE'),
                   textTheme: ButtonTextTheme.primary,
-                  color: Colors.red,
+                  // color: Colors.redAccent,
                 ),
               ],
             ),
