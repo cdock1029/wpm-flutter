@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wpm/leases/lease_create.dart';
 import 'package:wpm/leases/lease_list.dart';
-import 'package:wpm/models.dart';
+import 'package:wpm/data/models.dart';
 import 'package:wpm/app_state.dart';
 import 'package:wpm/properties/add_edit_property.dart';
-import 'package:wpm/wpm_drawer.dart';
+import 'package:wpm/common/wpm_drawer.dart';
 
-class Dashboard extends StatelessWidget {
-  const Dashboard();
+class ContentShell extends StatelessWidget {
+  const ContentShell();
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final AppState appState = AppState.of(context);
-    final Property selected = appState.selected;
+    final Property selected = AppState.of(context).selected;
 
     String _titleText, _subTitleText;
     MainAxisAlignment _align;

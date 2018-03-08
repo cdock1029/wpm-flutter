@@ -5,19 +5,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:wpm/leases/lease_detail.dart';
 import 'package:wpm/properties/add_edit_property.dart';
-import 'package:wpm/dashboard.dart';
+import 'package:wpm/content_shell.dart';
 import 'package:wpm/leases/lease_create.dart';
-import 'package:wpm/models.dart';
+import 'package:wpm/data/models.dart';
 import 'package:wpm/app_state.dart';
-import 'package:wpm/sign-in-page.dart';
+import 'package:wpm/auth/sign-in-page.dart';
 import 'package:wpm/tenants/tenant_add.dart';
 import 'package:wpm/tenants/tenant_list.dart';
 
-void main() => runApp(new WPMApp());
+void main() => runApp(WPMApp());
 
 class WPMApp extends StatefulWidget {
   @override
-  WPMAppState createState() => new WPMAppState();
+  WPMAppState createState() => WPMAppState();
 }
 
 class WPMAppState extends State<WPMApp> {
@@ -27,8 +27,7 @@ class WPMAppState extends State<WPMApp> {
       .map<List<DocumentSnapshot>>(
           (QuerySnapshot querySnap) => querySnap.documents)
       .map<List<Property>>((List<DocumentSnapshot> docs) => docs
-          .map<Property>(
-              (DocumentSnapshot doc) => new Property.fromSnapshot(doc))
+          .map<Property>((DocumentSnapshot doc) => Property.fromSnapshot(doc))
           .toList());
 
   Property _selected;
@@ -49,6 +48,12 @@ class WPMAppState extends State<WPMApp> {
     });
   }
 
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    super.dispose();
+  }
+
   void _selectProperty(Property property) {
     setState(() {
       _selected = property;
@@ -56,19 +61,20 @@ class WPMAppState extends State<WPMApp> {
   }
 
   @override
-  Widget build(BuildContext context) => new StreamBuilder<List<Property>>(
+  Widget build(BuildContext context) => StreamBuilder<List<Property>>(
         stream: _propertiesStream,
         initialData: <Property>[],
         builder: (
           BuildContext context,
           AsyncSnapshot<List<Property>> snapshot,
         ) =>
-            new AppState(
+            AppState(
               user: _user,
               properties: snapshot.data,
               selected: _selected,
               selectProperty: _selectProperty,
-              child: _user != null ? WPMAppView() : WPMAppView(),// new SignInPage(),
+              child:
+                  _user != null ? WPMAppView() : SignInPage(),
             ),
       );
 }
@@ -85,14 +91,14 @@ class WPMAppView extends StatelessWidget {
           // scaffoldBackgroundColor: Colors.grey[200],
           brightness: Brightness.dark,
         ),
-        // home: const Dashboard(),
-        home: LeaseDetail(),
+        home: ContentShell(),
+        // home: LeaseDetail(),
         routes: <String, WidgetBuilder>{
           AddEditProperty.routeName: (_) => AddEditProperty(),
           AddTenant.routeName: (_) => AddTenant(),
           TenantList.routeName: (_) => TenantList(),
           CreateLease.routeName: (_) => CreateLease(),
           LeaseDetail.routeName: (_) => LeaseDetail(),
-        },
+        }
       );
 }

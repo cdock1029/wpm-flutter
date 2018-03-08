@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:wpm/models.dart';
+import 'package:wpm/data/models.dart';
 import 'package:wpm/tenants/tenant_add.dart';
 
 class TenantList extends StatelessWidget {
@@ -13,8 +13,10 @@ class TenantList extends StatelessWidget {
   @override
   Widget build(BuildContext context) => new StreamBuilder<QuerySnapshot>(
         stream: Firestore.instance.collection('tenants').snapshots,
-        builder:
-            (BuildContext context, AsyncSnapshot<QuerySnapshot> streamSnap) {
+        builder: (
+          BuildContext context,
+          AsyncSnapshot<QuerySnapshot> streamSnap,
+        ) {
           Widget body;
           if (!streamSnap.hasData) {
             body = const Text('Loading..');
@@ -125,7 +127,9 @@ class CurrentLeaseSegment extends StatelessWidget {
           AsyncSnapshot<Lease> snap,
         ) =>
             new Row(
-              children: <Widget>[new Text(snap.data?.propertyUnit ?? 'no data')],
+              children: <Widget>[
+                new Text(snap.data?.propertyUnit ?? 'no data')
+              ],
             ),
       );
 }

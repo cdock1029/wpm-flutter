@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:wpm/models.dart';
+import 'package:wpm/data/models.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AppState extends InheritedWidget {

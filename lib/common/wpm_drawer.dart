@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:wpm/properties/add_edit_property.dart';
-import 'package:wpm/models.dart';
+import 'package:wpm/data/models.dart';
 import 'package:wpm/app_state.dart';
 import 'package:wpm/tenants/tenant_list.dart';
 
@@ -48,7 +48,7 @@ class WPMDrawerViewState extends State<WPMDrawerView> {
           itemBuilder: (BuildContext context, int index) {
             /* DRAWER HEADER index: 0 */
             if (index == 0) {
-              return new UserAccountsDrawerHeader(
+              return UserAccountsDrawerHeader(
                 accountName: new Text(user.displayName),
                 accountEmail: new Text(user.email),
                 currentAccountPicture: new CircleAvatar(

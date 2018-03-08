@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:wpm/models.dart';
+import 'package:wpm/data/models.dart';
 import 'package:stream_transform/stream_transform.dart';
 import 'package:flutter_stream_friends/flutter_stream_friends.dart';
 

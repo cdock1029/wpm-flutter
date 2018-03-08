@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:wpm/models.dart';
+import 'package:wpm/data/models.dart';
 import 'package:intl/intl.dart';
 
 final List<String> _items = <String>[
@@ -18,13 +18,6 @@ final List<String> _items = <String>[
   'transaction 12',
 ];
 
-final List<Tenant> _tenants = <Tenant>[
-  new Tenant(firstName: 'Bill', lastName: 'Brasky'),
-  new Tenant(firstName: 'Mickey', lastName: 'Mouse'),
-];
-final Unit _unit = new Unit(address: 'F555');
-final Property _property = new Property(name: 'Raccoon City');
-
 enum ChargeType { rent, late_fee, damage, maintenance, nsf }
 
 class LeaseDetail extends StatefulWidget {
@@ -33,7 +26,7 @@ class LeaseDetail extends StatefulWidget {
   static const String routeName = '/lease_detail';
 
   @override
-  _LeaseDetailState createState() => new _LeaseDetailState();
+  _LeaseDetailState createState() => _LeaseDetailState();
 }
 
 class _LeaseDetailState extends State<LeaseDetail> {
@@ -51,8 +44,10 @@ class _LeaseDetailState extends State<LeaseDetail> {
 
     final List<List<bool>> _outerTemp = new List<List<bool>>.from(_expands);
 
-    final List<bool> sectionList =
-        new List<bool>.filled(_outerTemp[listIndex].length, false);
+    final List<bool> sectionList = new List<bool>.filled(
+      _outerTemp[listIndex].length,
+      false,
+    );
 
     sectionList[itemIndex] = !previous;
 
@@ -64,242 +59,246 @@ class _LeaseDetailState extends State<LeaseDetail> {
   }
 
   @override
-  Widget build(BuildContext context) => new Scaffold(
-      appBar: new AppBar(
-        title: const Text('A101 Smith, John'),
-      ),
-      body: new ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: <Widget>[
-          // heading
-          new MaterialSection(
-            title: 'Details',
-            expansionPanelList: new ExpansionPanelList(
-              expansionCallback: (int itemIndex, bool previous) =>
-                  _onExpanded(1, itemIndex, previous),
-              children: <ExpansionPanel>[
-                new ExpansionPanel(
-                  isExpanded: _expands[1][0],
-                  headerBuilder: (_, __) => const ListTile(
-                      leading: const Icon(Icons.place),
-                      title: const Text('Address')),
-                  body: new Column(
-                    children: <Widget>[
-                      new ListTile(
-                        leading: const Icon(Icons.map),
-                        title: new Text('Columbiana Manor'),
-                        subtitle: new Text('Property'),
-                      ),
-                      const ListTile(
-                        leading: const Icon(Icons.domain),
-                        title: const Text('A101'),
-                        subtitle: const Text('Unit'),
-                      ),
-                      const ListTile(
-                        leading: const Icon(Icons.merge_type),
-                        title: const Text('Apartment'),
-                        subtitle: const Text('Type'),
-                      ),
-                    ],
-                  ),
-                ),
-                // new ExpansionPanel(headerBuilder: (_, __) => const ListTile(title: const Text('Tenants')), body: null),
-                // new ExpansionPanel(headerBuilder: (_, __) => const ListTile(title: const Text('Dates')), body: null),
-                // new ExpansionPanel(headerBuilder: (_, __) => const ListTile(title: const Text('\$ Amount')), body: null),
-              ],
+  Widget build(BuildContext context) => DefaultTabController(
+        length: 2,
+        child: Scaffold(
+            appBar: AppBar(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Text('A101'),
+                  Text('Smith, John'),
+                ],
+              ),
+              bottom: TabBar(
+                isScrollable: false,
+                tabs: <Widget>[
+                  Tab(text: 'ACTIONS'),
+                  Tab(text: 'DETAILS'),
+                ],
+              ),
             ),
-          ),
-          new MaterialSection(
-            title: 'Actions',
-            expansionPanelList: new ExpansionPanelList(
-              expansionCallback: (int itemIndex, bool previous) =>
-                  _onExpanded(0, itemIndex, previous),
-              children: <ExpansionPanel>[
-                new ExpansionPanel(
-                  isExpanded: _expands[0][0],
-                  headerBuilder: (BuildContext context, bool isExpanded) =>
-                      new ListTile(
-                          leading: const Icon(
-                            Icons.attach_money,
-                            color: Colors.green,
-                          ),
-                          title: new Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              new Text(
-                                'Payment',
-                                style: isExpanded
-                                    ? Theme
-                                        .of(context)
-                                        .textTheme
-                                        .subhead
-                                        .copyWith(
-                                          // color: Theme.of(context).primaryColor,
-                                          fontWeight: FontWeight.bold,
-                                        )
-                                    : null,
-                              ),
-                              new Padding(
-                                padding: const EdgeInsets.only(left: 0.0),
-                                child: new Column(
-                                  children: <Widget>[
-                                    new Text(
-                                      '799.43',
-                                      style:
-                                          Theme.of(context).textTheme.subhead,
-                                    ),
-                                    new Text(
-                                      'Balance',
-                                      style:
-                                          Theme.of(context).textTheme.caption,
-                                    )
-                                  ],
+            body: TabBarView(
+              children: <Widget>[
+                ListView(
+                  padding: EdgeInsets.all(16.0),
+                  children: <Widget>[
+                    ExpansionPanelList(
+                      expansionCallback: (int itemIndex, bool previous) =>
+                          _onExpanded(0, itemIndex, previous),
+                      children: <ExpansionPanel>[
+                        ExpansionPanel(
+                          isExpanded: _expands[0][0],
+                          headerBuilder: (
+                            BuildContext context,
+                            bool isExpanded,
+                          ) =>
+                              ListTile(
+                                  leading: Icon(
+                                    Icons.attach_money,
+                                    color: Colors.green,
+                                  ),
+                                  title: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(
+                                        'Payment',
+                                        style: isExpanded
+                                            ? Theme
+                                                .of(context)
+                                                .textTheme
+                                                .subhead
+                                                .copyWith(
+                                                  color: Colors.green,
+                                                  fontWeight: FontWeight.bold,
+                                                )
+                                            : null,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 0.0),
+                                        child: Column(
+                                          children: <Widget>[
+                                            Text(
+                                              '799.43',
+                                              style: Theme
+                                                  .of(context)
+                                                  .textTheme
+                                                  .subhead,
+                                            ),
+                                            Text(
+                                              'Balance',
+                                              style: Theme
+                                                  .of(context)
+                                                  .textTheme
+                                                  .caption,
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  )),
+                          body: PaymentActionSection(),
+                        ),
+                        ExpansionPanel(
+                          isExpanded: _expands[0][1],
+                          headerBuilder: (
+                            BuildContext context,
+                            bool isExpanded,
+                          ) =>
+                              ListTile(
+                                leading: Icon(
+                                  Icons.attach_money,
+                                  color: Colors.red,
                                 ),
-                              )
-                            ],
-                          )),
-                  body: new PaymentActionSection(),
+                                title: Text(
+                                  'Charge',
+                                  style: isExpanded
+                                      ? Theme
+                                          .of(context)
+                                          .textTheme
+                                          .subhead
+                                          .copyWith(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                          )
+                                      : null,
+                                ),
+                              ),
+                          body: ChargeActionSection(),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                new ExpansionPanel(
-                  isExpanded: _expands[0][1],
-                  headerBuilder: (_, bool isExpanded) => new ListTile(
-                        leading: const Icon(
-                          Icons.attach_money,
-                          color: Colors.red,
-                        ),
-                        title: new Text(
-                          'Charge',
-                          style: isExpanded
-                              ? Theme.of(context).textTheme.subhead.copyWith(
-                                    // color: Theme.of(context).primaryColor,
-                                    fontWeight: FontWeight.bold,
-                                  )
-                              : null,
-                        ),
+                ListView(
+                  padding: EdgeInsets.all(16.0),
+                  children: <Widget>[
+                    // heading
+                    MaterialSection(
+                      title: 'Details',
+                      expansionPanelList: ExpansionPanelList(
+                        expansionCallback: (
+                          int itemIndex,
+                          bool previous,
+                        ) =>
+                            _onExpanded(1, itemIndex, previous),
+                        children: <ExpansionPanel>[
+                          ExpansionPanel(
+                            isExpanded: _expands[1][0],
+                            headerBuilder: (
+                              BuildContext context,
+                              bool isExpanded,
+                            ) =>
+                                ListTile(
+                                  leading: Icon(Icons.place),
+                                  title: Text('Address'),
+                                ),
+                            body: Column(
+                              children: <Widget>[
+                                ListTile(
+                                  leading: Icon(Icons.map),
+                                  title: Text('Columbiana Manor'),
+                                  subtitle: Text('Property'),
+                                ),
+                                ListTile(
+                                  leading: Icon(Icons.domain),
+                                  title: Text('A101'),
+                                  subtitle: Text('Unit'),
+                                ),
+                                ListTile(
+                                  leading: Icon(Icons.merge_type),
+                                  title: Text('Apartment'),
+                                  subtitle: Text('Type'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                  body: new ChargeActionSection(),
+                    ),
+                  ],
                 ),
               ],
-            ),
-          ),
-
-//        new Container(
-//          margin: const EdgeInsets.all(4.0),
-//          child: new ExpansionPanelList(
-//            expansionCallback: _onExpanded,
-//            children: <ExpansionPanel>[
-//              new ExpansionPanel(
-//                isExpanded: _expands[0],
-//                headerBuilder: (BuildContext context, bool isExpanded) =>
-//                    new ListTile(
-//                      title: new Text('Add connection'),
-//                      trailing: new Icon(Icons.arrow_back),
-//                    ),
-//                body: new Container(
-//                  width: 0.0,
-//                  height: 0.0,
-//                ),
-//              ),
-//
-//              new ExpansionPanel(
-//                isExpanded: _expands[1],
-//                headerBuilder: LeaseDetailHeader.headerBuilder,
-//                body: LeaseDetailHeader.body(),
-//              ),
-//              new ExpansionPanel(
-//                isExpanded: _expands[2],
-//                headerBuilder: ControlSection.headerBuilder,
-//                body: ControlSection.body(),
-//              ),
-//              new ExpansionPanel(
-//                isExpanded: _expands[3],
-//                headerBuilder: LeaseDetailBottomSection.headerBuilder,
-//                body: LeaseDetailBottomSection.body(),
-//              ),
-//
-//              // new LeaseDetailBottomSection(),
-//            ],
-//          ),
-//        ),
-        ],
-      ));
+            )),
+      );
 }
 
 class LeaseDetailHeader extends StatefulWidget {
   const LeaseDetailHeader();
 
   static Widget headerBuilder(BuildContext context, bool isExpanded) =>
-      const ListTile(
-        leading: const Icon(Icons.list),
-        title: const Text('Details'),
+      ListTile(
+        leading: Icon(Icons.list),
+        title: Text('Details'),
       );
 
-  static Widget body() => const LeaseDetailHeader();
+  static Widget body() => LeaseDetailHeader();
 
   @override
-  LeaseDetailHeaderState createState() => new LeaseDetailHeaderState();
+  LeaseDetailHeaderState createState() => LeaseDetailHeaderState();
 }
 
 class LeaseDetailHeaderState extends State<LeaseDetailHeader> {
   @override
-  Widget build(BuildContext context) => new Column(
+  Widget build(BuildContext context) => Column(
         children: <Widget>[
-          new Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              const Flexible(
-                child: const ListTile(
+              Flexible(
+                child: ListTile(
                   dense: true,
-                  leading: const Icon(Icons.home),
-                  title: const Text('A101'),
-                  subtitle: const Text('Columbiana Manor'),
+                  leading: Icon(Icons.home),
+                  title: Text('A101'),
+                  subtitle: Text('Columbiana Manor'),
                 ),
               ),
-              const Flexible(
-                child: const ListTile(
+              Flexible(
+                child: ListTile(
                   dense: true,
-                  leading: const Icon(Icons.people),
-                  title: const Text('Smith, John'),
-                  subtitle: const Text('Smith, Jane'),
+                  leading: Icon(Icons.people),
+                  title: Text('Smith, John'),
+                  subtitle: Text('Smith, Jane'),
                 ),
               ),
             ],
           ),
-          new Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              const Flexible(
-                child: const ListTile(
+              Flexible(
+                child: ListTile(
                   dense: true,
-                  leading: const Icon(Icons.calendar_today),
-                  subtitle: const Text('Start Date'),
-                  title: const Text('2017-07-04'),
+                  leading: Icon(Icons.calendar_today),
+                  subtitle: Text('Start Date'),
+                  title: Text('2017-07-04'),
                 ),
               ),
-              const Flexible(
-                child: const ListTile(
+              Flexible(
+                child: ListTile(
                   dense: true,
-                  leading: const Icon(Icons.calendar_today),
-                  subtitle: const Text('End Date'),
-                  title: const Text('2018-07-03'),
+                  leading: Icon(Icons.calendar_today),
+                  subtitle: Text('End Date'),
+                  title: Text('2018-07-03'),
                 ),
               ),
             ],
           ),
-          new ListTile(
+          ListTile(
             dense: true,
-            leading: const Icon(Icons.attach_money),
-            title: const Text('550.00'),
-            subtitle: const Text('Rent'),
+            leading: Icon(Icons.attach_money),
+            title: Text('550.00'),
+            subtitle: Text('Rent'),
           ),
-          const Divider(),
-          new ButtonBar(
+          Divider(),
+          ButtonBar(
             children: <Widget>[
-              new FlatButton(
+              FlatButton(
                 onPressed: () {},
-                child: const Text('EDIT'),
+                child: Text('EDIT'),
                 textTheme: ButtonTextTheme.accent,
               ),
             ],
@@ -312,15 +311,15 @@ class ControlSection extends StatefulWidget {
   const ControlSection();
 
   static Widget headerBuilder(BuildContext context, bool isExpanded) =>
-      const ListTile(
-        leading: const Icon(Icons.edit),
-        title: const Text('Actions'),
+      ListTile(
+        leading: Icon(Icons.edit),
+        title: Text('Actions'),
       );
 
-  static Widget body() => const ControlSection();
+  static Widget body() => ControlSection();
 
   @override
-  _ControlSectionState createState() => new _ControlSectionState();
+  _ControlSectionState createState() => _ControlSectionState();
 }
 
 class _ControlSectionState extends State<ControlSection> {
@@ -329,7 +328,7 @@ class _ControlSectionState extends State<ControlSection> {
   @override
   void initState() {
     super.initState();
-    _payController = new TextEditingController(text: '799.43');
+    _payController = TextEditingController(text: '799.43');
   }
 
   @override
@@ -339,33 +338,33 @@ class _ControlSectionState extends State<ControlSection> {
   }
 
   @override
-  Widget build(BuildContext context) => new Column(
+  Widget build(BuildContext context) => Column(
         children: <Widget>[
-          new ListTile(
-              title: new Chip(
-            label: new Text('Enter payment'),
+          ListTile(
+              title: Chip(
+            label: Text('Enter payment'),
           )),
-          new ListTile(
-            leading: const Icon(Icons.attach_money),
-            title: const Text(
+          ListTile(
+            leading: Icon(Icons.attach_money),
+            title: Text(
               'Balance:',
             ),
-            trailing: new Text(
+            trailing: Text(
               '799.43',
               style: Theme.of(context).textTheme.subhead,
             ),
-            /*trailing: new Chip(
-              label: new Text('799.43'),
+            /*trailing: Chip(
+              label: Text('799.43'),
               // TODO abstract background color based on balance
               backgroundColor: Colors.redAccent.withAlpha(75),
             ),*/
           ),
-          new Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              new Expanded(child: new Container()),
-              new Flexible(
-                child: new TextField(
+              Expanded(child: Container()),
+              Flexible(
+                child: TextField(
                   controller: _payController,
                   textAlign: TextAlign.center,
                   style: Theme
@@ -373,39 +372,39 @@ class _ControlSectionState extends State<ControlSection> {
                       .textTheme
                       .subhead
                       .copyWith(color: Colors.green),
-                  // new TextStyle(color: Theme.of(context).accentColor),
-                  decoration: new InputDecoration(
-                    icon: const Icon(Icons.attach_money),
+                  // TextStyle(color: Theme.of(context).accentColor),
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.attach_money),
                   ),
                 ),
               ),
-              new ButtonBar(
+              ButtonBar(
                 children: <Widget>[
-//                  new FlatButton(
-//                    child: const Text('PAY Other'),
+//                  FlatButton(
+//                    child: Text('PAY Other'),
 //                    onPressed: () {},
 //                    textTheme: ButtonTextTheme.accent,
 //                  ),
-                  new FlatButton(
+                  FlatButton(
                     onPressed: () {},
-                    child: const Text('PAY'),
+                    child: Text('PAY'),
                     textTheme: ButtonTextTheme.primary,
                   ),
                 ],
               ),
             ],
           ),
-          const Divider(),
-          new ListTile(
-              title: new Chip(
-            label: new Text('Charge late fee'),
+          Divider(),
+          ListTile(
+              title: Chip(
+            label: Text('Charge late fee'),
           )),
-          new Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              new Expanded(
-                  child: new ListTile(
-                title: new Text('Charge late fee'),
+              Expanded(
+                  child: ListTile(
+                title: Text('Charge late fee'),
               ))
             ],
           ),
@@ -417,23 +416,22 @@ class LeaseDetailBottomSection extends StatefulWidget {
   const LeaseDetailBottomSection();
 
   static Widget headerBuilder(BuildContext context, bool isExpanded) =>
-      const ListTile(
-        leading: const Icon(Icons.dashboard),
-        title: const Text('Transactions'),
+      ListTile(
+        leading: Icon(Icons.dashboard),
+        title: Text('Transactions'),
       );
 
-  static Widget body() => const LeaseDetailBottomSection();
+  static Widget body() => LeaseDetailBottomSection();
 
   @override
   _LeaseDetailBottomSectionState createState() =>
-      new _LeaseDetailBottomSectionState();
+      _LeaseDetailBottomSectionState();
 }
 
 class _LeaseDetailBottomSectionState extends State<LeaseDetailBottomSection> {
   @override
-  Widget build(BuildContext context) => new Column(
-        children:
-            _items.map((String s) => new ListTile(title: new Text(s))).toList(),
+  Widget build(BuildContext context) => Column(
+        children: _items.map((String s) => ListTile(title: Text(s))).toList(),
       );
 }
 
@@ -451,14 +449,14 @@ class MaterialSection extends StatefulWidget {
   static const double bottomMargin = 16.0;
 
   @override
-  _MaterialSectionState createState() => new _MaterialSectionState();
+  _MaterialSectionState createState() => _MaterialSectionState();
 }
 
 class _MaterialSectionState extends State<MaterialSection> {
   @override
   Widget build(BuildContext context) {
-    final Widget _titleWidget = new Container(
-      child: new Text(
+    final Widget _titleWidget = Container(
+      child: Text(
         widget.title,
         style: Theme
             .of(context)
@@ -466,7 +464,7 @@ class _MaterialSectionState extends State<MaterialSection> {
             .subhead
             .copyWith(fontWeight: FontWeight.bold),
       ),
-      margin: const EdgeInsets.fromLTRB(
+      margin: EdgeInsets.fromLTRB(
           MaterialSection.leftMargin,
           MaterialSection.topMargin,
           MaterialSection.rightMargin,
@@ -474,9 +472,9 @@ class _MaterialSectionState extends State<MaterialSection> {
     );
 
     return widget.hideable
-        ? new ExpansionTile(
+        ? ExpansionTile(
             title: _titleWidget, children: <Widget>[widget.expansionPanelList])
-        : new Column(
+        : Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -500,7 +498,7 @@ class MaterialSectionItem extends StatelessWidget {
       this.initiallyExpanded = false});
 
   @override
-  Widget build(BuildContext context) => new ExpansionTile(
+  Widget build(BuildContext context) => ExpansionTile(
         initiallyExpanded: initiallyExpanded,
         leading: leading,
         title: title,
@@ -508,8 +506,8 @@ class MaterialSectionItem extends StatelessWidget {
             .divideTiles(
               context: context,
               tiles: children
-                  .map((Widget child) => new Padding(
-                        padding: const EdgeInsets.only(left: 32.0),
+                  .map((Widget child) => Padding(
+                        padding: EdgeInsets.only(left: 32.0),
                         child: child,
                       ))
                   .toList(),
@@ -519,10 +517,10 @@ class MaterialSectionItem extends StatelessWidget {
 }
 
 class PaymentActionSection extends StatefulWidget {
-  final DateFormat dateFormat = new DateFormat.yMd();
+  final DateFormat dateFormat = DateFormat.yMd();
 
   @override
-  _PaymentActionSectionState createState() => new _PaymentActionSectionState();
+  _PaymentActionSectionState createState() => _PaymentActionSectionState();
 }
 
 class _PaymentActionSectionState extends State<PaymentActionSection> {
@@ -531,8 +529,15 @@ class _PaymentActionSectionState extends State<PaymentActionSection> {
 
   @override
   void initState() {
-    _paymentDate = new DateTime.now();
-    _payController = new TextEditingController(text: '799.43');
+    super.initState();
+    _paymentDate = DateTime.now();
+    _payController = TextEditingController(text: '799.43');
+  }
+
+  @override
+  void dispose() {
+    _payController?.dispose();
+    super.dispose();
   }
 
   void _updateDate(DateTime newDate) {
@@ -544,54 +549,43 @@ class _PaymentActionSectionState extends State<PaymentActionSection> {
   }
 
   @override
-  Widget build(BuildContext context) => new Column(
+  Widget build(BuildContext context) => Column(
         children: <Widget>[
-          new ListTile(
-            title: new Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ListTile(
+            leading: Icon(Icons.calendar_today),
+            title: Text('Date'),
+            trailing: FlatButton(
+              child: Text(
+                widget.dateFormat.format(_paymentDate),
+              ),
+              textTheme: ButtonTextTheme.accent,
+              // color: Colors.lightBlue,
+              onPressed: () async {
+                final DateTime newDate = await showDatePicker(
+                  context: context,
+                  initialDate: _paymentDate,
+                  firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
+                  lastDate: DateTime(3000),
+                );
+                _updateDate(newDate);
+              },
+            ),
+          ),
+          ListTile(
+            leading: Icon(Icons.attach_money),
+            title: Row(
               children: <Widget>[
-                // Expanded ? or just Flexible..
-                new Expanded(
-                  child: new Column(
-                    // crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      new FlatButton(
-                        child: new Text(
-                          widget.dateFormat.format(_paymentDate),
-                        ),
-                        textTheme: ButtonTextTheme.accent,
-                        // color: Colors.lightBlue,
-                        onPressed: () async {
-                          final DateTime newDate = await showDatePicker(
-                            context: context,
-                            initialDate: _paymentDate,
-                            firstDate:
-                                new DateTime.fromMicrosecondsSinceEpoch(0),
-                            lastDate: new DateTime(3000),
-                          );
-                          _updateDate(newDate);
-                        },
-                      ),
-                      new Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: new Text(
-                          'Payment date',
-                          style: Theme.of(context).textTheme.caption,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                new Flexible(
-                  child: new TextField(
+                Expanded(child: Text('Amount')),
+                Flexible(
+                  child: TextField(
                     controller: _payController,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.subhead.copyWith(
                         color: Theme.of(context).accentColor,
                         fontWeight: FontWeight.bold),
-                    // new TextStyle(color: Theme.of(context).accentColor),
-                    decoration: new InputDecoration(
-                      prefixIcon: new Icon(
+                    // TextStyle(color: Theme.of(context).accentColor),
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
                         Icons.attach_money,
                         color: Theme.of(context).iconTheme.color,
                       ),
@@ -601,18 +595,18 @@ class _PaymentActionSectionState extends State<PaymentActionSection> {
                       helperStyle: Theme.of(context).textTheme.caption,
                     ),
                   ),
-                ),
+                )
               ],
             ),
           ),
-          const Divider(),
-          new ButtonBar(
+          Divider(),
+          ButtonBar(
             children: <Widget>[
-              new RaisedButton(
+              RaisedButton(
                 onPressed: () {},
-                child: const Text('SAVE PAYMENT'),
+                child: Text('SAVE PAYMENT'),
                 textTheme: ButtonTextTheme.primary,
-                color: Colors.green,
+                // color: Colors.green,
               ),
             ],
           ),
@@ -621,10 +615,10 @@ class _PaymentActionSectionState extends State<PaymentActionSection> {
 }
 
 class ChargeActionSection extends StatefulWidget {
-  final DateFormat dateFormat = new DateFormat.yMd();
+  final DateFormat dateFormat = DateFormat.yMMMEd();
 
   @override
-  _ChargeActionSectionState createState() => new _ChargeActionSectionState();
+  _ChargeActionSectionState createState() => _ChargeActionSectionState();
 }
 
 class _ChargeActionSectionState extends State<ChargeActionSection> {
@@ -636,13 +630,13 @@ class _ChargeActionSectionState extends State<ChargeActionSection> {
   void initState() {
     // TODO think about how to handle currency values.. important!
 
-    final DateTime now = new DateTime.now();
-    //final DateTime firstOfThisMonth = new DateTime(now.year, now.month, 1);
+    final DateTime now = DateTime.now();
+    //final DateTime firstOfThisMonth = DateTime(now.year, now.month, 1);
 
     _chargeDate = now;
     // final int difference = now.difference(firstOfThisMonth).inDays;
 
-    _chargeController = new TextEditingController(text: now.day.toString());
+    _chargeController = TextEditingController(text: now.day.toString());
     _chargeType = ChargeType.late_fee;
   }
 
@@ -661,14 +655,14 @@ class _ChargeActionSectionState extends State<ChargeActionSection> {
   }
 
   @override
-  Widget build(BuildContext context) => new SingleChildScrollView(
-        child: new Column(
+  Widget build(BuildContext context) => SingleChildScrollView(
+        child: Column(
           children: <Widget>[
-            new ListTile(
-              leading: const Icon(Icons.calendar_today),
-              title: const Text('Date'),
-              trailing: new FlatButton(
-                child: new Text(
+            ListTile(
+              leading: Icon(Icons.calendar_today),
+              title: Text('Date'),
+              trailing: FlatButton(
+                child: Text(
                   widget.dateFormat.format(_chargeDate),
                 ),
                 // color: Colors.lightBlue,
@@ -676,24 +670,25 @@ class _ChargeActionSectionState extends State<ChargeActionSection> {
                   final DateTime newDate = await showDatePicker(
                     context: context,
                     initialDate: _chargeDate,
-                    firstDate: new DateTime.fromMicrosecondsSinceEpoch(0),
-                    lastDate: new DateTime(3000),
+                    firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
+                    lastDate: DateTime(3000),
                   );
                   _updateDate(newDate);
                 },
+                // color: Theme.of(context).accentColor,
                 textTheme: ButtonTextTheme.accent,
-                // color: .withOpacity(0.3),
               ),
             ),
-            new ListTile(
-              leading: new Container(),
-              title: const Text('Type'),
-              trailing: new DropdownButton<ChargeType>(
+            ListTile(
+              leading: Container(),
+              title: Text('Type'),
+              trailing: DropdownButton<ChargeType>(
+                // style: Theme.of(context).textTheme.subhead.copyWith(color: Theme.of(context).accentColor),
                 value: _chargeType,
                 items: ChargeType.values
                     .map(
-                      (ChargeType type) => new DropdownMenuItem<ChargeType>(
-                            child: new Text(type
+                      (ChargeType type) => DropdownMenuItem<ChargeType>(
+                            child: Text(type
                                 .toString()
                                 .split(r'.')[1]
                                 .splitMapJoin('_', onMatch: (_) => ' ')
@@ -705,25 +700,25 @@ class _ChargeActionSectionState extends State<ChargeActionSection> {
                 onChanged: _updateChargeType,
               ),
             ),
-            new ListTile(
-              leading: new Container(), //const Icon(Icons.monetization_on),
-              title: new Row(
+            ListTile(
+              leading: Container(), //Icon(Icons.monetization_on),
+              title: Row(
                 children: <Widget>[
-                  const Expanded(
-                    child: const Text('Amount'),
+                  Expanded(
+                    child: Text('Amount'),
                   ),
-                  new Flexible(
-                    child: new TextField(
+                  Flexible(
+                    child: TextField(
                       keyboardType: TextInputType.number,
                       controller: _chargeController,
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.subhead.copyWith(
+                      /* style: Theme.of(context).textTheme.subhead.copyWith(
                             color: Theme.of(context).accentColor,
                             fontWeight: FontWeight.bold,
-                          ),
-                      decoration: new InputDecoration(
-                        // icon: const Icon(Icons.attach_money),
-                        prefixIcon: new Icon(
+                          ), */
+                      decoration: InputDecoration(
+                        // icon: Icon(Icons.attach_money),
+                        prefixIcon: Icon(
                           Icons.attach_money,
                           color: Theme.of(context).iconTheme.color,
                         ),
@@ -733,52 +728,51 @@ class _ChargeActionSectionState extends State<ChargeActionSection> {
                 ],
               ),
             ),
-            const Divider(),
-            new ButtonBar(
+            Divider(),
+            ButtonBar(
               children: <Widget>[
-                new RaisedButton(
+                RaisedButton(
                   onPressed: () async {
                     final bool result = await showDialog<bool>(
                       context: context,
-                      child: new AlertDialog(
-                        title: const Text('Confirm charge'),
+                      child: AlertDialog(
+                        title: Text('Confirm charge'),
                         actions: <Widget>[
-                          new FlatButton(
-                            child: const Text('CANCEL'),
+                          FlatButton(
+                            child: Text('CANCEL'),
                             onPressed: () => Navigator.of(context).pop(false),
                           ),
-                          new FlatButton(
-                            child: const Text('SAVE'),
+                          FlatButton(
+                            child: Text('SAVE'),
                             onPressed: () => Navigator.of(context).pop(true),
                           )
                         ],
-                        content: new Column(
+                        content: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            new Row(
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                new Text(
+                                Text(
                                   'Date',
                                   style: Theme.of(context).textTheme.caption,
                                 ),
-                                new Text(widget.dateFormat.format(_chargeDate))
+                                Text(widget.dateFormat.format(_chargeDate))
                               ],
                               //mainAxisSize: MainAxisSize.min,
                             ),
-                            new Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: new Row(
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  new Text(
+                                  Text(
                                     'Type',
                                     style: Theme.of(context).textTheme.caption,
                                   ),
-                                  new Text(_chargeType
+                                  Text(_chargeType
                                       .toString()
                                       .split(r'.')[1]
                                       .splitMapJoin('_', onMatch: (_) => ' ')
@@ -787,14 +781,14 @@ class _ChargeActionSectionState extends State<ChargeActionSection> {
                                 //mainAxisSize: MainAxisSize.min,
                               ),
                             ),
-                            new Row(
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                new Text(
+                                Text(
                                   'Amount',
                                   style: Theme.of(context).textTheme.caption,
                                 ),
-                                new Text(_chargeController.text),
+                                Text(_chargeController.text),
                               ],
                               //mainAxisSize: MainAxisSize.min,
                             ),
@@ -804,7 +798,7 @@ class _ChargeActionSectionState extends State<ChargeActionSection> {
                     );
                     print('result was: $result');
                   },
-                  child: const Text('SAVE CHARGE'),
+                  child: Text('SAVE CHARGE'),
                   textTheme: ButtonTextTheme.primary,
                   // color: Colors.redAccent,
                 ),

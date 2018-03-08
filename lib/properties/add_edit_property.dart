@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:wpm/models.dart';
+import 'package:wpm/data/models.dart';
 
 class AddEditProperty extends StatefulWidget {
   final Property property;
