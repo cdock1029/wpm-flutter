@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 
 abstract class Model {
@@ -10,29 +11,49 @@ abstract class Model {
 
   final DocumentSnapshot snapshot;
 
-  // dynamic call(DocumentSnapshot snap);
-
-//  Future<List<T>> getTypedCollection<T extends Model>(
-//    List<T> cached,
-//    CollectionReference collectionRef,
-//    T instanceCall, // Function getModelInstance,
-//  ) async =>
-//      cached != null
-//          ? new Future<T>.value(cached)
-//          : await collectionRef.snapshots
-//              .map((QuerySnapshot querySnap) => querySnap.documents)
-//              .expand((List<DocumentSnapshot> docSnapList) =>
-//                  docSnapList.map((DocumentSnapshot snap) => snap))
-//              .map((DocumentSnapshot snap) => instanceCall(snap))
-//              .toList();
-
-  // TODO good enough?
   @override
   bool operator ==(Object other) =>
       identical(this, other) || other is Model && other.id == id;
 
   @override
   int get hashCode => id.hashCode;
+}
+
+class AppUser extends Model {
+
+  final FirebaseUser firebaseUser;
+  AppUser({this.firebaseUser});
+
+  // Company get company => Firestore.instance.collection('companies').document()
+}
+
+class UserData extends Model {
+  final FirebaseUser firebaseUser;
+  UserData({this.firebaseUser});
+
+}
+
+class Company extends Model {
+  final String name;
+  final CollectionReference _propertiesRef;
+  final CollectionReference _tenantsRef;
+
+
+  Company(DocumentSnapshot snapshot)
+      : name = snapshot['name'],
+        _propertiesRef = snapshot.reference.getCollection('properties'),
+        _tenantsRef = snapshot.reference.getCollection('tenants'),
+        super(snapshot: snapshot);
+
+  Stream<QuerySnapshot> get properties => _propertiesRef.snapshots;
+  Stream<QuerySnapshot> get tenants => _tenantsRef.snapshots;
+
+/*
+  Company.fromSnapshot(DocumentSnapshot snapshot)
+      : name = snapshot['name'],
+        super(snapshot: snapshot);
+
+  */
 }
 
 class Property extends Model {
@@ -48,6 +69,7 @@ class Property extends Model {
         unitCount = snapshot['unitCount'] ?? 0,
         unitsRef = snapshot.reference.getCollection('units'),
         super(snapshot: snapshot);
+
 //
 //  @override
 //  call(DocumentSnapshot snap) => new Property.fromSnapshot(snap);

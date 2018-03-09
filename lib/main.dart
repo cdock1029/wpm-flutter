@@ -30,9 +30,10 @@ class WPMAppState extends State<WPMApp> {
           .map<Property>((DocumentSnapshot doc) => Property.fromSnapshot(doc))
           .toList());
 
+  Company _company;
   Property _selected;
+  AppUser _appUser;
   FirebaseUser _user;
-
   StreamSubscription<FirebaseUser> _authSubscription;
 
   @override
@@ -41,6 +42,7 @@ class WPMAppState extends State<WPMApp> {
 
     _authSubscription =
         FirebaseAuth.instance.onAuthStateChanged.listen((FirebaseUser user) {
+
       print('onAuthStateChanged user=[${user.toString()}]');
       setState(() {
         _user = user;
