@@ -132,9 +132,11 @@ class _WPMDrawerViewState extends State<_WPMDrawerView> {
                     leading: new Icon(Icons.home),
                     title: new Text(property.name),
                     dense: true,
-                    onTap: () {
-                      selectProperty(property);
+                    onTap: () async {
                       Navigator.pop(context);
+                      // see Drawer kSettleDuration. wait till closes
+                      await Future.delayed(Duration(milliseconds: 350));
+                      selectProperty(property);
                     },
                     onLongPress: () async {
                       final bool shouldDelete = await showDialog<bool>(

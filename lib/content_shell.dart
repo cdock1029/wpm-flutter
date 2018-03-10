@@ -14,87 +14,125 @@ class ContentShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    final Stream<Property> selectedPropertyStream = AppStateProvider.of(context).selectedPropertyStream;
-    // print('ContentShell build => selected=[${selected.toString()}]');
+    final Stream<Property> selectedStream =
+        AppStateProvider.of(context).selectedPropertyStream;
 
-    return StreamBuilder<Property>(
-      stream: selectedPropertyStream,
-      builder: (
-        BuildContext context,
-        AsyncSnapshot<Property> streamSnap,
-      ) {
-        Widget _title;
-        String _titleText, _subTitleText;
-        MainAxisAlignment _align;
-        final Property selected = streamSnap.data;
-        if (selected?.name != null) {
-          _titleText = selected.name;
-          _subTitleText = 'Unit count: ${selected.unitCount}';
-          _align = MainAxisAlignment.start;
-        } else {
-          _titleText = '↑ Select a Property what?';
-          _subTitleText = '';
-          _align = MainAxisAlignment.center;
-        }
-        final Text title = new Text(_titleText, style: textTheme.headline);
-        final Text subTitle = new Text(_subTitleText, style: textTheme.subhead);
-
-        final List<Widget> _children = <Widget>[
-          title,
-          subTitle,
-        ];
-        if (selected != null) {
-          // print('model.selectedProperty: [$selected]');
-          // TODO: use STRING key for now, until refs are supported..
-          _children.add(
-            new Expanded(
-//          child: new LeaseList(
-//            propertyRef: propRefSTRING,
-//          ),
-              child: UnitListView(
-                property: selected,
-              ),
-            ),
-          );
-        }
-        return new Scaffold(
-            key: Key('property_detail'),
-            appBar: AppBar(
-              title: Text(selected?.name ?? AppStateProvider.of(context).user.company.name),
-              actions: selected != null
-                  ? <Widget>[
-                      new IconButton(
-                        icon: new Icon(Icons.edit),
+    return selectedStream == null
+        ? SelectPropertyMessage()
+        : StreamBuilder<Property>(
+            stream: selectedStream,
+            builder: (
+              BuildContext context,
+              AsyncSnapshot<Property> streamSnap,
+            ) {
+              if (streamSnap.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              }
+              final Property selected = streamSnap.data;
+              final List<Widget> children = <Widget>[
+                UnitsTab(selected),
+                TenantsTab(selected),
+              ];
+              return DefaultTabController(
+                length: 2,
+                child: Scaffold(
+                  key: Key('property_detail'),
+                  appBar: AppBar(
+                    title: Text(selected.name),
+                    actions: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.edit),
                         onPressed: () {
                           Navigator.push(
                               context,
-                              new MaterialPageRoute<Null>(
+                              MaterialPageRoute<Null>(
                                 builder: (BuildContext context) =>
-                                    new AddEditProperty(property: selected),
+                                    AddEditProperty(property: selected),
                               ));
                         },
                       ),
-                    ]
-                  : null,
-            ),
-            body: new Column(
-              mainAxisAlignment: _align,
-              children: _children,
-            ),
-            drawer: WPMDrawerLoader(),
-            floatingActionButton: selected != null
-                ? new FloatingActionButton(
-                    child: new Center(
-                      child: new Icon(Icons.add),
+                    ],
+                    bottom: TabBar(
+                      isScrollable: false,
+                      tabs: <Widget>[
+                        Tab(
+                          text: 'UNITS',
+                        ),
+                        Tab(text: 'TENANTS'),
+                      ],
+                    ),
+                  ),
+                  body: TabBarView(
+                    children: children,
+                  ),
+                  drawer: WPMDrawerLoader(),
+                  floatingActionButton: FloatingActionButton(
+                    child: Center(
+                      child: Icon(Icons.add),
                     ),
                     onPressed: () {
                       Navigator.pushNamed(context, CreateLease.routeName);
                     },
-                  )
-                : null,
+                  ),
+                ),
+              );
+            },
           );
-      },
-    );
   }
+}
+
+class UnitsTab extends StatelessWidget {
+  const UnitsTab(this.property);
+
+  final Property property;
+
+  @override
+  Widget build(BuildContext context) => Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Unit count: ${property.unitCount}',
+                style: Theme.of(context).textTheme.subhead),
+          ),
+          Expanded(
+            child: UnitListView(
+              property: property,
+            ),
+          ),
+        ],
+      );
+}
+
+class TenantsTab extends StatelessWidget {
+  const TenantsTab(this.property);
+  final Property property;
+
+  @override
+  Widget build(BuildContext context) => Center(child: Text('tenants todo'),);
+}
+
+
+class SelectPropertyMessage extends StatelessWidget {
+  const SelectPropertyMessage();
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        key: Key('property_detail'),
+        appBar: AppBar(
+          title: Text(AppStateProvider.of(context).user.company.name),
+        ),
+        drawer: WPMDrawerLoader(),
+        body: Center(
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Text(
+                'Select Property',
+                style: Theme.of(context).textTheme.headline,
+              ),
+            ),
+          ),
+        ),
+      );
 }
