@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:wpm/app_state.dart';
 import 'package:wpm/data/models.dart';
+import 'package:collection/collection.dart';
 
 class AddEditProperty extends StatefulWidget {
   final Property property;
@@ -48,10 +50,17 @@ class _AddEditPropertyState extends State<AddEditProperty>
   }
 
   Future<Null> _addPropertyAsync(BuildContext context) async {
+    final Company company = AppStateProvider.of(context).user.company;
+
     final String trimStr = _propertyNameController.text.trim();
     if (trimStr.isNotEmpty) {
-      final DocumentReference ref =
-          Firestore.instance.collection('properties').document(_property?.id);
+      final DocumentReference ref = Firestore.instance
+          .collection('companies')
+          .document(company.id)
+          .getCollection('properties')
+          .document(_property?.id);
+
+      print('saving/updating path=[${ref.path}]');
 
       final Map<String, String> _data = <String, String>{'name': trimStr};
       if (_property != null) {
@@ -124,17 +133,12 @@ class _AddEditPropertyState extends State<AddEditProperty>
             _property != null
                 ? new Flexible(
                     child: new StreamBuilder<List<Unit>>(
-                      stream: _property.unitsRef
-                          .orderBy('ordering')
-                          .snapshots
-                          .map((QuerySnapshot qSnap) => qSnap.documents)
-                          .map((List<DocumentSnapshot> docs) => docs
-                              .map((DocumentSnapshot doc) =>
-                                  new Unit.fromSnapshot(doc))
-                              .toList()),
+                      stream: _property.units,
                       initialData: <Unit>[],
-                      builder: (BuildContext context,
-                              AsyncSnapshot<List<Unit>> snapshot) =>
+                      builder: (
+                        BuildContext context,
+                        AsyncSnapshot<List<Unit>> snapshot,
+                      ) =>
                           new ListView.builder(
                             shrinkWrap: true,
                             itemCount: snapshot.data.length,

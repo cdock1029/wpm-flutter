@@ -6,20 +6,24 @@ import 'package:flutter/widgets.dart';
 import 'package:wpm/data/models.dart';
 
 class UnitListView extends StatelessWidget {
-  final Stream<QuerySnapshot> stream;
+  final Stream<List<Unit>> units;
   final Property property;
 
-  const UnitListView({this.property, this.stream, Key key}) : super(key: key);
+  UnitListView({this.property, Key key})
+      : units = property?.units,
+        super(key: key);
 
   @override
-  Widget build(BuildContext context) => new StreamBuilder<QuerySnapshot>(
-        stream: stream,
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snap) =>
+  Widget build(BuildContext context) => new StreamBuilder<List<Unit>>(
+        stream: units,
+        builder: (
+          BuildContext context,
+          AsyncSnapshot<List<Unit>> snap,
+        ) =>
             new ListView.builder(
-              itemCount: snap.data?.documents?.length ?? 0,
+              itemCount: snap.data?.length ?? 0,
               itemBuilder: (BuildContext ctx, int index) {
-                final DocumentSnapshot doc = snap.data.documents[index];
-                final Unit unit = new Unit.fromSnapshot(doc);
+                final Unit unit = snap.data[index];
                 return new ListTile(
                   key: new Key(unit.id),
                   title: new Text(unit.address),

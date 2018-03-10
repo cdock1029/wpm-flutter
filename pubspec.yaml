@@ -12,6 +12,7 @@ dependencies:
   firebase_auth:
   google_sign_in:
   intl:
+  collection:
 
   # rxdart:
   stream_transform:

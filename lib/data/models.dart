@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 
@@ -20,17 +21,39 @@ abstract class Model {
 }
 
 class AppUser extends Model {
+  final FirebaseUser _firebaseUser;
+  final Company company;
 
-  final FirebaseUser firebaseUser;
-  AppUser({this.firebaseUser});
+  AppUser._({
+    @required FirebaseUser firebaseUser,
+    @required DocumentSnapshot userSnap,
+    this.company,
+  })  : _firebaseUser = firebaseUser,
+        super(snapshot: userSnap);
 
-  // Company get company => Firestore.instance.collection('companies').document()
-}
+  String get email => _firebaseUser.email;
 
-class UserData extends Model {
-  final FirebaseUser firebaseUser;
-  UserData({this.firebaseUser});
+  String get displayName => _firebaseUser.displayName;
 
+  String get photoUrl => _firebaseUser.photoUrl;
+
+  String get uid => _firebaseUser.uid;
+
+  static Future<AppUser> fromFirebaseUser(FirebaseUser user) async {
+    if (user == null) {
+      return null;
+    }
+    final DocumentSnapshot userSnap =
+        await Firestore.instance.collection('users').document(user.uid).get();
+    final String activeCompany = userSnap['activeCompany'];
+    final DocumentSnapshot companySnap = await Firestore.instance
+        .collection('companies')
+        .document(activeCompany)
+        .get();
+    final Company company = Company(companySnap);
+
+    return AppUser._(firebaseUser: user, userSnap: userSnap, company: company);
+  }
 }
 
 class Company extends Model {
@@ -38,41 +61,56 @@ class Company extends Model {
   final CollectionReference _propertiesRef;
   final CollectionReference _tenantsRef;
 
-
   Company(DocumentSnapshot snapshot)
       : name = snapshot['name'],
         _propertiesRef = snapshot.reference.getCollection('properties'),
         _tenantsRef = snapshot.reference.getCollection('tenants'),
         super(snapshot: snapshot);
 
-  Stream<QuerySnapshot> get properties => _propertiesRef.snapshots;
+  Stream<List<Property>> get properties => _propertiesRef.snapshots
+      .map<List<DocumentSnapshot>>(
+          (QuerySnapshot querySnap) => querySnap.documents)
+      .map<List<Property>>((List<DocumentSnapshot> docs) => docs
+          .map<Property>((DocumentSnapshot doc) => Property.fromSnapshot(doc))
+          .toList());
+
   Stream<QuerySnapshot> get tenants => _tenantsRef.snapshots;
-
-/*
-  Company.fromSnapshot(DocumentSnapshot snapshot)
-      : name = snapshot['name'],
-        super(snapshot: snapshot);
-
-  */
 }
 
 class Property extends Model {
   final String name;
   final int unitCount;
+  final DocumentReference documentReference;
   CollectionReference unitsRef;
-  List<Unit> _units;
 
-  Property({@required this.name, this.unitCount = 0});
+  // Property({@required this.name, this.unitCount = 0});
 
   Property.fromSnapshot(DocumentSnapshot snapshot)
       : name = snapshot['name'],
         unitCount = snapshot['unitCount'] ?? 0,
         unitsRef = snapshot.reference.getCollection('units'),
+        documentReference = snapshot.reference,
         super(snapshot: snapshot);
+
+  Stream<List<Unit>> get units => unitsRef.snapshots
+      .map<List<DocumentSnapshot>>((QuerySnapshot snap) => snap.documents)
+      .map<List<Unit>>((List<DocumentSnapshot> docs) => docs
+          .map<Unit>((DocumentSnapshot doc) => Unit.fromSnapshot(doc))
+          .toList()).map<List<Unit>>((List<Unit> units) {
+            units.sort((Unit a, Unit b) => compareAsciiLowerCaseNatural(a.address, b.address));
+            return units;
+          });
 
 //
 //  @override
 //  call(DocumentSnapshot snap) => new Property.fromSnapshot(snap);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is Property && other.id == id && other.name == name;
+
+  @override
+  int get hashCode => id.hashCode ^ name.hashCode;
 
   @override
   String toString() =>

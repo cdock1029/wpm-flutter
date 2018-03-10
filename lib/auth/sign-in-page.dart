@@ -13,7 +13,6 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-
   bool isLoading = false;
 
   Future<Null> _testSignInWithGoogle() async {
@@ -31,7 +30,7 @@ class _SignInPageState extends State<SignInPage> {
     if (googleUser != null) {
       print('Sign In Page googleUser=[${googleUser.toString()}]');
       final GoogleSignInAuthentication googleAuth =
-      await googleUser.authentication;
+          await googleUser.authentication;
       print('Sign In Page googleAuth=[${googleAuth.toString()}]');
       final FirebaseUser user = await FirebaseAuth.instance.signInWithGoogle(
         accessToken: googleAuth.accessToken,
@@ -45,8 +44,7 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      new MaterialApp(
+  Widget build(BuildContext context) => new MaterialApp(
         theme: new ThemeData(
           primarySwatch: Colors.deepOrange,
           accentColor: Colors.blueAccent,
@@ -57,7 +55,9 @@ class _SignInPageState extends State<SignInPage> {
             title: const Text('Sign In'),
           ),
           body: Center(
-            child: isLoading ? CircularProgressIndicator() : LoginWidget(onPressed: _testSignInWithGoogle),
+            child: isLoading
+                ? CircularProgressIndicator()
+                : LoginWidget(onPressed: _testSignInWithGoogle),
           ),
         ),
       );
@@ -72,9 +72,6 @@ class LoginWidget extends StatelessWidget {
   Widget build(BuildContext context) => RaisedButton(
         child: const Text('GOOGLE SIGN-IN'),
         onPressed: onPressed,
-        textTheme: ButtonTheme
-            .of(context)
-            .textTheme,
+        textTheme: ButtonTheme.of(context).textTheme,
       );
-
 }
