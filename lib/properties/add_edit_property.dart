@@ -113,8 +113,7 @@ class _AddEditPropertyState extends State<AddEditProperty>
                       ),
                       onSubmitted: (String value) async {
                         _updateLoading(true);
-                        await _property.unitsRef
-                            .add(<String, dynamic>{'address': value});
+                        await _property.addUnit(<String, dynamic>{'address': value});
                         _updateLoading(false);
                         _unitAddressController.clear();
                       },

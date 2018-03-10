@@ -81,18 +81,18 @@ class Property extends Model {
   final String name;
   final int unitCount;
   final DocumentReference documentReference;
-  CollectionReference unitsRef;
+  CollectionReference _unitsRef;
 
   // Property({@required this.name, this.unitCount = 0});
 
   Property.fromSnapshot(DocumentSnapshot snapshot)
       : name = snapshot['name'],
         unitCount = snapshot['unitCount'] ?? 0,
-        unitsRef = snapshot.reference.getCollection('units'),
+        _unitsRef = snapshot.reference.getCollection('units'),
         documentReference = snapshot.reference,
         super(snapshot: snapshot);
 
-  Stream<List<Unit>> get units => unitsRef.snapshots
+  Stream<List<Unit>> get units => _unitsRef.snapshots
       .map<List<DocumentSnapshot>>((QuerySnapshot snap) => snap.documents)
       .map<List<Unit>>((List<DocumentSnapshot> docs) => docs
           .map<Unit>((DocumentSnapshot doc) => Unit.fromSnapshot(doc))
@@ -101,9 +101,8 @@ class Property extends Model {
             return units;
           });
 
-//
-//  @override
-//  call(DocumentSnapshot snap) => new Property.fromSnapshot(snap);
+  Future<DocumentReference> addUnit(Map<String, dynamic> data) => _unitsRef.add(data);
+  // Stream<Property> toStream() => documentReference.snapshots.
 
   @override
   bool operator ==(Object other) =>
@@ -114,20 +113,8 @@ class Property extends Model {
 
   @override
   String toString() =>
-      'Property(id: $id, name: $name, unitCount: $unitCount, unitsRef: $unitsRef)';
+      'Property(id: $id, name: $name, unitCount: $unitCount, _unitsRef: $_unitsRef)';
 
-//  Future<List<Unit>> get units async {
-//    final List<Unit> updated = await getTypedCollection(
-//      _units,
-//      unitsRef,
-//      this,
-//      // (DocumentSnapshot snap) => new Unit.fromSnapshot(snap),
-//    );
-//    _units = updated;
-//    return updated;
-//  }
-
-// Property withSnap(DocumentSnapshot snap) => new Property.fromSnapshot(snap);
 }
 
 class Unit extends Model {
@@ -147,16 +134,6 @@ class Unit extends Model {
         unitRef = snapshot.reference,
         super(snapshot: snapshot);
 
-//  @override
-//  call(DocumentSnapshot snap) => new Unit.fromSnapshot(snap);
-
-//  Future<Property> get property async {
-//    if (_property == null) {
-//      final DocumentSnapshot propSnap = await propertyRef.get();
-//      _property = new Property.fromSnapshot(propSnap);
-//    }
-//    return _property;
-//  }
 }
 
 class Tenant extends Model {
@@ -164,7 +141,6 @@ class Tenant extends Model {
   final String lastName;
 
   // TODO think about Lease queries using name-concatenation w/ tenantId
-
   // String get normalizedName => '${lastName.toLowerCase()}|${firstName.toLowerCase()}';
 
   Tenant({this.firstName, this.lastName});
@@ -178,8 +154,6 @@ class Tenant extends Model {
       : firstName = map['firstName'],
         lastName = map['lastName']; // ,super(snapshot: snapshot)
 
-  @override
-  Tenant call(DocumentSnapshot snap) => new Tenant.fromSnapshot(snap);
 }
 
 class Lease extends Model {
@@ -201,9 +175,6 @@ class Lease extends Model {
         rent = snapshot['rent'],
         _tenants = snapshot['tenants'],
         super(snapshot: snapshot);
-
-  @override
-  Lease call(DocumentSnapshot snap) => new Lease.fromSnapshot(snap);
 
   @override
   String toString() => '''
