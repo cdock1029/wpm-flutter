@@ -32,14 +32,10 @@ class _SignInPageState extends State<SignInPage> {
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
       print('Sign In Page googleAuth=[${googleAuth.toString()}]');
-      final FirebaseUser user = await FirebaseAuth.instance.signInWithGoogle(
+      await FirebaseAuth.instance.signInWithGoogle(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-//      setState(() {
-//        isLoading = false;
-//      });
-//      print('Sign In Page firebaseUser=[${user.toString()}]');
     }
   }
 

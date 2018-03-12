@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 import 'package:wpm/leases/lease_create.dart';
 import 'package:wpm/data/models.dart';
 import 'package:wpm/app_state.dart';
@@ -10,8 +12,6 @@ import 'package:wpm/common/wpm_drawer.dart';
 import 'package:wpm/units/unit.dart';
 
 class ContentShell extends StatelessWidget {
-  const ContentShell();
-
   @override
   Widget build(BuildContext context) {
     final Stream<Property> selectedStream =
@@ -30,7 +30,7 @@ class ContentShell extends StatelessWidget {
               }
               final Property selected = streamSnap.data;
               final List<Widget> children = <Widget>[
-                UnitsTab(selected),
+                UnitsTab(property: selected),
                 TenantsTab(selected),
               ];
               return DefaultTabController(
@@ -54,26 +54,11 @@ class ContentShell extends StatelessWidget {
                     ],
                     bottom: TabBar(
                       isScrollable: false,
-                      tabs: <Widget>[
-                        Tab(
-                          text: 'UNITS',
-                        ),
-                        Tab(text: 'TENANTS'),
-                      ],
+                      tabs: <Widget>[Tab(text: 'UNITS'), Tab(text: 'TENANTS')],
                     ),
                   ),
-                  body: TabBarView(
-                    children: children,
-                  ),
+                  body: TabBarView(children: children),
                   drawer: WPMDrawerLoader(),
-                  floatingActionButton: FloatingActionButton(
-                    child: Center(
-                      child: Icon(Icons.add),
-                    ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, CreateLease.routeName);
-                    },
-                  ),
                 ),
               );
             },
@@ -82,36 +67,63 @@ class ContentShell extends StatelessWidget {
 }
 
 class UnitsTab extends StatelessWidget {
-  const UnitsTab(this.property);
+  const UnitsTab({@required this.property});
 
   final Property property;
 
   @override
-  Widget build(BuildContext context) => Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text('Unit count: ${property.unitCount}',
-                style: Theme.of(context).textTheme.subhead),
-          ),
-          Expanded(
-            child: UnitListView(
-              property: property,
+  Widget build(BuildContext context) => StreamBuilder<List<Unit>>(
+      stream: property.units,
+      initialData: <Unit>[],
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<List<Unit>> snap,
+      ) {
+        final List<Unit> units = snap.data;
+        
+        // _view = UnitListView(units: units);
+        return Column(
+          children: <Widget>[
+            ListTile(
+              dense: true,
+              trailing: PopupMenuButton<String>(
+                onSelected: (String key) async {
+                  switch (key) {
+                    case 'add':
+                      final Unit newUnit = await showDialog<Unit>(
+                        context: context,
+                        child: AddUnitDialog(),
+                      );
+                      if (newUnit != null) {
+                        await property.snapshot
+                            .reference
+                            .getCollection('units')
+                            .add(newUnit.data);
+                      }
+                      break;
+                  }
+                },
+                itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
+                  PopupMenuItem<String>(child: Text('ADD UNIT'), value: 'add',),
+                ],
+              ),
             ),
-          ),
-        ],
-      );
+            Flexible(child: UnitGridView(units: units)),
+          ],
+        );
+      });
 }
 
 class TenantsTab extends StatelessWidget {
   const TenantsTab(this.property);
+
   final Property property;
 
   @override
-  Widget build(BuildContext context) => Center(child: Text('tenants todo'),);
+  Widget build(BuildContext context) => Center(
+        child: Text('tenants todo'),
+      );
 }
-
 
 class SelectPropertyMessage extends StatelessWidget {
   const SelectPropertyMessage();

@@ -24,6 +24,7 @@ class AppUser extends Model {
   final FirebaseUser _firebaseUser;
   final Company company;
 
+  // TODO clean this up..
   AppUser._({
     @required FirebaseUser firebaseUser,
     @required DocumentSnapshot userSnap,
@@ -43,8 +44,9 @@ class AppUser extends Model {
     if (user == null) {
       return null;
     }
-    final DocumentSnapshot userSnap =
-        await Firestore.instance.collection('users').document(user.uid).get();
+    final DocumentReference _userDataRef = Firestore.instance.collection('users').document(user.uid);
+    final DocumentSnapshot userSnap = await _userDataRef.get();
+
     final String activeCompany = userSnap['activeCompany'];
     final DocumentSnapshot companySnap = await Firestore.instance
         .collection('companies')
@@ -53,6 +55,27 @@ class AppUser extends Model {
     final Company company = Company(companySnap);
 
     return AppUser._(firebaseUser: user, userSnap: userSnap, company: company);
+  }
+
+  Future<T> getPreference<T>(String key) async {
+    final DocumentSnapshot doc = await snapshot.reference.get();
+    final Map<dynamic, dynamic> prefs = doc['preferences'];
+
+    final T result = prefs[key];
+    return result;
+  }
+
+  // TODO test this updates vs overwrites.
+  Future<Null> updatePreference(String key, dynamic value) async {
+    final DocumentSnapshot doc = await snapshot.reference.get();
+    final Map<dynamic, dynamic> prefs = doc['preferences'];
+
+    prefs[key] = value;
+
+    final Map<String, dynamic> userUpdate = <String, dynamic>{'preferences': prefs};
+    // WHY split? type error otherwise..
+    await snapshot.reference.updateData(userUpdate);
+    return null;
   }
 }
 
@@ -119,40 +142,36 @@ class Property extends Model {
 
 class Unit extends Model {
   final String address;
-  final DocumentReference propertyRef;
-  final DocumentReference unitRef;
-  final int ordering;
-
-  // Property _property;
-
-  const Unit({this.address, this.propertyRef, this.ordering, this.unitRef});
+  const Unit({this.address});
 
   Unit.fromSnapshot(DocumentSnapshot snapshot)
       : address = snapshot['address'],
-        propertyRef = snapshot['propertyRef'],
-        ordering = snapshot['ordering'],
-        unitRef = snapshot.reference,
         super(snapshot: snapshot);
 
+  // TODO put this in abstract model
+  Map<String, dynamic> get data => <String, dynamic>{'address': address};
 }
 
 class Tenant extends Model {
   final String firstName;
   final String lastName;
+  final String displayName;
 
   // TODO think about Lease queries using name-concatenation w/ tenantId
   // String get normalizedName => '${lastName.toLowerCase()}|${firstName.toLowerCase()}';
 
-  Tenant({this.firstName, this.lastName});
+  Tenant({this.firstName, this.lastName, this.displayName});
 
   Tenant.fromSnapshot(DocumentSnapshot snapshot)
       : firstName = snapshot['firstName'],
         lastName = snapshot['lastName'],
+        displayName = snapshot['displayName'],
         super(snapshot: snapshot);
 
   Tenant.fromMap(Map<String, dynamic> map)
       : firstName = map['firstName'],
-        lastName = map['lastName']; // ,super(snapshot: snapshot)
+        lastName = map['lastName'], // ,super(snapshot: snapshot)
+        displayName = map['displayName'];
 
 }
 

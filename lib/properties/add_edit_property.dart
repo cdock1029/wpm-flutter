@@ -196,7 +196,7 @@ class _AddEditPropertyState extends State<AddEditProperty>
                                                       setState(() {
                                                         _editUnitIndex = -1;
                                                       });
-                                                      unit.unitRef.delete();
+                                                      unit.snapshot.reference.delete();
                                                     },
                                                   ),
                                                   new FlatButton(
@@ -234,7 +234,7 @@ class _AddEditPropertyState extends State<AddEditProperty>
                           ),
                     ),
                   )
-                : const Text('Property is empty'),
+                : Container(),
           ],
         ),
       );

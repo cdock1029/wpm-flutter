@@ -135,6 +135,7 @@ class _WPMDrawerViewState extends State<_WPMDrawerView> {
                     onTap: () async {
                       Navigator.pop(context);
                       // see Drawer kSettleDuration. wait till closes
+                      // ignore: strong_mode_implicit_dynamic_type, always_specify_types
                       await Future.delayed(Duration(milliseconds: 350));
                       selectProperty(property);
                     },
