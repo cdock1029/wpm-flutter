@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:wpm/data/models.dart';
-import 'package:wpm/tenants/tenant_add.dart';
+import 'package:wpm/modules/tenants/tenant_add.dart';
 
 class TenantList extends StatelessWidget {
   const TenantList({Key key}) : super(key: key);

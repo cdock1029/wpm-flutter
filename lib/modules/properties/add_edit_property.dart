@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:wpm/app_state.dart';
+import 'package:wpm/data/app_state.dart';
 import 'package:wpm/data/models.dart';
 import 'package:collection/collection.dart';
 
@@ -196,7 +196,7 @@ class _AddEditPropertyState extends State<AddEditProperty>
                                                       setState(() {
                                                         _editUnitIndex = -1;
                                                       });
-                                                      unit.snapshot.reference.delete();
+                                                      unit.ref.delete();
                                                     },
                                                   ),
                                                   new FlatButton(

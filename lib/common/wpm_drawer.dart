@@ -4,10 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:wpm/properties/add_edit_property.dart';
+import 'package:wpm/modules/properties/add_edit_property.dart';
 import 'package:wpm/data/models.dart';
-import 'package:wpm/app_state.dart';
-import 'package:wpm/tenants/tenant_list.dart';
+import 'package:wpm/data/app_state.dart';
+import 'package:wpm/modules/properties/property_dashboard.dart';
+import 'package:wpm/modules/tenants/tenant_list.dart';
 
 class WPMDrawerLoader extends StatelessWidget {
   const WPMDrawerLoader();
@@ -58,9 +59,10 @@ class _WPMDrawerViewState extends State<_WPMDrawerView> {
 
   @override
   Widget build(BuildContext context) {
-    final AppUser user = AppStateProvider.of(context).user;
-    final Stream<Property> selectedPropertyStream = AppStateProvider.of(context).selectedPropertyStream;
-    final ValueChanged<Property> selectProperty = AppStateProvider.of(context).selectProperty;
+    final AppState appState = AppStateProvider.of(context);
+    final AppUser user = appState.user;
+    final Stream<Property> selectedPropertyStream = appState.selectedPropertyStream;
+    final ValueChanged<Property> selectProperty = appState.selectProperty;
 
     return StreamBuilder<Property>(
       stream: selectedPropertyStream,
@@ -69,7 +71,6 @@ class _WPMDrawerViewState extends State<_WPMDrawerView> {
         AsyncSnapshot<Property> snapshot,
       ) {
         final Property selectedProperty = snapshot.data;
-        print('drawer selected snapshot.connState=[${snapshot.connectionState.toString()}]');
         return new Drawer(
             child: new ListView.builder(
                 // gets rid of light-colored top bar..
@@ -134,9 +135,9 @@ class _WPMDrawerViewState extends State<_WPMDrawerView> {
                     dense: true,
                     onTap: () async {
                       Navigator.pop(context);
-                      // see Drawer kSettleDuration. wait till closes
+                      // see Drawer kBaseSettleDuration (246 ms), wait for close animation
                       // ignore: strong_mode_implicit_dynamic_type, always_specify_types
-                      await Future.delayed(Duration(milliseconds: 350));
+                      await Future.delayed(Duration(milliseconds: 255));
                       selectProperty(property);
                     },
                     onLongPress: () async {

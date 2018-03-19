@@ -6,11 +6,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 
 abstract class Model {
-  const Model({this.snapshot});
 
-  String get id => snapshot?.documentID;
+  final DocumentReference ref;
+  const Model({this.ref});
 
-  final DocumentSnapshot snapshot;
+  String get id => ref?.documentID;
+
+  Future<void> updateData(Map<String, dynamic> data) => ref?.updateData(data);
 
   @override
   bool operator ==(Object other) =>
@@ -30,7 +32,7 @@ class AppUser extends Model {
     @required DocumentSnapshot userSnap,
     this.company,
   })  : _firebaseUser = firebaseUser,
-        super(snapshot: userSnap);
+        super(ref: userSnap.reference);
 
   String get email => _firebaseUser.email;
 
@@ -58,7 +60,7 @@ class AppUser extends Model {
   }
 
   Future<T> getPreference<T>(String key) async {
-    final DocumentSnapshot doc = await snapshot.reference.get();
+    final DocumentSnapshot doc = await ref.get();
     final Map<dynamic, dynamic> prefs = doc['preferences'];
 
     final T result = prefs[key];
@@ -67,14 +69,14 @@ class AppUser extends Model {
 
   // TODO test this updates vs overwrites.
   Future<Null> updatePreference(String key, dynamic value) async {
-    final DocumentSnapshot doc = await snapshot.reference.get();
+    final DocumentSnapshot doc = await ref.get();
     final Map<dynamic, dynamic> prefs = doc['preferences'];
 
     prefs[key] = value;
 
     final Map<String, dynamic> userUpdate = <String, dynamic>{'preferences': prefs};
     // WHY split? type error otherwise..
-    await snapshot.reference.updateData(userUpdate);
+    await ref.updateData(userUpdate);
     return null;
   }
 }
@@ -88,7 +90,7 @@ class Company extends Model {
       : name = snapshot['name'],
         _propertiesRef = snapshot.reference.getCollection('properties'),
         _tenantsRef = snapshot.reference.getCollection('tenants'),
-        super(snapshot: snapshot);
+        super(ref: snapshot.reference);
 
   Stream<List<Property>> get properties => _propertiesRef.snapshots
       .map<List<DocumentSnapshot>>(
@@ -113,7 +115,7 @@ class Property extends Model {
         unitCount = snapshot['unitCount'] ?? 0,
         _unitsRef = snapshot.reference.getCollection('units'),
         documentReference = snapshot.reference,
-        super(snapshot: snapshot);
+        super(ref: snapshot.reference);
 
   Stream<List<Unit>> get units => _unitsRef.snapshots
       .map<List<DocumentSnapshot>>((QuerySnapshot snap) => snap.documents)
@@ -146,10 +148,13 @@ class Unit extends Model {
 
   Unit.fromSnapshot(DocumentSnapshot snapshot)
       : address = snapshot['address'],
-        super(snapshot: snapshot);
+        super(ref: snapshot.reference);
+
+  Unit.copy(Unit u, [String address]) : address = address ?? u.address, super(ref: u.ref);
 
   // TODO put this in abstract model
   Map<String, dynamic> get data => <String, dynamic>{'address': address};
+
 }
 
 class Tenant extends Model {
@@ -166,7 +171,7 @@ class Tenant extends Model {
       : firstName = snapshot['firstName'],
         lastName = snapshot['lastName'],
         displayName = snapshot['displayName'],
-        super(snapshot: snapshot);
+        super(ref: snapshot.reference);
 
   Tenant.fromMap(Map<String, dynamic> map)
       : firstName = map['firstName'],
@@ -193,7 +198,7 @@ class Lease extends Model {
         propertyUnit = snapshot['propertyUnit'],
         rent = snapshot['rent'],
         _tenants = snapshot['tenants'],
-        super(snapshot: snapshot);
+        super(ref: snapshot.reference);
 
   @override
   String toString() => '''

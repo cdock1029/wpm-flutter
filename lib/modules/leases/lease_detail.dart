@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:wpm/data/models.dart';
 import 'package:intl/intl.dart';
 
 final List<String> _items = <String>[

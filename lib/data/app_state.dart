@@ -5,8 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:wpm/data/models.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class _AppState extends InheritedWidget {
-  const _AppState({
+class AppState extends InheritedWidget {
+  const AppState({
     this.user,
     this.selectProperty,
     Property selectedProperty,
@@ -18,13 +18,11 @@ class _AppState extends InheritedWidget {
   final ValueChanged<Property> selectProperty;
   final Property _selectedProperty;
 
-  // TODO streams need to generate each time, so when read they yield values...
-  // TODO or can somehow use a Subject from rx dart.
   Stream<List<Property>> get propertiesStream => user.company.properties;
   Stream<Property> get selectedPropertyStream => _selectedProperty?.documentReference?.snapshots?.map<Property>((DocumentSnapshot snap) => Property.fromSnapshot(snap));
 
   @override
-  bool updateShouldNotify(_AppState oldWidget) {
+  bool updateShouldNotify(AppState oldWidget) {
     final bool userB = oldWidget.user != user;
     final bool selectedB =
         oldWidget.selectedPropertyStream != selectedPropertyStream;
@@ -48,8 +46,8 @@ class AppStateProvider extends StatefulWidget {
     this.child,
   });
 
-  static _AppState of(BuildContext context) =>
-      context.inheritFromWidgetOfExactType(_AppState);
+  static AppState of(BuildContext context) =>
+      context.inheritFromWidgetOfExactType(AppState);
 
   @override
   _AppStateProviderState createState() => new _AppStateProviderState();
@@ -90,7 +88,7 @@ class _AppStateProviderState extends State<AppStateProvider> {
   }
 
   @override
-  Widget build(BuildContext context) => _AppState(
+  Widget build(BuildContext context) => AppState(
         user: _user,
         selectedProperty: _selectedProperty,
         selectProperty: _onPropertySelected,

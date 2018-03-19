@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:wpm/data/models.dart';
-import 'package:wpm/app_state.dart';
-import 'package:wpm/units/unit.dart';
-import 'package:wpm/common/wpm_drawer.dart';
 
 class PropertyDetail extends StatelessWidget {
   const PropertyDetail();

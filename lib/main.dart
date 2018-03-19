@@ -1,17 +1,17 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:wpm/leases/lease_detail.dart';
-import 'package:wpm/properties/add_edit_property.dart';
-import 'package:wpm/content_shell.dart';
-import 'package:wpm/leases/lease_create.dart';
+import 'package:wpm/modules/company/company_dashboard.dart';
+import 'package:wpm/modules/leases/lease_detail.dart';
+import 'package:wpm/modules/properties/add_edit_property.dart';
+import 'package:wpm/modules/properties/property_dashboard.dart';
+import 'package:wpm/modules/leases/lease_create.dart';
 import 'package:wpm/data/models.dart';
-import 'package:wpm/app_state.dart';
+import 'package:wpm/data/app_state.dart';
 import 'package:wpm/auth/sign-in-page.dart';
-import 'package:wpm/tenants/tenant_add.dart';
-import 'package:wpm/tenants/tenant_list.dart';
+import 'package:wpm/modules/tenants/tenant_add.dart';
+import 'package:wpm/modules/tenants/tenant_list.dart';
 
 void main() => runApp(WPMApp());
 
@@ -33,20 +33,21 @@ class WPMAppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('building WPMAppView');
     final AppUser user = AppStateProvider.of(context).user;
-    print('WPMAppView user=[${user?.email}]');
     return user != null
         ? MaterialApp(
             title: user.company.name ?? '',
             theme: ThemeData(
               primarySwatch: Colors.deepPurple,
               accentColor: Colors.tealAccent,
-              // scaffoldBackgroundColor: Colors.grey[200],
               brightness: Brightness.dark,
             ),
-            home: ContentShell(),
+            home: CompanyDashboard(),
             // home: LeaseDetail(),
             routes: <String, WidgetBuilder>{
+                CompanyDashboard.routeName: (_) => CompanyDashboard(),
+                PropertyDashboard.routeName: (_) => PropertyDashboard(),
                 AddEditProperty.routeName: (_) => AddEditProperty(),
                 AddTenant.routeName: (_) => AddTenant(),
                 TenantList.routeName: (_) => TenantList(),
@@ -56,6 +57,7 @@ class WPMAppView extends StatelessWidget {
         : FutureBuilder<bool>(
             // prevent flash when user initialized to 'null' even though signed in.
             // not sure about 800 but somehow this works pretty good..
+            // ignore: always_specify_types
             future: Future.delayed(Duration(milliseconds: 800), () => true),
             builder: (
               BuildContext context,

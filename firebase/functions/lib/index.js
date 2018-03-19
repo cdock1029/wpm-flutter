@@ -240,29 +240,308 @@ exports.fixQbo = functions.firestore.document('qbo/{propertyId}').onUpdate((even
     console.log('no fixField');
     return null;
 }));
-// export const onUnitOrderUpdate = functions.firestore.document('properties/{propertyId}/units/{unitId}').onUpdate(async event => {
-//   const params = event.params;
-//   if (typeof params === 'undefined') {
-//     return null;
-//   }
-//   const newOrdering = event.data['ordering'];
-//   const prevOrdering = event.data.previous['ordering'];
-//   if (newOrdering === prevOrdering) {
-//     return;
-//   }
-//   const { propertyId, unitId } = params;
-//   // get the 2 items with same ordering..
-//   const orderedItemsQuery: Query = db.collection(`properties/${propertyId}/units`).where('ordering', '==', newOrdering);
-//   const result = await orderedItemsQuery.get();
-//   if (result.docs.length < 2) {
-//     console.log('units with ordering result < 2');
-//     return null;
-//   }
-//   const oldSnapArr = result.docs.filter(snap => snap.id !== unitId);
-//   if (oldSnapArr.length) {
-//     const oldDocSnap = oldSnapArr[0];
-//     return oldDocSnap.ref.update({ ordering: prevOrdering });
-//   }
-//   return null;
-// });
+var trxnType;
+(function (trxnType) {
+    trxnType["CHARGE"] = "CHARGE";
+    trxnType["PAYMENT"] = "PAYMENT";
+    trxnType["CREDIT"] = "CREDIT";
+})(trxnType || (trxnType = {}));
+var trxnSubType;
+(function (trxnSubType) {
+    trxnSubType["RENT"] = "RENT";
+    trxnSubType["LATE_FEE"] = "LATE_FEE";
+    trxnSubType["NSF_FEE"] = "NSF_FEE";
+})(trxnSubType || (trxnSubType = {}));
+function updatedBalance(currBalance = 0, trxnAmount, type) {
+    switch (type) {
+        case trxnType.CHARGE:
+            return currBalance + trxnAmount;
+        case trxnType.PAYMENT:
+        case trxnType.CREDIT:
+            return currBalance - trxnAmount;
+    }
+    throw new TypeError(`Error calculating balance. Unhandled transaction type=[${type}]`);
+}
+function shouldUpdateBalance(updated, previous) {
+    return updated.amount !== previous.amount || updated.type !== previous.type;
+}
+exports.onTransactionWrite = functions.firestore.document('companies/{companyId}/leases/{leaseId}/transactions/{transactionId}').onWrite((event) => __awaiter(this, void 0, void 0, function* () {
+    const params = event.params;
+    const transactionsCollectionRef = event.data.ref.parent;
+    const leaseRef = transactionsCollectionRef.parent;
+    console.log('handling transaction write params=', params);
+    if (!event.data.previous.exists) {
+        // creation
+        console.log('trxn creation');
+        const trxn = event.data.data();
+        return db.runTransaction((dbTrxn) => __awaiter(this, void 0, void 0, function* () {
+            if (leaseRef) {
+                const leaseData = (yield leaseRef.get()).data();
+                if (leaseData) {
+                    const bal = leaseData.balance;
+                    const newBal = updatedBalance(bal, trxn.amount, trxn.type);
+                    return dbTrxn.update(leaseRef, { balance: newBal });
+                }
+                else
+                    return 'leaseData null';
+            }
+            else
+                return 'leaseRef null';
+        }));
+    }
+    const previous = event.data.previous.data();
+    if (event.data.exists) {
+        // updating
+        const updated = event.data.data();
+        if (shouldUpdateBalance(updated, previous)) {
+            console.log('trxn updating');
+            return db.runTransaction((dbTrxn) => __awaiter(this, void 0, void 0, function* () {
+                if (leaseRef) {
+                    const leaseData = (yield leaseRef.get()).data();
+                    if (leaseData) {
+                        const bal = leaseData.balance;
+                        // reverse the old trxn..
+                        const undoOld = updatedBalance(bal, previous.amount * -1, previous.type);
+                        // apply the new..
+                        const newBal = updatedBalance(undoOld, updated.amount, updated.type);
+                        return dbTrxn.update(leaseRef, { balance: newBal });
+                    }
+                    else
+                        return 'leaseData null';
+                }
+                else
+                    return 'leaseRef null';
+            }));
+        }
+        return null;
+    }
+    // deleting
+    console.log('trxn deletion');
+    return db.runTransaction((dbTrxn) => __awaiter(this, void 0, void 0, function* () {
+        if (leaseRef) {
+            const leaseData = (yield leaseRef.get()).data();
+            if (leaseData) {
+                const bal = leaseData.balance || 0;
+                // reverse the old trxn value..
+                const newBal = updatedBalance(bal, previous.amount * -1, previous.type);
+                return dbTrxn.update(leaseRef, { balance: newBal });
+            }
+            else
+                return 'leaseData null';
+        }
+        else
+            return 'leaseRef null';
+    }));
+    // throw new Error(`Unacounted for state. leaseId=[${params.leaseId}], transactionId=[${params.transactionId}]`);
+}));
+/*
+export const onTransactionCreate = functions.firestore.document('companies/{companyId}/leases/{leaseId}/transactions/{transactionId}').onCreate(async event => {
+  const params = event.params as TrxnParams;
+  const transactionsCollectionRef: CollectionReference = event.data.ref.parent;
+
+  const leaseRef = transactionsCollectionRef.parent as DocumentReference;
+
+  // when created.. only have date and amount. Need to...
+  // - update global Balance
+  // - show/track effect on balance for each trxn
+  // - update pointers between trxns
+
+  const trxn: Transaction = event.data.data();
+  const trxnRef: DocumentReference = event.data.ref;
+  const trxnDate: Date = trxn.date;
+
+  // only 2 things that would effect balance
+  db.runTransaction(async dbTrxn => {
+    if (leaseRef) {
+      const leaseData = (await leaseRef.get()).data();
+      if (leaseData) {
+        const bal = leaseData.balance;
+        const newBal = updatedBalance(bal, trxn.amount, trxn.type);
+        dbTrxn.update(leaseRef, { balance: newBal });
+      }
+    }
+  }
+
+
+  // desc because we want the 'most recent' transaction to the left of this new one
+  const prevQuery = transactionsCollectionRef.where('date', '<', trxnDate).orderBy('date', 'desc').limit(1);
+
+  // asc beause we want the 'earliest'/'closest' trxn to right of this new one
+  const nextQuery = transactionsCollectionRef.where('date', '>', trxnDate).orderBy('date', 'asc').limit(1);
+
+  const queries = Promise.all([
+    prevQuery.get(),
+    nextQuery.get(),
+  ]);
+
+  const results = await queries;
+  const prevDocs = results[0].docs;
+  const nextDocs = results[1].docs;
+
+
+  // base case: this is first trxn, none exist before or after
+  if (!prevDocs.length && !nextDocs.length) {
+    // update global Balance and document balance
+    console.log('handling first trxn created');
+    db.runTransaction(async dbTrxn => {
+      // update local balance
+      dbTrxn.update(trxnRef, { localBalance: trxn.amount });
+    });
+  } else if (!prevDocs.length && nextDocs.length) {
+    db.runTransaction(async dbTrxn => {
+
+      // nothing before, but trxns after (inserted at beginning)
+      const next = nextDocs[0];
+      const nextData = next.data() as Transaction;
+
+      // making this first trxn, so no previous balance
+      const localBalance = updatedBalance(0, trxn.amount, trxn.type);
+
+      // update 2 pointers
+      dbTrxn.update(next.ref, { prevTrxn: params.transactionId });
+      dbTrxn.update(trxnRef, { nextTrxn: next.id, localBalance });
+      // TODO how to handle this in onUpdate...***
+    });
+
+  } else if (!nextDocs.length) {
+    // previous docs exist, but not nextDoc. "this" is the newest..
+    console.log('appending latest trxn');
+    db.runTransaction(async dbTrxn => {
+      // get the previous trxn
+      // update next pointer to point to "this" new trxn id
+      const prev = prevDocs[0];
+      // update local balances
+      console.log(`prev Trxn data=[${JSON.stringify(prev.data())}]`);
+      const prevData = prev.data() as Transaction;
+
+      const prevBalance = prevData.localBalance;
+      const localBalance = updatedBalance(prevBalance, trxn.amount, trxn.type);
+
+      dbTrxn.update(prev.ref, { nextTrxn: params.transactionId });
+      dbTrxn.update(trxnRef, { prevTrxn: prev.id, localBalance });
+    });
+  } else {
+    // prev and next exist..
+    // ** update pointers both directions **
+    console.log('inserting trxn between others');
+    db.runTransaction(async dbTrxn => {
+      const prev = prevDocs[0];
+      const next = nextDocs[0];
+
+      dbTrxn.update(prev.ref, { nextTrxn: params.transactionId });
+      dbTrxn.update(next.ref, { prevTrxn: params.transactionId });
+
+      // get lease
+      // const lease = await leaseRef.get();
+      // const data = lease.data() as DocumentData;
+      // const currBalance: number = data.balance;
+
+      // update local balances
+      const prevData = prev.data() as Transaction;
+      const prevBalance = prevData.localBalance;
+      const localBalance = updatedBalance(prevBalance, trxn.amount, trxn.type);
+      dbTrxn.update(trxnRef, { localBalance });
+    });
+  }
+
+});
+
+// 1. "dependencies" have changed, either:
+// - 'previous transaction' ptr on left
+// - trxn Amount
+// - trxn type
+function haveDependenciesChanged(trans: Transaction, transOldData: Transaction, transPrevLeftId: string | undefined): boolean {
+  if (transPrevLeftId !== transOldData.prevTrxn && trans.localBalance === transOldData.localBalance) return true;
+  if (trans.amount !== transOldData.amount) return true;
+  if (trans.type !== transOldData.type) return true;
+
+  return false;
+}
+
+// TODO.. started down the wrong path above. trxnId's only exist on updates.
+export const onTransactionUpdate = functions.firestore.document('companies/{companyId}/leases/{leaseId}/transactions/{transactionId}').onUpdate(async event => {
+  // 1. is prevTrxn pointer updated but not my balance ?
+  // then a trxn was added to my left "before me".. my dependencies changed
+  // 2. or if trxn amount was changed.
+  // --> recalculate my balance
+
+  // is my balance updated ?
+  // do i have a 'next pointer' ?
+  // 1. yes --> then recalculate "nextTrxn" balance
+  // 2. no --> I'm the "last transaction", update global balance.
+
+  const params = event.params as TrxnParams;
+  const transactionsCollectionRef: CollectionReference = event.data.ref.parent;
+  const leaseRef = transactionsCollectionRef.parent;
+
+  const trxn: Transaction = event.data.data();
+  const oldTrxnData: Transaction = event.data.previous.data();
+
+  const trxnRef: DocumentReference = event.data.ref;
+
+  // only 2 things that would effect balance
+  if (trxn.type !== oldTrxnData.type || trxn.amount !== oldTrxnData.amount) {
+    db.runTransaction(async dbTrxn => {
+      if (leaseRef) {
+        const leaseData = (await leaseRef.get()).data();
+        if (leaseData) {
+          const bal = leaseData.balance;
+          const newBal = updatedBalance(bal, trxn.amount, trxn.type);
+          dbTrxn.update(leaseRef, { balance: newBal });
+        }
+      }
+    });
+  }
+
+
+
+
+  // TODO: this should handle case where 'previous trxn' was deleted also
+  if (haveDependenciesChanged(trxn, oldTrxnData, trxn.prevTrxn)) {
+    // need to recalculate my 'local balance'
+    db.runTransaction(async dbTrxn => {
+
+      // check 'left ptr' to get starting point for calc.
+      let localBalanceInput: number = 0;
+      if (trxn.prevTrxn) {
+        const data = (await transactionsCollectionRef.doc(trxn.prevTrxn).get()).data();
+        localBalanceInput = (data && (data as Transaction).localBalance) || 0;
+      }
+      const localBalance = updatedBalance(localBalanceInput, trxn.amount, trxn.type);
+      dbTrxn.update(trxnRef, { localBalance });
+      return Promise.resolve('local balance recalculated');
+    });
+  } else if (trxn.localBalance !== oldTrxnData.localBalance) {
+    // 2. This happens after above block... local balance has changed --> cascade to my "right/next" trxn
+    if (trxn.nextTrxn) {
+
+      // update my next pntr's balance
+      db.runTransaction(async dbTrxn => {
+        const nextPtrDoc = await transactionsCollectionRef.doc(trxn.nextTrxn).get();
+        const nextPtrTrxn = nextPtrDoc.data() as Transaction;
+
+        // input value is 'this' trxn.localBalance that was just updated
+        const localBalance = updatedBalance(trxn.localBalance, nextPtrTrxn.amount, nextPtrTrxn.type);
+        dbTrxn.update(nextPtrDoc.ref, { localBalance });
+        return Promise.resolve('after trxn balance updated, it updated nextPtr balance');
+      });
+
+    } else {
+
+      // OR, if I'm "last", update Global lease Balance
+      // TODO : should we specify 'when' this should run or just fall through to it ?
+      db.runTransaction(async dbTrxn => {
+        if (leaseRef) {
+          dbTrxn.update(leaseRef, { balance: trxn.localBalance });
+          return Promise.resolve('updated global balance from last trxn localBalance');
+        } else {
+          const { companyId, leaseId } = params;
+          throw new Error(`leaseRef was null while updating global Balance. companyId=[${companyId}], leaseId=[${leaseId}]`);
+        }
+      });
+    }
+  }
+
+});
+*/
 //# sourceMappingURL=index.js.map
