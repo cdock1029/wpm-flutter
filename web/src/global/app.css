@@ -47,3 +47,7 @@ ion-page {
 
   contain: layout size style;
 }
+
+ion-scroll {
+  padding: 1em;
+}

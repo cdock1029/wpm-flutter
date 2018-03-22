@@ -29,8 +29,39 @@ import {
 } from '@stencil/router';
 
 import {
+  AppProfile as AppProfile
+} from './components/app-profile/app-profile';
+
+declare global {
+  interface HTMLAppProfileElement extends AppProfile, HTMLStencilElement {
+  }
+  var HTMLAppProfileElement: {
+    prototype: HTMLAppProfileElement;
+    new (): HTMLAppProfileElement;
+  };
+  interface HTMLElementTagNameMap {
+    "app-profile": HTMLAppProfileElement;
+  }
+  interface ElementTagNameMap {
+    "app-profile": HTMLAppProfileElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "app-profile": JSXElements.AppProfileAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface AppProfileAttributes extends HTMLAttributes {
+      match?: MatchResults;
+      
+    }
+  }
+}
+
+
+import {
   AppHome as AppHome
-} from './components/app-home/app-home';
+} from './components/app/app-home';
 
 declare global {
   interface HTMLAppHomeElement extends AppHome, HTMLStencilElement {
@@ -60,8 +91,70 @@ declare global {
 
 
 import {
+  MyApp as MyApp
+} from './components/app/my-app';
+
+declare global {
+  interface HTMLMyAppElement extends MyApp, HTMLStencilElement {
+  }
+  var HTMLMyAppElement: {
+    prototype: HTMLMyAppElement;
+    new (): HTMLMyAppElement;
+  };
+  interface HTMLElementTagNameMap {
+    "my-app": HTMLMyAppElement;
+  }
+  interface ElementTagNameMap {
+    "my-app": HTMLMyAppElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "my-app": JSXElements.MyAppAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface MyAppAttributes extends HTMLAttributes {
+      
+      
+    }
+  }
+}
+
+
+import {
+  PageTabs as PageTabs
+} from './components/app/page-tabs';
+
+declare global {
+  interface HTMLPageTabsElement extends PageTabs, HTMLStencilElement {
+  }
+  var HTMLPageTabsElement: {
+    prototype: HTMLPageTabsElement;
+    new (): HTMLPageTabsElement;
+  };
+  interface HTMLElementTagNameMap {
+    "page-tabs": HTMLPageTabsElement;
+  }
+  interface ElementTagNameMap {
+    "page-tabs": HTMLPageTabsElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "page-tabs": JSXElements.PageTabsAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface PageTabsAttributes extends HTMLAttributes {
+      
+      
+    }
+  }
+}
+
+
+import {
   AppLogin as AppLogin
-} from './components/app-login/app-login';
+} from './components/auth/app-login';
 
 declare global {
   interface HTMLAppLoginElement extends AppLogin, HTMLStencilElement {
@@ -91,30 +184,61 @@ declare global {
 
 
 import {
-  AppProfile as AppProfile
-} from './components/app-profile/app-profile';
+  LogoutButton as LogoutButton
+} from './components/auth/logout-button';
 
 declare global {
-  interface HTMLAppProfileElement extends AppProfile, HTMLStencilElement {
+  interface HTMLLogoutButtonElement extends LogoutButton, HTMLStencilElement {
   }
-  var HTMLAppProfileElement: {
-    prototype: HTMLAppProfileElement;
-    new (): HTMLAppProfileElement;
+  var HTMLLogoutButtonElement: {
+    prototype: HTMLLogoutButtonElement;
+    new (): HTMLLogoutButtonElement;
   };
   interface HTMLElementTagNameMap {
-    "app-profile": HTMLAppProfileElement;
+    "logout-button": HTMLLogoutButtonElement;
   }
   interface ElementTagNameMap {
-    "app-profile": HTMLAppProfileElement;
+    "logout-button": HTMLLogoutButtonElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "app-profile": JSXElements.AppProfileAttributes;
+      "logout-button": JSXElements.LogoutButtonAttributes;
     }
   }
   namespace JSXElements {
-    export interface AppProfileAttributes extends HTMLAttributes {
-      match?: MatchResults;
+    export interface LogoutButtonAttributes extends HTMLAttributes {
+      
+      
+    }
+  }
+}
+
+
+import {
+  LoadingSpinner as LoadingSpinner
+} from './components/common/loading-spinner';
+
+declare global {
+  interface HTMLLoadingSpinnerElement extends LoadingSpinner, HTMLStencilElement {
+  }
+  var HTMLLoadingSpinnerElement: {
+    prototype: HTMLLoadingSpinnerElement;
+    new (): HTMLLoadingSpinnerElement;
+  };
+  interface HTMLElementTagNameMap {
+    "loading-spinner": HTMLLoadingSpinnerElement;
+  }
+  interface ElementTagNameMap {
+    "loading-spinner": HTMLLoadingSpinnerElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "loading-spinner": JSXElements.LoadingSpinnerAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface LoadingSpinnerAttributes extends HTMLAttributes {
+      
       
     }
   }
@@ -154,91 +278,29 @@ declare global {
 
 
 import {
-  LogoutButton as LogoutButton
-} from './components/logout-button/logout-button';
+  PageTabs as AddProperty
+} from './components/properties/add-property';
 
 declare global {
-  interface HTMLLogoutButtonElement extends LogoutButton, HTMLStencilElement {
+  interface HTMLAddPropertyElement extends AddProperty, HTMLStencilElement {
   }
-  var HTMLLogoutButtonElement: {
-    prototype: HTMLLogoutButtonElement;
-    new (): HTMLLogoutButtonElement;
+  var HTMLAddPropertyElement: {
+    prototype: HTMLAddPropertyElement;
+    new (): HTMLAddPropertyElement;
   };
   interface HTMLElementTagNameMap {
-    "logout-button": HTMLLogoutButtonElement;
+    "add-property": HTMLAddPropertyElement;
   }
   interface ElementTagNameMap {
-    "logout-button": HTMLLogoutButtonElement;
+    "add-property": HTMLAddPropertyElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "logout-button": JSXElements.LogoutButtonAttributes;
+      "add-property": JSXElements.AddPropertyAttributes;
     }
   }
   namespace JSXElements {
-    export interface LogoutButtonAttributes extends HTMLAttributes {
-      
-      
-    }
-  }
-}
-
-
-import {
-  MyApp as MyApp
-} from './components/my-app/my-app';
-
-declare global {
-  interface HTMLMyAppElement extends MyApp, HTMLStencilElement {
-  }
-  var HTMLMyAppElement: {
-    prototype: HTMLMyAppElement;
-    new (): HTMLMyAppElement;
-  };
-  interface HTMLElementTagNameMap {
-    "my-app": HTMLMyAppElement;
-  }
-  interface ElementTagNameMap {
-    "my-app": HTMLMyAppElement;
-  }
-  namespace JSX {
-    interface IntrinsicElements {
-      "my-app": JSXElements.MyAppAttributes;
-    }
-  }
-  namespace JSXElements {
-    export interface MyAppAttributes extends HTMLAttributes {
-      
-      
-    }
-  }
-}
-
-
-import {
-  PageTabs as PageTabs
-} from './components/page-tabs/page-tabs';
-
-declare global {
-  interface HTMLPageTabsElement extends PageTabs, HTMLStencilElement {
-  }
-  var HTMLPageTabsElement: {
-    prototype: HTMLPageTabsElement;
-    new (): HTMLPageTabsElement;
-  };
-  interface HTMLElementTagNameMap {
-    "page-tabs": HTMLPageTabsElement;
-  }
-  interface ElementTagNameMap {
-    "page-tabs": HTMLPageTabsElement;
-  }
-  namespace JSX {
-    interface IntrinsicElements {
-      "page-tabs": JSXElements.PageTabsAttributes;
-    }
-  }
-  namespace JSXElements {
-    export interface PageTabsAttributes extends HTMLAttributes {
+    export interface AddPropertyAttributes extends HTMLAttributes {
       
       
     }
@@ -248,7 +310,7 @@ declare global {
 
 import {
   PropertiesPage as PropertiesPage
-} from './components/properties-page/properties-page';
+} from './components/properties/properties-page';
 
 declare global {
   interface HTMLPropertiesPageElement extends PropertiesPage, HTMLStencilElement {
@@ -271,7 +333,38 @@ declare global {
   namespace JSXElements {
     export interface PropertiesPageAttributes extends HTMLAttributes {
       
-      onLogOut?: (event: CustomEvent) => void;
+      
+    }
+  }
+}
+
+
+import {
+  PropertyDetail as PropertyDetail
+} from './components/properties/property-detail';
+
+declare global {
+  interface HTMLPropertyDetailElement extends PropertyDetail, HTMLStencilElement {
+  }
+  var HTMLPropertyDetailElement: {
+    prototype: HTMLPropertyDetailElement;
+    new (): HTMLPropertyDetailElement;
+  };
+  interface HTMLElementTagNameMap {
+    "property-detail": HTMLPropertyDetailElement;
+  }
+  interface ElementTagNameMap {
+    "property-detail": HTMLPropertyDetailElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "property-detail": JSXElements.PropertyDetailAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface PropertyDetailAttributes extends HTMLAttributes {
+      propertyId?: string;
+      
     }
   }
 }
@@ -372,7 +465,7 @@ declare global {
 
 import {
   TenantsPage as TenantsPage
-} from './components/tenants-page/tenants-page';
+} from './components/tenants/tenants-page';
 
 declare global {
   interface HTMLTenantsPageElement extends TenantsPage, HTMLStencilElement {
@@ -395,6 +488,38 @@ declare global {
   namespace JSXElements {
     export interface TenantsPageAttributes extends HTMLAttributes {
       
+      
+    }
+  }
+}
+
+
+import {
+  UnitDetail as UnitDetail
+} from './components/units/units-detail';
+
+declare global {
+  interface HTMLUnitDetailElement extends UnitDetail, HTMLStencilElement {
+  }
+  var HTMLUnitDetailElement: {
+    prototype: HTMLUnitDetailElement;
+    new (): HTMLUnitDetailElement;
+  };
+  interface HTMLElementTagNameMap {
+    "unit-detail": HTMLUnitDetailElement;
+  }
+  interface ElementTagNameMap {
+    "unit-detail": HTMLUnitDetailElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "unit-detail": JSXElements.UnitDetailAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface UnitDetailAttributes extends HTMLAttributes {
+      propertyId?: string;
+      unitId?: string;
       
     }
   }

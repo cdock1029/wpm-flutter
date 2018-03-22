@@ -19,7 +19,9 @@ export class PageTabs {
     return [
       <ion-tabs>
         <ion-tab title="Home" icon="home" component="app-home" />
-        <ion-tab title="Properties" icon="planet" component="properties-page" />
+        <ion-tab title="Properties" icon="planet" name="tab-properties">
+          <ion-nav />
+        </ion-tab>
         <ion-tab title="Tenants" icon="people" component="tenants-page" />
       </ion-tabs>
     ]

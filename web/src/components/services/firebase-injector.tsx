@@ -1,17 +1,17 @@
 import { Component, Method } from '@stencil/core'
 import { firebase } from '@firebase/app'
-import '@firebase/database'
+import '@firebase/firestore'
 import '@firebase/auth'
 
 import { FirebaseNamespace } from '@firebase/app-types'
 
 const config = {
-  apiKey: 'AIzaSyBVQa5KM6YoqwyTE2O8nESPi_hS676S0RM',
-  authDomain: 'don-dob.firebaseapp.com',
-  databaseURL: 'https://don-dob.firebaseio.com',
-  projectId: 'don-dob',
-  storageBucket: 'don-dob.appspot.com',
-  messagingSenderId: '178447522597'
+  apiKey: 'AIzaSyDlWm0Ftq30kFD4LnPJ5sf9Mz8vyrcjIfM',
+  authDomain: 'wpmfirebaseproject.firebaseapp.com',
+  databaseURL: 'https://wpmfirebaseproject.firebaseio.com',
+  projectId: 'wpmfirebaseproject',
+  storageBucket: 'wpmfirebaseproject.appspot.com',
+  messagingSenderId: '1038799458160'
 }
 
 export interface IFirebaseInjector {
@@ -22,7 +22,7 @@ export interface IFirebaseInjector {
 export class FirebaseInjector implements IFirebaseInjector {
   initFirebase() {
     if (!firebase.apps.length) {
-      console.log('initializeApp')
+      // console.log('initializeApp')
       firebase.initializeApp(config)
     } else {
       console.log('already initialized, ', firebase)

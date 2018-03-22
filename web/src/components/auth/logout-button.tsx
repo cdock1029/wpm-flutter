@@ -18,14 +18,12 @@ export class LogoutButton {
   logOutHandler = async () => {
     console.log('logouthandler click')
     const auth = await this.authInjector.create()
-    // const navCtrl: NavControllerBase = await (this.nav as any).componentOnReady()
+    const navCtrl: NavControllerBase = await (this
+      .nav as any).componentOnReady()
 
     await auth.signOut()
 
-    /*
-    navCtrl.setRoot(
-      'app-login'
-    ) */
+    navCtrl.setRoot('app-login')
   }
 
   render() {

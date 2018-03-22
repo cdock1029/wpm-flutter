@@ -30,19 +30,16 @@ export class AppLogin {
   }
 
   onLogin = async e => {
-    console.log('onLogin')
     e.preventDefault()
     try {
       const user = await this.auth.signInWithEmailAndPassword(
         this.username,
         this.password
       )
-      console.log(user)
 
       if (user) {
         const navCtrl: NavControllerBase = await (this
           .nav as any).componentOnReady()
-
         navCtrl.setRoot('page-tabs')
       }
     } catch (e) {
