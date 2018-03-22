@@ -96,7 +96,6 @@ export class MyApp {
           <ion-route url="/tenants" component="tenants-page" />
         </ion-route>,
         <ion-route-redirect from="/" to="/home" />,
-        <ion-route url="/spinner" component="loading-spinner" />
       </ion-router>
     )
   }
@@ -180,10 +179,5 @@ const appPages = [
     title: 'Tenants',
     url: '/tenants',
     icon: 'people'
-  },
-  {
-    title: 'spinner',
-    url: '/spinner',
-    icon: 'refresh'
   }
 ]

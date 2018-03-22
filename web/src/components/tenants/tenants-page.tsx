@@ -3,6 +3,8 @@ import '@stencil/core'
 
 import { Component } from '@stencil/core'
 
+/* <logout-button /> */
+
 @Component({
   tag: 'tenants-page'
 })
@@ -17,7 +19,7 @@ export class TenantsPage {
             </ion-buttons>
             <ion-title>Tenants</ion-title>
             <ion-buttons slot="end">
-              <logout-button />
+              <property-popover-button />
             </ion-buttons>
           </ion-toolbar>
         </ion-header>

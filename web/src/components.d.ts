@@ -21,42 +21,7 @@ declare global {
 }
 
 import 'ionicons';
-import '@stencil/router';
 import '@ionic/core';
-
-import {
-  MatchResults,
-} from '@stencil/router';
-
-import {
-  AppProfile as AppProfile
-} from './components/app-profile/app-profile';
-
-declare global {
-  interface HTMLAppProfileElement extends AppProfile, HTMLStencilElement {
-  }
-  var HTMLAppProfileElement: {
-    prototype: HTMLAppProfileElement;
-    new (): HTMLAppProfileElement;
-  };
-  interface HTMLElementTagNameMap {
-    "app-profile": HTMLAppProfileElement;
-  }
-  interface ElementTagNameMap {
-    "app-profile": HTMLAppProfileElement;
-  }
-  namespace JSX {
-    interface IntrinsicElements {
-      "app-profile": JSXElements.AppProfileAttributes;
-    }
-  }
-  namespace JSXElements {
-    export interface AppProfileAttributes extends HTMLAttributes {
-      match?: MatchResults;
-      
-    }
-  }
-}
 
 
 import {
@@ -71,14 +36,14 @@ declare global {
     new (): HTMLAppHomeElement;
   };
   interface HTMLElementTagNameMap {
-    "app-home": HTMLAppHomeElement;
+    'app-home': HTMLAppHomeElement;
   }
   interface ElementTagNameMap {
-    "app-home": HTMLAppHomeElement;
+    'app-home': HTMLAppHomeElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "app-home": JSXElements.AppHomeAttributes;
+      'app-home': JSXElements.AppHomeAttributes;
     }
   }
   namespace JSXElements {
@@ -102,14 +67,14 @@ declare global {
     new (): HTMLMyAppElement;
   };
   interface HTMLElementTagNameMap {
-    "my-app": HTMLMyAppElement;
+    'my-app': HTMLMyAppElement;
   }
   interface ElementTagNameMap {
-    "my-app": HTMLMyAppElement;
+    'my-app': HTMLMyAppElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "my-app": JSXElements.MyAppAttributes;
+      'my-app': JSXElements.MyAppAttributes;
     }
   }
   namespace JSXElements {
@@ -133,14 +98,14 @@ declare global {
     new (): HTMLPageTabsElement;
   };
   interface HTMLElementTagNameMap {
-    "page-tabs": HTMLPageTabsElement;
+    'page-tabs': HTMLPageTabsElement;
   }
   interface ElementTagNameMap {
-    "page-tabs": HTMLPageTabsElement;
+    'page-tabs': HTMLPageTabsElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "page-tabs": JSXElements.PageTabsAttributes;
+      'page-tabs': JSXElements.PageTabsAttributes;
     }
   }
   namespace JSXElements {
@@ -164,14 +129,14 @@ declare global {
     new (): HTMLAppLoginElement;
   };
   interface HTMLElementTagNameMap {
-    "app-login": HTMLAppLoginElement;
+    'app-login': HTMLAppLoginElement;
   }
   interface ElementTagNameMap {
-    "app-login": HTMLAppLoginElement;
+    'app-login': HTMLAppLoginElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "app-login": JSXElements.AppLoginAttributes;
+      'app-login': JSXElements.AppLoginAttributes;
     }
   }
   namespace JSXElements {
@@ -195,14 +160,14 @@ declare global {
     new (): HTMLLogoutButtonElement;
   };
   interface HTMLElementTagNameMap {
-    "logout-button": HTMLLogoutButtonElement;
+    'logout-button': HTMLLogoutButtonElement;
   }
   interface ElementTagNameMap {
-    "logout-button": HTMLLogoutButtonElement;
+    'logout-button': HTMLLogoutButtonElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "logout-button": JSXElements.LogoutButtonAttributes;
+      'logout-button': JSXElements.LogoutButtonAttributes;
     }
   }
   namespace JSXElements {
@@ -226,18 +191,80 @@ declare global {
     new (): HTMLLoadingSpinnerElement;
   };
   interface HTMLElementTagNameMap {
-    "loading-spinner": HTMLLoadingSpinnerElement;
+    'loading-spinner': HTMLLoadingSpinnerElement;
   }
   interface ElementTagNameMap {
-    "loading-spinner": HTMLLoadingSpinnerElement;
+    'loading-spinner': HTMLLoadingSpinnerElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "loading-spinner": JSXElements.LoadingSpinnerAttributes;
+      'loading-spinner': JSXElements.LoadingSpinnerAttributes;
     }
   }
   namespace JSXElements {
     export interface LoadingSpinnerAttributes extends HTMLAttributes {
+      
+      
+    }
+  }
+}
+
+
+import {
+  PropertyPopoverButton as PropertyPopoverButton
+} from './components/common/property-popover-button';
+
+declare global {
+  interface HTMLPropertyPopoverButtonElement extends PropertyPopoverButton, HTMLStencilElement {
+  }
+  var HTMLPropertyPopoverButtonElement: {
+    prototype: HTMLPropertyPopoverButtonElement;
+    new (): HTMLPropertyPopoverButtonElement;
+  };
+  interface HTMLElementTagNameMap {
+    'property-popover-button': HTMLPropertyPopoverButtonElement;
+  }
+  interface ElementTagNameMap {
+    'property-popover-button': HTMLPropertyPopoverButtonElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'property-popover-button': JSXElements.PropertyPopoverButtonAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface PropertyPopoverButtonAttributes extends HTMLAttributes {
+      
+      
+    }
+  }
+}
+
+
+import {
+  PropertyPopover as PropertyPopover
+} from './components/common/property-popover';
+
+declare global {
+  interface HTMLPropertyPopoverElement extends PropertyPopover, HTMLStencilElement {
+  }
+  var HTMLPropertyPopoverElement: {
+    prototype: HTMLPropertyPopoverElement;
+    new (): HTMLPropertyPopoverElement;
+  };
+  interface HTMLElementTagNameMap {
+    'property-popover': HTMLPropertyPopoverElement;
+  }
+  interface ElementTagNameMap {
+    'property-popover': HTMLPropertyPopoverElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'property-popover': JSXElements.PropertyPopoverAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface PropertyPopoverAttributes extends HTMLAttributes {
       
       
     }
@@ -257,21 +284,21 @@ declare global {
     new (): HTMLLazyImgElement;
   };
   interface HTMLElementTagNameMap {
-    "lazy-img": HTMLLazyImgElement;
+    'lazy-img': HTMLLazyImgElement;
   }
   interface ElementTagNameMap {
-    "lazy-img": HTMLLazyImgElement;
+    'lazy-img': HTMLLazyImgElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "lazy-img": JSXElements.LazyImgAttributes;
+      'lazy-img': JSXElements.LazyImgAttributes;
     }
   }
   namespace JSXElements {
     export interface LazyImgAttributes extends HTMLAttributes {
-      alt?: string;
-      src?: string;
-      onLazyImgloaded?: (event: CustomEvent<HTMLImageElement>) => void;
+      'alt'?: string;
+      'src'?: string;
+      'onLazyImgloaded'?: (event: CustomEvent<HTMLImageElement>) => void;
     }
   }
 }
@@ -289,14 +316,14 @@ declare global {
     new (): HTMLAddPropertyElement;
   };
   interface HTMLElementTagNameMap {
-    "add-property": HTMLAddPropertyElement;
+    'add-property': HTMLAddPropertyElement;
   }
   interface ElementTagNameMap {
-    "add-property": HTMLAddPropertyElement;
+    'add-property': HTMLAddPropertyElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "add-property": JSXElements.AddPropertyAttributes;
+      'add-property': JSXElements.AddPropertyAttributes;
     }
   }
   namespace JSXElements {
@@ -320,14 +347,14 @@ declare global {
     new (): HTMLPropertiesPageElement;
   };
   interface HTMLElementTagNameMap {
-    "properties-page": HTMLPropertiesPageElement;
+    'properties-page': HTMLPropertiesPageElement;
   }
   interface ElementTagNameMap {
-    "properties-page": HTMLPropertiesPageElement;
+    'properties-page': HTMLPropertiesPageElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "properties-page": JSXElements.PropertiesPageAttributes;
+      'properties-page': JSXElements.PropertiesPageAttributes;
     }
   }
   namespace JSXElements {
@@ -351,19 +378,19 @@ declare global {
     new (): HTMLPropertyDetailElement;
   };
   interface HTMLElementTagNameMap {
-    "property-detail": HTMLPropertyDetailElement;
+    'property-detail': HTMLPropertyDetailElement;
   }
   interface ElementTagNameMap {
-    "property-detail": HTMLPropertyDetailElement;
+    'property-detail': HTMLPropertyDetailElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "property-detail": JSXElements.PropertyDetailAttributes;
+      'property-detail': JSXElements.PropertyDetailAttributes;
     }
   }
   namespace JSXElements {
     export interface PropertyDetailAttributes extends HTMLAttributes {
-      propertyId?: string;
+      'propertyId'?: string;
       
     }
   }
@@ -382,14 +409,14 @@ declare global {
     new (): HTMLAuthInjectorElement;
   };
   interface HTMLElementTagNameMap {
-    "auth-injector": HTMLAuthInjectorElement;
+    'auth-injector': HTMLAuthInjectorElement;
   }
   interface ElementTagNameMap {
-    "auth-injector": HTMLAuthInjectorElement;
+    'auth-injector': HTMLAuthInjectorElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "auth-injector": JSXElements.AuthInjectorAttributes;
+      'auth-injector': JSXElements.AuthInjectorAttributes;
     }
   }
   namespace JSXElements {
@@ -413,14 +440,14 @@ declare global {
     new (): HTMLDatabaseInjectorElement;
   };
   interface HTMLElementTagNameMap {
-    "database-injector": HTMLDatabaseInjectorElement;
+    'database-injector': HTMLDatabaseInjectorElement;
   }
   interface ElementTagNameMap {
-    "database-injector": HTMLDatabaseInjectorElement;
+    'database-injector': HTMLDatabaseInjectorElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "database-injector": JSXElements.DatabaseInjectorAttributes;
+      'database-injector': JSXElements.DatabaseInjectorAttributes;
     }
   }
   namespace JSXElements {
@@ -444,14 +471,14 @@ declare global {
     new (): HTMLFirebaseInjectorElement;
   };
   interface HTMLElementTagNameMap {
-    "firebase-injector": HTMLFirebaseInjectorElement;
+    'firebase-injector': HTMLFirebaseInjectorElement;
   }
   interface ElementTagNameMap {
-    "firebase-injector": HTMLFirebaseInjectorElement;
+    'firebase-injector': HTMLFirebaseInjectorElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "firebase-injector": JSXElements.FirebaseInjectorAttributes;
+      'firebase-injector': JSXElements.FirebaseInjectorAttributes;
     }
   }
   namespace JSXElements {
@@ -475,14 +502,14 @@ declare global {
     new (): HTMLTenantsPageElement;
   };
   interface HTMLElementTagNameMap {
-    "tenants-page": HTMLTenantsPageElement;
+    'tenants-page': HTMLTenantsPageElement;
   }
   interface ElementTagNameMap {
-    "tenants-page": HTMLTenantsPageElement;
+    'tenants-page': HTMLTenantsPageElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "tenants-page": JSXElements.TenantsPageAttributes;
+      'tenants-page': JSXElements.TenantsPageAttributes;
     }
   }
   namespace JSXElements {
@@ -506,20 +533,20 @@ declare global {
     new (): HTMLUnitDetailElement;
   };
   interface HTMLElementTagNameMap {
-    "unit-detail": HTMLUnitDetailElement;
+    'unit-detail': HTMLUnitDetailElement;
   }
   interface ElementTagNameMap {
-    "unit-detail": HTMLUnitDetailElement;
+    'unit-detail': HTMLUnitDetailElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "unit-detail": JSXElements.UnitDetailAttributes;
+      'unit-detail': JSXElements.UnitDetailAttributes;
     }
   }
   namespace JSXElements {
     export interface UnitDetailAttributes extends HTMLAttributes {
-      propertyId?: string;
-      unitId?: string;
+      'propertyId'?: string;
+      'unitId'?: string;
       
     }
   }

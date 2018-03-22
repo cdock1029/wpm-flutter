@@ -18,21 +18,20 @@
   },
   "dependencies": {
     "@firebase/app": "^0.1.10",
-    "@firebase/auth": "^0.3.4",
+    "@firebase/auth": "^0.4.0",
     "@firebase/firestore": "^0.3.6",
-    "@ionic/core": "^0.1.4-9",
-    "@stencil/core": "^0.7.3",
-    "@stencil/router": "^0.0.25"
+    "@ionic/core": "^0.1.5-1",
+    "@stencil/core": "^0.7.6"
   },
   "devDependencies": {
     "@firebase/app-types": "^0.1.2",
-    "@firebase/auth-types": "^0.1.2",
+    "@firebase/auth-types": "^0.2.0",
     "@firebase/firestore-types": "^0.2.2",
     "@stencil/dev-server": "latest",
     "@stencil/sass": "latest",
     "@stencil/utils": "latest",
-    "@types/jest": "^21.1.1",
-    "jest": "^21.2.1",
+    "@types/jest": "^22.2.1",
+    "jest": "^22.4.3",
     "prettier": "^1.11.1",
     "tslint": "^5.9.1",
     "tslint-ionic-rules": "0.0.14"
