@@ -51,3 +51,11 @@ ion-page {
 ion-scroll {
   padding: 1em;
 }
+.modal {
+  ion-scroll {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}

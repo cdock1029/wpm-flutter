@@ -211,6 +211,68 @@ declare global {
 
 
 import {
+  MorePopoverButton as MorePopoverButton
+} from './components/common/more-popover-button';
+
+declare global {
+  interface HTMLMorePopoverButtonElement extends MorePopoverButton, HTMLStencilElement {
+  }
+  var HTMLMorePopoverButtonElement: {
+    prototype: HTMLMorePopoverButtonElement;
+    new (): HTMLMorePopoverButtonElement;
+  };
+  interface HTMLElementTagNameMap {
+    'more-popover-button': HTMLMorePopoverButtonElement;
+  }
+  interface ElementTagNameMap {
+    'more-popover-button': HTMLMorePopoverButtonElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'more-popover-button': JSXElements.MorePopoverButtonAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface MorePopoverButtonAttributes extends HTMLAttributes {
+      
+      
+    }
+  }
+}
+
+
+import {
+  MorePopover as MorePopover
+} from './components/common/more-popover';
+
+declare global {
+  interface HTMLMorePopoverElement extends MorePopover, HTMLStencilElement {
+  }
+  var HTMLMorePopoverElement: {
+    prototype: HTMLMorePopoverElement;
+    new (): HTMLMorePopoverElement;
+  };
+  interface HTMLElementTagNameMap {
+    'more-popover': HTMLMorePopoverElement;
+  }
+  interface ElementTagNameMap {
+    'more-popover': HTMLMorePopoverElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'more-popover': JSXElements.MorePopoverAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface MorePopoverAttributes extends HTMLAttributes {
+      
+      
+    }
+  }
+}
+
+
+import {
   PropertyPopoverButton as PropertyPopoverButton
 } from './components/common/property-popover-button';
 
@@ -305,7 +367,7 @@ declare global {
 
 
 import {
-  PageTabs as AddProperty
+  AddProperty as AddProperty
 } from './components/properties/add-property';
 
 declare global {
@@ -398,6 +460,37 @@ declare global {
 
 
 import {
+  PageTabs as PropertyTabs
+} from './components/properties/property-tabs';
+
+declare global {
+  interface HTMLPropertyTabsElement extends PropertyTabs, HTMLStencilElement {
+  }
+  var HTMLPropertyTabsElement: {
+    prototype: HTMLPropertyTabsElement;
+    new (): HTMLPropertyTabsElement;
+  };
+  interface HTMLElementTagNameMap {
+    'property-tabs': HTMLPropertyTabsElement;
+  }
+  interface ElementTagNameMap {
+    'property-tabs': HTMLPropertyTabsElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'property-tabs': JSXElements.PropertyTabsAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface PropertyTabsAttributes extends HTMLAttributes {
+      
+      
+    }
+  }
+}
+
+
+import {
   AuthInjector as AuthInjector
 } from './components/services/auth-injector';
 
@@ -483,6 +576,37 @@ declare global {
   }
   namespace JSXElements {
     export interface FirebaseInjectorAttributes extends HTMLAttributes {
+      
+      
+    }
+  }
+}
+
+
+import {
+  AddTenant as AddTenant
+} from './components/tenants/add-tenant';
+
+declare global {
+  interface HTMLAddTenantElement extends AddTenant, HTMLStencilElement {
+  }
+  var HTMLAddTenantElement: {
+    prototype: HTMLAddTenantElement;
+    new (): HTMLAddTenantElement;
+  };
+  interface HTMLElementTagNameMap {
+    'add-tenant': HTMLAddTenantElement;
+  }
+  interface ElementTagNameMap {
+    'add-tenant': HTMLAddTenantElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'add-tenant': JSXElements.AddTenantAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface AddTenantAttributes extends HTMLAttributes {
       
       
     }

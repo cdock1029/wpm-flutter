@@ -7,7 +7,7 @@ import { Property } from '../services/database-injector'
 @Component({
   tag: 'add-property'
 })
-export class PageTabs {
+export class AddProperty {
   @Element() el: any
 
   @State() name = { value: null, valid: false }

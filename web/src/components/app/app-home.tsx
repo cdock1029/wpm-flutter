@@ -15,7 +15,7 @@ export class AppHome {
             </ion-buttons>
             <ion-title>WPM</ion-title>
             <ion-buttons slot="end">
-              <logout-button />
+              <more-popover-button />
             </ion-buttons>
           </ion-toolbar>
         </ion-header>

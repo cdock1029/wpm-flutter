@@ -61,7 +61,7 @@ export class PropertiesPage {
             </ion-buttons>
             <ion-title>Properties</ion-title>
             <ion-buttons slot="end">
-              <logout-button />
+              <more-popover-button />
             </ion-buttons>
           </ion-toolbar>
         </ion-header>

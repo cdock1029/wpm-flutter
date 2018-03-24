@@ -2,7 +2,7 @@ import '@ionic/core'
 import '@stencil/core'
 
 import { Component, Prop } from '@stencil/core'
-import { AuthInjector } from '../services/auth-injector'
+import { IAuthInjector } from '../services/auth-injector'
 import { NavControllerBase } from '@ionic/core'
 
 @Component({
@@ -10,7 +10,7 @@ import { NavControllerBase } from '@ionic/core'
 })
 export class LogoutButton {
   @Prop({ connect: 'auth-injector' })
-  authInjector: AuthInjector
+  authInjector: IAuthInjector
 
   @Prop({ connect: 'ion-nav' })
   nav: NavControllerBase

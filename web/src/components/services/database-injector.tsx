@@ -9,7 +9,9 @@ export interface IDatabase {
   // properties(options: { once: boolean; (data: any): any }): Promise<Property[]>
   properties(cb: (props: Property[]) => void): Promise<() => void>
   units(propertyId: string, cb: (units: Unit[]) => void): Promise<() => void>
+  tenants(cb: (tens: Tenant[]) => void): Promise<() => void>
   addProperty(data: Property): Promise<DocumentReference>
+  addTenant(data: Tenant): Promise<DocumentReference>
   property(id: string): Promise<Property>
   unit(ids: { propertyId: string; unitId: string }): Promise<Unit>
 }
@@ -116,8 +118,40 @@ class Database implements IDatabase {
       .collection('properties')
       .doc()
 
-    await ref.set(data)
+    await ref.set({ name: data.name.trim() })
     return ref
+  }
+  addTenant = async (data: Tenant): Promise<DocumentReference> => {
+    const cid = await this.getActiveCompany()
+    const ref = this.fs
+      .doc(`companies/${cid}`)
+      .collection('tenants')
+      .doc()
+
+    const { firstName, lastName } = data
+    await ref.set({ firstName: firstName.trim(), lastName: lastName.trim() })
+    return ref
+  }
+
+  tenants = async (cb): Promise<() => void> => {
+    const companyId = await this.getActiveCompany()
+    const ref = await this.fs
+      .collection('companies')
+      .doc(companyId)
+      .collection('tenants')
+      .orderBy('lastName')
+
+    return ref.onSnapshot(snapshot => {
+      const tens: Tenant[] = snapshot.docs.map(doc => {
+        const data = doc.data()
+        return {
+          id: doc.id,
+          firstName: data.firstName,
+          lastName: data.lastName
+        }
+      })
+      cb(tens)
+    })
   }
 }
 
@@ -161,4 +195,9 @@ export interface Property extends Model {
 
 export interface Unit extends Model {
   address: string
+}
+
+export interface Tenant extends Model {
+  firstName: string
+  lastName: string
 }

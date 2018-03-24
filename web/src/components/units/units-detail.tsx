@@ -74,7 +74,7 @@ export class UnitDetail {
               {propName && unitAddr && `${propName} / ${unitAddr}`}
             </ion-title>
             <ion-buttons slot="end">
-              <logout-button />
+              <more-popover-button />
             </ion-buttons>
           </ion-toolbar>
         </ion-header>

@@ -81,20 +81,23 @@ export class MyApp {
       <ion-router useHash={false}>
         <ion-route url="/login" component="app-login" />,
         <ion-route-redirect from="*" to={!this.user.data ? '/login' : null} />
-        <ion-route component="page-tabs">
-          <ion-route url="/home" component="app-home" />
-
+        <ion-route url="/home" component="app-home" />
+        <ion-route url="/properties" component="properties-page" />>
+        <ion-route url="/properties/:propertyId" component="property-detail" />
+        <ion-route
+          url="/properties/:propertyId/units/:unitId"
+          component="unit-detail"
+        />
+        <ion-route url="/tenants" component="tenants-page" />
+        {/* <ion-route component="page-tabs">
           <ion-route url="/properties" component="tab-properties">
-            <ion-route component="properties-page" />
             <ion-route url="/:propertyId" component="property-detail" />
             <ion-route
               url="/:propertyId/units/:unitId"
               component="unit-detail"
             />
           </ion-route>
-
-          <ion-route url="/tenants" component="tenants-page" />
-        </ion-route>,
+        </ion-route> */}
         <ion-route-redirect from="/" to="/home" />,
       </ion-router>
     )
