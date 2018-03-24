@@ -8,16 +8,16 @@ class UnitGridView extends StatelessWidget {
   final List<Unit> units;
 
   @override
-  Widget build(BuildContext context) => GridView.count(
+  Widget build(BuildContext context) => new GridView.count(
         crossAxisCount: 2,
         childAspectRatio: 3.0,
         children: units
-            .map((Unit u) => Card(
-                  child: FlatButton(
+            .map((Unit u) => new Card(
+                  child: new FlatButton(
                     onPressed: () {
                       print('unit pressed');
                     },
-                    child: Text(u.address,
+                    child: new Text(u.address,
                         style: Theme.of(context).textTheme.title),
                   ),
                 ))

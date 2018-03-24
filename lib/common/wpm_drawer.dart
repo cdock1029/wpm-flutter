@@ -15,7 +15,7 @@ class WPMDrawerLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Stream<List<Property>> propertiesStream = AppStateProvider.of(context).propertiesStream;
-    return StreamBuilder<List<Property>>(
+    return new StreamBuilder<List<Property>>(
       stream: propertiesStream,
       initialData: <Property>[],
       builder: (
@@ -23,9 +23,9 @@ class WPMDrawerLoader extends StatelessWidget {
         AsyncSnapshot<List<Property>> snapshot,
       ) {
         if (snapshot.hasData) {
-          return _WPMDrawerView(snapshot.data);
+          return new _WPMDrawerView(snapshot.data);
         } else {
-          return Text('why no data?');
+          return new Text('why no data?');
         }
       },
     );
@@ -64,7 +64,7 @@ class _WPMDrawerViewState extends State<_WPMDrawerView> {
     final Stream<Property> selectedPropertyStream = appState.selectedPropertyStream;
     final ValueChanged<Property> selectProperty = appState.selectProperty;
 
-    return StreamBuilder<Property>(
+    return new StreamBuilder<Property>(
       stream: selectedPropertyStream,
       builder: (
         BuildContext context,
@@ -81,10 +81,10 @@ class _WPMDrawerViewState extends State<_WPMDrawerView> {
                 itemBuilder: (BuildContext context, int index) {
                   /* DRAWER HEADER index: 0 */
                   if (index == 0) {
-                    return DrawerHeader(user: user, toggleShowSignOut: _toggleShowSignOut);
+                    return new DrawerHeader(user: user, toggleShowSignOut: _toggleShowSignOut);
                   }
                   if (_showSignOut) {
-                    return SignOutTile();
+                    return new SignOutTile();
                   }
                   /* TENANTS Route */
                   if (index == 1) {
@@ -137,7 +137,7 @@ class _WPMDrawerViewState extends State<_WPMDrawerView> {
                       Navigator.pop(context);
                       // see Drawer kBaseSettleDuration (246 ms), wait for close animation
                       // ignore: strong_mode_implicit_dynamic_type, always_specify_types
-                      await Future.delayed(Duration(milliseconds: 255));
+                      await Future.delayed(new Duration(milliseconds: 255));
                       selectProperty(property);
                     },
                     onLongPress: () async {
@@ -192,7 +192,7 @@ class DrawerHeader extends StatelessWidget {
   final VoidCallback toggleShowSignOut;
 
   @override
-  Widget build(BuildContext context) => UserAccountsDrawerHeader(
+  Widget build(BuildContext context) => new UserAccountsDrawerHeader(
       accountName: new Text(user.displayName),
       accountEmail: new Text(user.email),
       currentAccountPicture: new CircleAvatar(

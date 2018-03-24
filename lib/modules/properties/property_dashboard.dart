@@ -18,46 +18,46 @@ class PropertyDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     final Stream<Property> selectedStream =
         AppStateProvider.of(context).selectedPropertyStream;
-    return StreamBuilder<Property>(
+    return new StreamBuilder<Property>(
             stream: selectedStream,
             builder: (
               BuildContext context,
               AsyncSnapshot<Property> streamSnap,
             ) {
               if (streamSnap.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
+                return new CircularProgressIndicator();
               }
               final Property selected = streamSnap.data;
               final List<Widget> children = <Widget>[
-                UnitsTab(property: selected),
-                TenantsTab(selected),
+                new UnitsTab(property: selected),
+                new TenantsTab(selected),
               ];
-              return DefaultTabController(
+              return new DefaultTabController(
                 length: 2,
-                child: Scaffold(
-                  key: Key('property_detail'),
-                  appBar: AppBar(
-                    title: Text(selected.name),
+                child: new Scaffold(
+                  key: new Key('property_detail'),
+                  appBar: new AppBar(
+                    title: new Text(selected.name),
                     actions: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.edit),
+                      new IconButton(
+                        icon: new Icon(Icons.edit),
                         onPressed: () {
                           Navigator.push(
                               context,
-                              MaterialPageRoute<Null>(
+                              new MaterialPageRoute<Null>(
                                 builder: (BuildContext context) =>
-                                    AddEditProperty(property: selected),
+                                    new AddEditProperty(property: selected),
                               ));
                         },
                       ),
                     ],
-                    bottom: TabBar(
+                    bottom: new TabBar(
                       isScrollable: false,
-                      tabs: <Widget>[Tab(text: 'UNITS'), Tab(text: 'TENANTS')],
+                      tabs: <Widget>[new Tab(text: 'UNITS'), new Tab(text: 'TENANTS')],
                     ),
                   ),
-                  body: TabBarView(children: children),
-                  drawer: WPMDrawerLoader(),
+                  body: new TabBarView(children: children),
+                  drawer: new WPMDrawerLoader(),
                 ),
               );
             },
@@ -71,5 +71,5 @@ class TenantsTab extends StatelessWidget {
   final Property property;
 
   @override
-  Widget build(BuildContext context) => Center(child: Text('tenants todo'));
+  Widget build(BuildContext context) => new Center(child: new Text('tenants todo'));
 }

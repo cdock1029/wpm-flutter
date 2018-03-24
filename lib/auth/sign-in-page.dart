@@ -50,10 +50,10 @@ class _SignInPageState extends State<SignInPage> {
           appBar: new AppBar(
             title: const Text('Sign In'),
           ),
-          body: Center(
+          body: new Center(
             child: isLoading
-                ? CircularProgressIndicator()
-                : LoginWidget(onPressed: _testSignInWithGoogle),
+                ? new CircularProgressIndicator()
+                : new LoginWidget(onPressed: _testSignInWithGoogle),
           ),
         ),
       );
@@ -65,7 +65,7 @@ class LoginWidget extends StatelessWidget {
   const LoginWidget({this.onPressed});
 
   @override
-  Widget build(BuildContext context) => RaisedButton(
+  Widget build(BuildContext context) => new RaisedButton(
         child: const Text('GOOGLE SIGN-IN'),
         onPressed: onPressed,
         textTheme: ButtonTheme.of(context).textTheme,

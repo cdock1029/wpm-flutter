@@ -18,7 +18,7 @@ class _AddUnitDialogState extends State<AddUnitDialog> {
   @override
   void initState() {
     super.initState();
-    _textController = TextEditingController(text: widget.unit?.address);
+    _textController = new TextEditingController(text: widget.unit?.address);
     _titleText = widget.unit != null ? 'Update unit' : 'Add unit';
   }
 
@@ -36,36 +36,36 @@ class _AddUnitDialogState extends State<AddUnitDialog> {
         unitToSave = Unit.copy(widget.unit, address);
       } else {
         // create new
-        unitToSave = Unit(address: address);
+        unitToSave = new Unit(address: address);
       }
       Navigator.pop(context, unitToSave);
     }
   }
 
   @override
-  Widget build(BuildContext context) => SystemPadding(
-        child: AlertDialog(
-          title: Text(_titleText),
-          content: TextField(
+  Widget build(BuildContext context) => new SystemPadding(
+        child: new AlertDialog(
+          title: new Text(_titleText),
+          content: new TextField(
             autofocus: false,
             controller: _textController,
             autocorrect: false,
             onSubmitted: (String value) {
               _save(address: value, context: context);
             },
-            decoration: InputDecoration(
+            decoration: new InputDecoration(
               hintText: 'Unit address',
             ),
           ),
           actions: <Widget>[
-            FlatButton(
-              child: Text('CANCEL'),
+            new FlatButton(
+              child: new Text('CANCEL'),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            FlatButton(
-              child: Text('SAVE'),
+            new FlatButton(
+              child: new Text('SAVE'),
               onPressed: () {
                 _save(address: _textController.text, context: context);
               },

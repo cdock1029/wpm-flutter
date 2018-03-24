@@ -18,18 +18,18 @@ class CompanyDashboard extends StatelessWidget {
         AppStateProvider.of(context).selectedPropertyStream;
 
     return selectedStream != null
-        ? PropertyDashboard()
-        : Scaffold(
-            key: Key('company_dashboard'),
-            appBar: AppBar(
-              title: Text(AppStateProvider.of(context).user.company.name),
+        ? new PropertyDashboard()
+        : new Scaffold(
+            key: new Key('company_dashboard'),
+            appBar: new AppBar(
+              title: new Text(AppStateProvider.of(context).user.company.name),
             ),
-            drawer: WPMDrawerLoader(),
-            body: Center(
-              child: Card(
-                child: Padding(
-                  padding: EdgeInsets.all(32.0),
-                  child: Text(
+            drawer: new WPMDrawerLoader(),
+            body: new Center(
+              child: new Card(
+                child: new Padding(
+                  padding: new EdgeInsets.all(32.0),
+                  child: new Text(
                     'Select Property',
                     style: Theme.of(context).textTheme.headline,
                   ),

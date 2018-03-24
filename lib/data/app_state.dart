@@ -88,7 +88,7 @@ class _AppStateProviderState extends State<AppStateProvider> {
   }
 
   @override
-  Widget build(BuildContext context) => AppState(
+  Widget build(BuildContext context) => new AppState(
         user: _user,
         selectedProperty: _selectedProperty,
         selectProperty: _onPropertySelected,
