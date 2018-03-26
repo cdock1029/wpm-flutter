@@ -17,6 +17,7 @@ dependencies:
   # rxdart:
   stream_transform:
   flutter_stream_friends:
+  rxdart:
 
 dev_dependencies:
   flutter_test:

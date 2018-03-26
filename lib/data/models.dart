@@ -55,6 +55,7 @@ class AppUser extends Model {
         .document(activeCompany)
         .get();
     final Company company = Company(companySnap);
+    print('** Company: dateCreate=${company.dateCreated.toIso8601String()}');
 
     return AppUser._(firebaseUser: user, userSnap: userSnap, company: company);
   }
@@ -83,11 +84,13 @@ class AppUser extends Model {
 
 class Company extends Model {
   final String name;
+  final DateTime dateCreated;
   final CollectionReference _propertiesRef;
   final CollectionReference _tenantsRef;
 
   Company(DocumentSnapshot snapshot)
       : name = snapshot['name'],
+        dateCreated = snapshot['dateCreated'],
         _propertiesRef = snapshot.reference.getCollection('properties'),
         _tenantsRef = snapshot.reference.getCollection('tenants'),
         super(ref: snapshot.reference);
@@ -181,9 +184,8 @@ class Tenant extends Model {
 }
 
 class Lease extends Model {
-  final String propertyRef;
-  final String unitRef;
-  final String unitPath;
+  final DocumentReference propertyRef;
+  final DocumentReference unitRef;
   final int rent;
   List<Tenant> tenants;
   Map<String, dynamic> _tenants;
@@ -194,7 +196,6 @@ class Lease extends Model {
   Lease.fromSnapshot(DocumentSnapshot snapshot)
       : propertyRef = snapshot['propertRef'],
         unitRef = snapshot['unitRef'],
-        unitPath = snapshot['unitPath'],
         propertyUnit = snapshot['propertyUnit'],
         rent = snapshot['rent'],
         _tenants = snapshot['tenants'],

@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:wpm/data/app_state.dart';
 
 class SignInPage extends StatefulWidget {
   final GoogleSignIn _googleSignIn = new GoogleSignIn();
@@ -13,14 +14,14 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  bool isLoading = false;
+  bool signInLoading = false;
 
-  Future<Null> _testSignInWithGoogle() async {
+  Future<Null> _signInWithGoogle() async {
     print('Sign In Page starting Google Sign In..');
     GoogleSignInAccount googleUser;
 
     setState(() {
-      isLoading = true;
+      signInLoading = true;
     });
     try {
       googleUser = await widget._googleSignIn.signIn();
@@ -40,23 +41,25 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   @override
-  Widget build(BuildContext context) => new MaterialApp(
-        theme: new ThemeData(
-          primarySwatch: Colors.deepOrange,
-          accentColor: Colors.blueAccent,
-          brightness: Brightness.dark,
-        ),
-        home: new Scaffold(
-          appBar: new AppBar(
-            title: const Text('Sign In'),
-          ),
-          body: new Center(
-            child: isLoading
-                ? new CircularProgressIndicator()
-                : new LoginWidget(onPressed: _testSignInWithGoogle),
-          ),
-        ),
-      );
+  Widget build(BuildContext context) {
+    final bool userLoaded = AppStateProvider.of(context).userLoaded;
+    Widget bodyChild;
+    if (!userLoaded || signInLoading) {
+      bodyChild = new CircularProgressIndicator();
+    } else {
+      bodyChild = new LoginWidget(onPressed: _signInWithGoogle,);
+    }
+    return new MaterialApp(
+      theme: new ThemeData(
+        primarySwatch: Colors.deepOrange,
+        accentColor: Colors.blueAccent,
+        brightness: Brightness.dark,
+      ),
+      home: new Scaffold(
+        body: new Center(child: bodyChild,),
+      ),
+    );
+  }
 }
 
 class LoginWidget extends StatelessWidget {

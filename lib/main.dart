@@ -15,12 +15,7 @@ import 'package:wpm/modules/tenants/tenant_list.dart';
 
 void main() => runApp(WPMApp());
 
-class WPMApp extends StatefulWidget {
-  @override
-  WPMAppState createState() => new WPMAppState();
-}
-
-class WPMAppState extends State<WPMApp> {
+class WPMApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => new AppStateProvider(
         userStream: FirebaseAuth.instance.onAuthStateChanged,
@@ -34,7 +29,15 @@ class WPMAppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('building WPMAppView');
-    final AppUser user = AppStateProvider.of(context).user;
+    final AppState state = AppStateProvider.of(context);
+    final AppUser user = state.user;
+    /*
+    final bool userLoaded = state.userLoaded;
+    if (!userLoaded) {
+      return new Center(
+        child: new CircularProgressIndicator(),
+      );
+    } */
     return user != null
         ? MaterialApp(
             title: user.company.name ?? '',
@@ -54,15 +57,6 @@ class WPMAppView extends StatelessWidget {
                 CreateLease.routeName: (_) => new CreateLease(),
                 LeaseDetail.routeName: (_) => new LeaseDetail(),
               })
-        : new FutureBuilder<bool>(
-            // prevent flash when user initialized to 'null' even though signed in.
-            // not sure about 800 but somehow this works pretty good..
-            // ignore: always_specify_types
-            future: Future.delayed(new Duration(milliseconds: 800), () => true),
-            builder: (
-              BuildContext context,
-              AsyncSnapshot<bool> snapshot,
-            ) => snapshot.hasData ? new SignInPage() : new Center(child: new CircularProgressIndicator()),
-          );
+        : new SignInPage();
   }
 }
