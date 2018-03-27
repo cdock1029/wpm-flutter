@@ -13,15 +13,15 @@
     "serve": "stencil-dev-server",
     "start": "npm run dev",
     "test": "jest --no-cache",
-    "test.watch": "jest --watch --no-cache",
-    "prettier": "prettier src/**/*.{js,tsx,ts,css,scss} --write"
+    "test.watch": "jest --watch --no-cache"
   },
   "dependencies": {
     "@firebase/app": "^0.1.10",
     "@firebase/auth": "^0.4.0",
     "@firebase/firestore": "^0.3.6",
-    "@ionic/core": "^0.1.5-2",
-    "@stencil/core": "0.7.8"
+    "@ionic/core": "0.1.5-2",
+    "@stencil/core": "0.7.8",
+    "@stencil/router": "latest"
   },
   "devDependencies": {
     "@firebase/app-types": "^0.1.2",
@@ -58,9 +58,5 @@
       "json",
       "jsx"
     ]
-  },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true
   }
 }

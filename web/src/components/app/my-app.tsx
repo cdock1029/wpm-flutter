@@ -1,5 +1,6 @@
 import '@ionic/core'
 import '@stencil/core'
+
 import { Component, Prop, Listen, State } from '@stencil/core'
 import {
   NavControllerBase,

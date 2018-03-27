@@ -1,6 +1,3 @@
-import '@ionic/core'
-import '@stencil/core'
-
 import { Component, Prop } from '@stencil/core'
 import { IAuthInjector } from '../services/auth-injector'
 import { NavControllerBase } from '@ionic/core'

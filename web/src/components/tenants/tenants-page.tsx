@@ -1,6 +1,3 @@
-import '@ionic/core'
-import '@stencil/core'
-
 import { Component, Listen, Prop, State } from '@stencil/core'
 import {
   IDatabaseInjector,

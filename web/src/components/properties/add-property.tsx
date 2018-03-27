@@ -1,6 +1,3 @@
-import '@ionic/core'
-import '@stencil/core'
-
 import { Component, Element, State } from '@stencil/core'
 import { Property } from '../services/database-injector'
 
