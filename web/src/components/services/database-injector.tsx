@@ -1,9 +1,9 @@
-import { Component, Method, Prop } from '@stencil/core'
-import { IFirebaseInjector } from './firebase-injector'
+import { Component, Method } from '@stencil/core'
+// import { IFirebaseInjector } from './firebase-injector'
 
 import { FirebaseFirestore, DocumentReference } from '@firebase/firestore-types'
 import { FirebaseAuth } from '@firebase/auth-types'
-import { IAuthInjector } from './auth-injector'
+// import { IAuthInjector } from './auth-injector'
 
 export interface IDatabase {
   // properties(options: { once: boolean; (data: any): any }): Promise<Property[]>
@@ -16,19 +16,16 @@ export interface IDatabase {
   unit(ids: { propertyId: string; unitId: string }): Promise<Unit>
 }
 
+declare var firebase: any
+
 class Database implements IDatabase {
   private fs: FirebaseFirestore
   private auth: FirebaseAuth
 
   constructor() {
+    this.fs = firebase.firestore()
+    this.auth = firebase.auth()
     console.log('Database constructor time=', new Date().toLocaleTimeString())
-  }
-
-  setFirestore(fs: FirebaseFirestore) {
-    this.fs = fs
-  }
-  setAuth(auth: FirebaseAuth) {
-    this.auth = auth
   }
 
   private getActiveCompany = async (): Promise<string> => {
@@ -161,23 +158,7 @@ export interface IDatabaseInjector {
 
 @Component({ tag: 'database-injector' })
 export class DatabaseInjector implements IDatabaseInjector {
-  @Prop({ connect: 'firebase-injector' })
-  fbInjector: IFirebaseInjector
-
-  @Prop({ connect: 'auth-injector' })
-  authInjector: IAuthInjector
-
   private static db = new Database()
-
-  async componentWillLoad() {
-    const [auth, fsI] = await Promise.all([
-      this.authInjector.create(),
-      this.fbInjector.create()
-    ])
-
-    DatabaseInjector.db.setFirestore(fsI.firestore())
-    DatabaseInjector.db.setAuth(auth)
-  }
 
   @Method()
   create(): Promise<IDatabase> {

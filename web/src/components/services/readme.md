@@ -1,8 +1,13 @@
-# my-app
+# auth-injector
 
 
 
 <!-- Auto Generated Below -->
+
+
+## Methods
+
+#### create()
 
 
 

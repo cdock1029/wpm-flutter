@@ -1,22 +1,8 @@
-# app-profile
+# app-login
 
 
 
 <!-- Auto Generated Below -->
-
-
-## Properties
-
-#### name
-
-string
-
-
-## Attributes
-
-#### name
-
-string
 
 
 

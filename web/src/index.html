@@ -16,6 +16,26 @@
   <meta http-equiv="x-ua-compatible" content="IE=Edge">
 
   <link href="/build/app.css" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.11.0/firebase-firestore.js"></script>
+
+  <script>
+    const config = {
+      apiKey: 'AIzaSyDlWm0Ftq30kFD4LnPJ5sf9Mz8vyrcjIfM',
+      authDomain: 'wpmfirebaseproject.firebaseapp.com',
+      databaseURL: 'https://wpmfirebaseproject.firebaseio.com',
+      projectId: 'wpmfirebaseproject',
+      storageBucket: 'wpmfirebaseproject.appspot.com',
+      messagingSenderId: '1038799458160'
+    }
+    if (!firebase.apps.length) {
+      console.log('initializeApp')
+      firebase.initializeApp(config)
+    } else {
+      console.log('already initialized, ', firebase)
+    }
+  </script>
+
   <script src="/build/app.js"></script>
 
   <link rel="apple-touch-icon" href="/assets/icon/icon.png">
