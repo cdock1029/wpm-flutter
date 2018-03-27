@@ -30,14 +30,8 @@ import {
   EventEmitter,
 } from '@stencil/core';
 import {
-  FirebaseAuth,
-} from '@firebase/auth-types';
-import {
   IDatabase,
 } from './components/services/database-injector';
-import {
-  FirebaseNamespace,
-} from '@firebase/app-types';
 
 declare global {
   interface HTMLAppHomeElement extends HTMLStencilElement {
@@ -448,33 +442,6 @@ declare global {
 
 
 declare global {
-  interface HTMLAuthInjectorElement extends HTMLStencilElement {
-    'create': () => Promise<FirebaseAuth>;
-  }
-  var HTMLAuthInjectorElement: {
-    prototype: HTMLAuthInjectorElement;
-    new (): HTMLAuthInjectorElement;
-  };
-  interface HTMLElementTagNameMap {
-    'auth-injector': HTMLAuthInjectorElement;
-  }
-  interface ElementTagNameMap {
-    'auth-injector': HTMLAuthInjectorElement;
-  }
-  namespace JSX {
-    interface IntrinsicElements {
-      'auth-injector': JSXElements.AuthInjectorAttributes;
-    }
-  }
-  namespace JSXElements {
-    export interface AuthInjectorAttributes extends HTMLAttributes {
-
-    }
-  }
-}
-
-
-declare global {
   interface HTMLDatabaseInjectorElement extends HTMLStencilElement {
     'create': () => Promise<IDatabase>;
   }
@@ -495,33 +462,6 @@ declare global {
   }
   namespace JSXElements {
     export interface DatabaseInjectorAttributes extends HTMLAttributes {
-
-    }
-  }
-}
-
-
-declare global {
-  interface HTMLFirebaseInjectorElement extends HTMLStencilElement {
-    'create': () => Promise<FirebaseNamespace>;
-  }
-  var HTMLFirebaseInjectorElement: {
-    prototype: HTMLFirebaseInjectorElement;
-    new (): HTMLFirebaseInjectorElement;
-  };
-  interface HTMLElementTagNameMap {
-    'firebase-injector': HTMLFirebaseInjectorElement;
-  }
-  interface ElementTagNameMap {
-    'firebase-injector': HTMLFirebaseInjectorElement;
-  }
-  namespace JSX {
-    interface IntrinsicElements {
-      'firebase-injector': JSXElements.FirebaseInjectorAttributes;
-    }
-  }
-  namespace JSXElements {
-    export interface FirebaseInjectorAttributes extends HTMLAttributes {
 
     }
   }

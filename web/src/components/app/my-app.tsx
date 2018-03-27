@@ -7,8 +7,10 @@ import {
   ToastController,
   LoadingController
 } from '@ionic/core'
-import { AuthInjector } from '../services/auth-injector'
+import { FirebaseNamespace } from '@firebase/app-types'
 import { User } from '@firebase/auth-types'
+
+declare const firebase: FirebaseNamespace
 
 @Component({
   tag: 'my-app',
@@ -17,9 +19,6 @@ import { User } from '@firebase/auth-types'
 export class MyApp {
   @Prop({ connect: 'ion-toast-controller' })
   toastCtrl: ToastController
-
-  @Prop({ connect: 'auth-injector' })
-  authInjector: AuthInjector
 
   @Prop({ connect: 'ion-nav' })
   nav: NavControllerBase
@@ -55,8 +54,8 @@ export class MyApp {
     await this.loadingEl.present()
   }
 
-  async componentDidLoad() {
-    const auth = await this.authInjector.create()
+  componentDidLoad() {
+    const auth = firebase.auth()
     console.log('my-app componentWillLoad')
     this.unsub = auth.onAuthStateChanged(this.authStateChanged)
 

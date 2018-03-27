@@ -1,9 +1,7 @@
 import { Component, Method } from '@stencil/core'
-// import { IFirebaseInjector } from './firebase-injector'
 
 import { FirebaseFirestore, DocumentReference } from '@firebase/firestore-types'
 import { FirebaseAuth } from '@firebase/auth-types'
-// import { IAuthInjector } from './auth-injector'
 
 export interface IDatabase {
   // properties(options: { once: boolean; (data: any): any }): Promise<Property[]>
@@ -19,14 +17,8 @@ export interface IDatabase {
 declare var firebase: any
 
 class Database implements IDatabase {
-  private fs: FirebaseFirestore
-  private auth: FirebaseAuth
-
-  constructor() {
-    this.fs = firebase.firestore()
-    this.auth = firebase.auth()
-    console.log('Database constructor time=', new Date().toLocaleTimeString())
-  }
+  private fs: FirebaseFirestore = firebase.firestore()
+  private auth: FirebaseAuth = firebase.auth()
 
   private getActiveCompany = async (): Promise<string> => {
     const uid = this.auth.currentUser.uid

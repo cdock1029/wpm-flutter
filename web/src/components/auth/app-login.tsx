@@ -1,14 +1,12 @@
 import { Component, Prop, State } from '@stencil/core'
 
-import { FirebaseAuth } from '@firebase/auth-types'
 import { NavControllerBase } from '@ionic/core'
-import { AuthInjector } from '../services/auth-injector'
+
+import { FirebaseNamespace } from '@firebase/app-types'
+declare const firebase: FirebaseNamespace
 
 @Component({ tag: 'app-login', styleUrl: 'app-login.scss' })
 export class AppLogin {
-  @Prop({ connect: 'auth-injector' })
-  authInjector: AuthInjector
-
   @Prop({ connect: 'ion-nav' })
   nav: NavControllerBase
 
@@ -16,11 +14,7 @@ export class AppLogin {
   @State() password = ''
   @State() error = ''
 
-  private auth: FirebaseAuth
-
-  async componentWillLoad() {
-    this.auth = await this.authInjector.create()
-  }
+  private auth = firebase.auth()
 
   handleUsername = e => {
     this.username = e.target.value

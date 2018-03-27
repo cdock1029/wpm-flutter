@@ -1,20 +1,19 @@
 import { Component, Prop } from '@stencil/core'
-import { IAuthInjector } from '../services/auth-injector'
 import { NavControllerBase } from '@ionic/core'
+import { FirebaseNamespace } from '@firebase/app-types'
+
+declare var firebase: FirebaseNamespace
 
 @Component({
   tag: 'logout-button'
 })
 export class LogoutButton {
-  @Prop({ connect: 'auth-injector' })
-  authInjector: IAuthInjector
-
   @Prop({ connect: 'ion-nav' })
   nav: NavControllerBase
 
   logOutHandler = async () => {
     console.log('logouthandler click')
-    const auth = await this.authInjector.create()
+    const auth = firebase.auth()
     const navCtrl: NavControllerBase = await (this
       .nav as any).componentOnReady()
 

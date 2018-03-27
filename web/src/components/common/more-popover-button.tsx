@@ -1,6 +1,8 @@
 import { Component, Prop } from '@stencil/core'
-import { IAuthInjector } from '../services/auth-injector'
 import { PopoverController, NavControllerBase } from '@ionic/core'
+import { FirebaseNamespace } from '@firebase/app-types'
+
+declare var firebase: FirebaseNamespace
 
 @Component({
   tag: 'more-popover-button'
@@ -8,9 +10,6 @@ import { PopoverController, NavControllerBase } from '@ionic/core'
 export class MorePopoverButton {
   @Prop({ connect: 'ion-popover-controller' })
   popoverCtrl: PopoverController
-
-  @Prop({ connect: 'auth-injector' })
-  authInjector: IAuthInjector
 
   @Prop({ connect: 'ion-nav' })
   nav: NavControllerBase
@@ -27,7 +26,7 @@ export class MorePopoverButton {
     console.log('dismissed DATA=', data)
 
     if (data) {
-      const auth = await this.authInjector.create()
+      const auth = firebase.auth()
       const navCtrl: NavControllerBase = await (this
         .nav as any).componentOnReady()
 
