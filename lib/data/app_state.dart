@@ -5,81 +5,66 @@ import 'package:flutter/widgets.dart';
 import 'package:wpm/data/models.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class AppState extends InheritedWidget {
-  const AppState({
-    this.user,
-    this.userLoaded,
-    this.selectProperty,
-    Property selectedProperty,
+class _InheritedState extends InheritedWidget {
+  const _InheritedState({
+    this.data,
     Widget child,
-  })
-      : _selectedProperty = selectedProperty,
-        super(child: child);
+    Key key,
+  }) : super(child: child, key: key);
 
-  final AppUser user;
-  final bool userLoaded;
-  final ValueChanged<Property> selectProperty;
-  final Property _selectedProperty;
-
-  Stream<List<Property>> get propertiesStream => user.company.properties;
-
-  Stream<Property> get selectedPropertyStream =>
-      _selectedProperty?.documentReference?.snapshots?.map<Property>((
-          DocumentSnapshot snap) => Property.fromSnapshot(snap));
-
-  Stream<List<Lease>> get leasesForSelectedPropertyStream =>
-      user.company.ref
-          .getCollection('leases')
-          .where(
-          'propertyRef', isEqualTo: _selectedProperty.ref)
-          .snapshots
-          .map<List<DocumentSnapshot>>((QuerySnapshot q) => q.documents)
-          .map<List<Lease>>((List<DocumentSnapshot> docList) => docList.map<Lease>((DocumentSnapshot d) => new Lease.fromSnapshot(d)).toList());
+  final AppState data;
 
   @override
-  bool updateShouldNotify(AppState oldWidget) {
-    final bool userB = oldWidget.user != user;
-    final bool selectedB =
-        oldWidget.selectedPropertyStream != selectedPropertyStream;
-    final bool loaded = oldWidget.userLoaded != userLoaded;
-    final bool shouldNotify = userB || selectedB || loaded;
-
-    print(
-        'updateShouldNotify? => $shouldNotify (userB=[$userB], selectedB=[$selectedB])');
-    print('selected=> old=[${oldWidget.selectedPropertyStream
-        .toString()}], new=[${selectedPropertyStream
-        .toString()}]');
-    return shouldNotify;
-  }
+  bool updateShouldNotify(_InheritedState oldWidget) => true;
 }
 
 class AppStateProvider extends StatefulWidget {
-  final Stream<FirebaseUser> userStream;
   final Widget child;
 
-  const AppStateProvider({
-    this.userStream,
-    this.child,
-  });
+  const AppStateProvider({this.child});
 
-  static AppState of(BuildContext context) =>
-      context.inheritFromWidgetOfExactType(AppState);
+  static AppState of(BuildContext context) {
+    final _InheritedState inherited =
+        context.inheritFromWidgetOfExactType(_InheritedState);
+    return inherited.data;
+  }
 
   @override
-  _AppStateProviderState createState() => new _AppStateProviderState();
+  AppState createState() => new AppState();
 }
 
-class _AppStateProviderState extends State<AppStateProvider> {
+class AppState extends State<AppStateProvider> {
   AppUser _user;
   bool _userLoaded;
   Property _selectedProperty;
   StreamSubscription<AppUser> _appUserSub;
 
+  Stream<List<Property>> get propertiesStream => _user.company.properties;
+
+  bool get userLoaded => _userLoaded;
+
+  Stream<Property> get selectedPropertyStream => _selectedProperty
+      ?.documentReference?.snapshots
+      ?.map<Property>((DocumentSnapshot snap) => Property.fromSnapshot(snap));
+
+  Stream<List<Lease>> get leasesForSelectedPropertyStream => _user.company.ref
+      .getCollection('leases')
+      .where('propertyRef', isEqualTo: _selectedProperty.ref)
+      .snapshots
+      .map<List<DocumentSnapshot>>((QuerySnapshot q) => q.documents)
+      .map<List<Lease>>((List<DocumentSnapshot> docList) => docList
+          .map<Lease>((DocumentSnapshot d) => new Lease.fromSnapshot(d))
+          .toList());
+
+  AppUser get user => _user;
+
+  ValueChanged<Property> get selectProperty => _onPropertySelected;
+
   @override
   void initState() {
     super.initState();
     _userLoaded = false;
-    _appUserSub = widget.userStream
+    _appUserSub = FirebaseAuth.instance.onAuthStateChanged
         .asyncMap(AppUser.fromFirebaseUser)
         .listen(_userStreamOnData);
   }
@@ -91,6 +76,7 @@ class _AppStateProviderState extends State<AppStateProvider> {
   }
 
   void _userStreamOnData(AppUser user) {
+    print('_userStreamOnData, user=[${user.toString()}]');
     setState(() {
       _userLoaded = true;
       _user = user;
@@ -107,12 +93,8 @@ class _AppStateProviderState extends State<AppStateProvider> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      new AppState(
-        user: _user,
-        userLoaded: _userLoaded,
-        selectedProperty: _selectedProperty,
-        selectProperty: _onPropertySelected,
+  Widget build(BuildContext context) => new _InheritedState(
+        data: this,
         child: widget.child,
       );
 }

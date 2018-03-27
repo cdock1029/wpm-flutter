@@ -128,7 +128,7 @@ class CurrentLeaseSegment extends StatelessWidget {
         ) =>
             new Row(
               children: <Widget>[
-                new Text(snap.data?.propertyUnit ?? 'no data')
+                new Text(/* snap.data?.propertyUnit ?? */'no data')
               ],
             ),
       );

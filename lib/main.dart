@@ -17,10 +17,7 @@ void main() => runApp(WPMApp());
 
 class WPMApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => new AppStateProvider(
-        userStream: FirebaseAuth.instance.onAuthStateChanged,
-        child: new WPMAppView(),
-      );
+  Widget build(BuildContext context) => new AppStateProvider(child: new WPMAppView());
 }
 
 class WPMAppView extends StatelessWidget {
@@ -31,16 +28,9 @@ class WPMAppView extends StatelessWidget {
     print('building WPMAppView');
     final AppState state = AppStateProvider.of(context);
     final AppUser user = state.user;
-    /*
-    final bool userLoaded = state.userLoaded;
-    if (!userLoaded) {
-      return new Center(
-        child: new CircularProgressIndicator(),
-      );
-    } */
     return user != null
         ? MaterialApp(
-            title: user.company.name ?? '',
+            title: user?.company?.name ?? '',
             theme: ThemeData(
               primarySwatch: Colors.deepPurple,
               accentColor: Colors.tealAccent,

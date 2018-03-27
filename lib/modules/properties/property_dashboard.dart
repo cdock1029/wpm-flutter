@@ -30,7 +30,7 @@ class PropertyDashboard extends StatelessWidget {
         final Property selected = streamSnap.data;
         final List<Widget> children = <Widget>[
           new UnitsTab(property: selected),
-          new LeasesTab(selected),
+          new LeasesTab(),
         ];
         return new DefaultTabController(
           length: 2,
@@ -66,9 +66,7 @@ class PropertyDashboard extends StatelessWidget {
 }
 
 class LeasesTab extends StatelessWidget {
-  const LeasesTab(this.property);
-
-  final Property property;
+  const LeasesTab();
 
   @override
   Widget build(BuildContext context) {
@@ -81,10 +79,14 @@ class LeasesTab extends StatelessWidget {
         AsyncSnapshot<List<Lease>> snapshot,
       ) {
         if (!snapshot.hasData) {
-          return new Center(child: new CircularProgressIndicator(),);
+          return new Center(
+            child: new CircularProgressIndicator(),
+          );
         }
         if (snapshot.data.isEmpty) {
-          return new Center(child: new Text('Property has no leases.'),);
+          return new Center(
+            child: new Text('Property has no leases.'),
+          );
         }
         return ListView.builder(
           itemCount: snapshot.data.length,
@@ -93,10 +95,63 @@ class LeasesTab extends StatelessWidget {
             int index,
           ) {
             final Lease lease = snapshot.data[index];
-            return new ListTile(title: new Text(lease.rent.toString()),);
+            return new Column(
+              children: <Widget>[
+                new FutureBuilder<List<Tenant>>(
+                  future: lease.tenants,
+                  initialData: <Tenant>[],
+                  builder: (
+                    BuildContext context,
+                    AsyncSnapshot<List<Tenant>> snapshot,
+                  ) {
+                    final List<Tenant> tenants = snapshot.data;
+                    return new Row(children: tenants.map<Widget>((Tenant t) => new Text('${t.lastName}, ${t.firstName}')).toList(),);
+                  },
+                ),
+                new FutureBuilder<List<Unit>>(
+                  future: lease.units,
+                  initialData: <Unit>[],
+                  builder: (
+                    BuildContext context,
+                    AsyncSnapshot<List<Unit>> snapshot,
+                  ) {
+                    if (!snapshot.hasData) {
+                      return new Row(children: <Widget>[new Text('.. no unit data')],);
+                    }
+                    final List<Unit> units = snapshot.data;
+                    return new Row(children: units.map<Widget>((Unit u) => new Text('${u.address}')).toList(),);
+                  },
+                ),
+              ],
+            );
           },
         );
       },
     );
+  }
+}
+
+class LeaseTabTile extends StatelessWidget {
+  final Lease lease;
+
+  const LeaseTabTile(this.lease);
+
+  @override
+  Widget build(BuildContext context) {
+//    return new FutureBuilder<List<>(
+//      // initialData: <>[],
+//      builder: (
+//        BuildContext context,
+//        AsyncSnapshot<List<List<Model>>> snapshot,
+//      ) {
+//        //final List<Tenant> tenants = snapshot.data;
+//        return new Column(
+//          children: <Widget>[
+//            new ListTile(title: new Text('Unit:'), subtitle: new Text(),
+//            new ListTile(title: new Text('Tenants:'), subtitle: new Text(tenants.map((Tenant t) => t.firstName).join(', ')),),
+//          ],
+//        );
+//      },
+//    );
   }
 }

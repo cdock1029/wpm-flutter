@@ -37,12 +37,16 @@ class UnitsTabState extends State<UnitsTab> {
         final Stream<String> _searchStream = _filterCallback
             .distinct()
             .transform<String>(debounce(new Duration(milliseconds: 260)));
+
+        /* final Stream<List<Unit>> filteredStream = _searchStream.map((String search) {
+        }); */
         return Column(
           children: <Widget>[
             new UnitsTabControlSection(
               unitsRef: unitsRef,
               filterCallback: _filterCallback,
             ),
+
             new StreamBuilder<String>(
               stream: _searchStream,
               builder: (
@@ -51,9 +55,13 @@ class UnitsTabState extends State<UnitsTab> {
               ) {
                 List<Unit> _filteredUnits;
                 if (snapshot.hasData && snapshot.data.isNotEmpty) {
-                  print('filter data=[${snapshot.data}]');
+                  final String search = snapshot.data.toLowerCase();
+                  print('filter search=[$search]');
                   _filteredUnits = units
-                      .where((Unit u) => u.address.contains(snapshot.data))
+                      .where((Unit u) {
+                        final List<Tenant> tenants = u.currentLease?.loadedTenants ?? <Tenant>[];
+                        return u.address.contains(search) || tenants.where((Tenant t) => t.firstName.toLowerCase().contains(search) || t.lastName.toLowerCase().contains(search)).toList().isNotEmpty;
+                      })
                       .toList();
                 } else {
                   print('no filter data OR data is empty');
