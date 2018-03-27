@@ -18,16 +18,11 @@ class _SignInPageState extends State<SignInPage> {
 
   Future<Null> _signInWithGoogle() async {
     print('Sign In Page starting Google Sign In..');
-    GoogleSignInAccount googleUser;
 
     setState(() {
       signInLoading = true;
     });
-    try {
-      googleUser = await widget._googleSignIn.signIn();
-    } catch (e) {
-      print('Google Sign In Error: ${e.toString()}');
-    }
+    final GoogleSignInAccount googleUser = await widget._googleSignIn.signIn();
     if (googleUser != null) {
       print('Sign In Page googleUser=[${googleUser.toString()}]');
       final GoogleSignInAuthentication googleAuth =

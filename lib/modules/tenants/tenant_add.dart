@@ -65,9 +65,9 @@ class AddTenantState extends State<AddTenant> {
     );
     final HttpClientRequest request = await _httpClient.getUrl(validateEmailUri);
     final HttpClientResponse response = await request.close();
-    final String body = await response.transform(UTF8.decoder).join();
-    final Map<String, dynamic> json = await JSON.decode(body);
-    final bool isEmailValid = json['isEmail'];
+    final String body = await response.transform(utf8.decoder).join();
+    final Map<String, dynamic> _json = await json.decode(body);
+    final bool isEmailValid = _json['isEmail'];
     return isEmailValid;
   }
 
@@ -100,7 +100,7 @@ class AddTenantState extends State<AddTenant> {
 
   @override
   Widget build(BuildContext context) {
-    print('');
+    print('formwasedited=[$_formWasEdited]');
     return new Scaffold(
       key: _scaffoldKey,
       appBar: new AppBar(title: const Text('New Tenant')),

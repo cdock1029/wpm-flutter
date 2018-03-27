@@ -72,18 +72,16 @@ class LeaseList extends StatelessWidget {
 
 class LeaseListTile extends StatelessWidget {
   final DocumentSnapshot lease;
-  final Map<String, Map<String, String>> tenants;
-  Iterable<String> tenantList;
 
-  LeaseListTile({
+  const LeaseListTile({
     this.lease,
     Key key,
-  })
-      : tenants = lease['tenants'],
-        super(key: key) {
-    tenantList = tenants.values
-        .map<String>((Map<String, String> tenantObj) => tenantObj['name']);
-  }
+  }) : super(key: key);
+
+  Iterable<String> get tenantList => tenants.values
+        .map<dynamic>((dynamic tenantObj) => tenantObj['name']);
+
+  Map<dynamic, dynamic> get tenants => lease['tenants'];
 
   @override
   Widget build(BuildContext context) {

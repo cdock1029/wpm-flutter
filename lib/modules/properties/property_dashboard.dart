@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wpm/data/models.dart';
 import 'package:wpm/data/app_state.dart';
-import 'package:wpm/modules/company/company_dashboard.dart';
 import 'package:wpm/modules/properties/add_edit_property.dart';
 import 'package:wpm/common/wpm_drawer.dart';
 import 'package:wpm/modules/units/units_tab.dart';
@@ -131,13 +130,13 @@ class LeasesTab extends StatelessWidget {
   }
 }
 
-class LeaseTabTile extends StatelessWidget {
-  final Lease lease;
-
-  const LeaseTabTile(this.lease);
-
-  @override
-  Widget build(BuildContext context) {
+//class LeaseTabTile extends StatelessWidget {
+//  final Lease lease;
+//
+//  const LeaseTabTile(this.lease);
+//
+//  @override
+//  Widget build(BuildContext context) {
 //    return new FutureBuilder<List<>(
 //      // initialData: <>[],
 //      builder: (
@@ -153,5 +152,5 @@ class LeaseTabTile extends StatelessWidget {
 //        );
 //      },
 //    );
-  }
-}
+//  }
+//}

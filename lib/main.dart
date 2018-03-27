@@ -1,9 +1,6 @@
-import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:wpm/modules/company/company_dashboard.dart';
-import 'package:wpm/modules/leases/lease_detail.dart';
 import 'package:wpm/modules/properties/add_edit_property.dart';
 import 'package:wpm/modules/properties/property_dashboard.dart';
 import 'package:wpm/modules/leases/lease_create.dart';
@@ -45,7 +42,7 @@ class WPMAppView extends StatelessWidget {
                 AddTenant.routeName: (_) => new AddTenant(),
                 TenantList.routeName: (_) => new TenantList(),
                 CreateLease.routeName: (_) => new CreateLease(),
-                LeaseDetail.routeName: (_) => new LeaseDetail(),
+                // LeaseDetail.routeName: (_) => new LeaseDetail(),
               })
         : new SignInPage();
   }

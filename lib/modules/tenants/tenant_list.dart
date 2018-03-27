@@ -52,24 +52,24 @@ class TenantList extends StatelessWidget {
                         onLongPress: () {
                           showDialog<Null>(
                             context: context,
-                            child: new AlertDialog(
-                              content: new Text(
-                                  'Delete Tenant "${tenant.lastName}, ${tenant
+                            builder: (BuildContext context) => new AlertDialog(
+                                  content: new Text(
+                                      'Delete Tenant "${tenant.lastName}, ${tenant
                                       .firstName}" ?'),
-                              actions: <Widget>[
-                                new FlatButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text('CANCEL'),
+                                  actions: <Widget>[
+                                    new FlatButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('CANCEL'),
+                                    ),
+                                    new FlatButton(
+                                      onPressed: () async {
+                                        await docs[index].reference.delete();
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('DELETE'),
+                                    ),
+                                  ],
                                 ),
-                                new FlatButton(
-                                  onPressed: () async {
-                                    await docs[index].reference.delete();
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('DELETE'),
-                                ),
-                              ],
-                            ),
                           );
                         },
                       );
@@ -128,7 +128,7 @@ class CurrentLeaseSegment extends StatelessWidget {
         ) =>
             new Row(
               children: <Widget>[
-                new Text(/* snap.data?.propertyUnit ?? */'no data')
+                new Text(/* snap.data?.propertyUnit ?? */ 'no data')
               ],
             ),
       );

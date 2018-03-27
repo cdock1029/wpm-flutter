@@ -8,7 +8,7 @@ import 'package:meta/meta.dart';
 import 'package:stream_transform/stream_transform.dart';
 import 'package:wpm/data/models.dart';
 import 'package:wpm/modules/units/add_unit.dart';
-import 'package:wpm/modules/units/unit_grid.dart';
+import 'package:wpm/modules/units/unit_list.dart';
 
 class UnitsTab extends StatefulWidget {
   const UnitsTab({@required this.property});
@@ -60,14 +60,15 @@ class UnitsTabState extends State<UnitsTab> {
                   _filteredUnits = units
                       .where((Unit u) {
                         final List<Tenant> tenants = u.currentLease?.loadedTenants ?? <Tenant>[];
-                        return u.address.contains(search) || tenants.where((Tenant t) => t.firstName.toLowerCase().contains(search) || t.lastName.toLowerCase().contains(search)).toList().isNotEmpty;
+                        return u.address.toLowerCase().contains(search) || tenants.where((Tenant t) => t.firstName.toLowerCase().contains(search) || t.lastName.toLowerCase().contains(search)).toList().isNotEmpty;
                       })
                       .toList();
                 } else {
                   print('no filter data OR data is empty');
                 }
                 return new Flexible(
-                  child: new UnitGridView(units: _filteredUnits ?? units),
+                  // child: new UnitGridView(units: _filteredUnits ?? units),
+                  child: new UnitList(units: _filteredUnits ?? units,),
                 );
               },
             ),

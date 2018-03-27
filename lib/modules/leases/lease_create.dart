@@ -26,7 +26,7 @@ class CreateLeaseState extends State<CreateLease> {
 
   Stream<List<Tenant>> _postAlgolia(String query) {
     final Map<String, String> data = <String, String>{'params': 'query=$query'};
-    final String jsonData = JSON.encode(data);
+    final String jsonData = json.encode(data);
 
     print('json query: $jsonData');
     final HttpClient client = new HttpClient();
@@ -48,12 +48,12 @@ class CreateLeaseState extends State<CreateLease> {
       request.write(jsonData);
       return request.close();
     }).asyncMap<String>((HttpClientResponse response) {
-      final Stream<String> str = response.transform<String>(UTF8.decoder);
+      final Stream<String> str = response.transform<String>(utf8.decoder);
       final Future<String> jn = str.join();
       return jn;
     }).asyncMap<Map<String, dynamic>>((String body) {
       print('response body');
-      return JSON.decode(body);
+      return json.decode(body);
     }).asyncMap<List<Tenant>>((Map<String, dynamic> json) {
       final List<Map<String, dynamic>> hits = json['hits'];
       print('response data: ${hits.toString()}');

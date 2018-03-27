@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 
 abstract class Model {
-
   final DocumentReference ref;
 
   const Model({this.ref});
@@ -36,8 +35,7 @@ class AppUser extends Model {
     @required FirebaseUser firebaseUser,
     @required DocumentSnapshot userSnap,
     this.company,
-  })
-      : _firebaseUser = firebaseUser,
+  })  : _firebaseUser = firebaseUser,
         super(ref: userSnap.reference);
 
   String get email => _firebaseUser.email;
@@ -52,8 +50,8 @@ class AppUser extends Model {
     if (user == null) {
       return null;
     }
-    final DocumentReference _userDataRef = Firestore.instance.collection(
-        'users').document(user.uid);
+    final DocumentReference _userDataRef =
+        Firestore.instance.collection('users').document(user.uid);
     final DocumentSnapshot userSnap = await _userDataRef.get();
 
     final String activeCompany = userSnap['activeCompany'];
@@ -82,8 +80,9 @@ class AppUser extends Model {
 
     prefs[key] = value;
 
-    final Map<String, dynamic> userUpdate =
-    <String, dynamic>{'preferences': prefs};
+    final Map<String, dynamic> userUpdate = <String, dynamic>{
+      'preferences': prefs
+    };
     // WHY split? type error otherwise..
     await ref.updateData(userUpdate);
     return null;
@@ -103,15 +102,12 @@ class Company extends Model {
         _tenantsRef = snapshot.reference.getCollection('tenants'),
         super(ref: snapshot.reference);
 
-  Stream<List<Property>> get properties =>
-      _propertiesRef.snapshots
-          .map<List<DocumentSnapshot>>(
-              (QuerySnapshot querySnap) => querySnap.documents)
-          .map<List<Property>>((List<DocumentSnapshot> docs) =>
-          docs
-              .map<Property>((DocumentSnapshot doc) =>
-              Property.fromSnapshot(doc))
-              .toList());
+  Stream<List<Property>> get properties => _propertiesRef.snapshots
+      .map<List<DocumentSnapshot>>(
+          (QuerySnapshot querySnap) => querySnap.documents)
+      .map<List<Property>>((List<DocumentSnapshot> docs) => docs
+          .map<Property>((DocumentSnapshot doc) => Property.fromSnapshot(doc))
+          .toList());
 
   Stream<QuerySnapshot> get tenants => _tenantsRef.snapshots;
 }
@@ -131,13 +127,12 @@ class Property extends Model {
         documentReference = snapshot.reference,
         super(ref: snapshot.reference);
 
-  Stream<List<Unit>> get units =>
-      _unitsRef.snapshots
+  Stream<List<Unit>> get units => _unitsRef.snapshots
           .map<List<DocumentSnapshot>>((QuerySnapshot snap) => snap.documents)
-          .map<List<Unit>>((List<DocumentSnapshot> docs) =>
-          docs
+          .map<List<Unit>>((List<DocumentSnapshot> docs) => docs
               .map<Unit>((DocumentSnapshot doc) => Unit.fromSnapshot(doc))
-              .toList()).map<List<Unit>>((List<Unit> units) {
+              .toList())
+          .map<List<Unit>>((List<Unit> units) {
         units.sort((Unit a, Unit b) =>
             compareAsciiLowerCaseNatural(a.address, b.address));
         return units;
@@ -151,7 +146,7 @@ class Property extends Model {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Property && other.id == id && other.name == name;
+      other is Property && other.id == id && other.name == name;
 
   @override
   int get hashCode => id.hashCode ^ name.hashCode;
@@ -159,7 +154,6 @@ class Property extends Model {
   @override
   String toString() =>
       'Property(id: $id, name: $name, unitCount: $unitCount, _unitsRef: $_unitsRef)';
-
 }
 
 class Unit extends Model {
@@ -168,7 +162,6 @@ class Unit extends Model {
 
   Unit({this.address});
 
-  List<String> _searchFields;
   Lease currentLease;
 
   Unit.fromSnapshot(DocumentSnapshot snapshot)
@@ -187,10 +180,15 @@ class Unit extends Model {
   Map<String, dynamic> get data => <String, dynamic>{'address': address};
 
   // Future<Lease> get currentLease => _currentLeaseRef?.get()?.then((DocumentSnapshot snap) => new Lease.fromSnapshot(snap));
-  Future<void> load() =>
-      _currentLeaseRef?.get()?.then((DocumentSnapshot snap) {
-        currentLease = new Lease.fromSnapshot(snap);
-      });
+  Future<Null> load() {
+    if (currentLease != null) {
+      // ignore: always_specify_types
+      return Future.value(null);
+    }
+    return _currentLeaseRef?.get()?.then((DocumentSnapshot snap) {
+      currentLease = new Lease.fromSnapshot(snap);
+    });
+  }
 }
 
 class Tenant extends Model {
@@ -212,9 +210,8 @@ class Tenant extends Model {
   Tenant.fromMap(Map<dynamic, dynamic> map)
       : firstName = map['firstName'],
         lastName = map['lastName'],
-  // ,super(snapshot: snapshot)
+        // ,super(snapshot: snapshot)
         displayName = map['displayName'];
-
 }
 
 class Lease extends Model {
@@ -225,7 +222,8 @@ class Lease extends Model {
   Map<dynamic, dynamic> _units;
 
   List<Tenant> loadedTenants;
-  List<Unit> loadedUnits;
+
+  // List<Unit> loadedUnits;
 
   // Lease({this.propertyRef, this.unitRef, this.tenants});
 
@@ -243,36 +241,28 @@ class Lease extends Model {
     load();
   }
 
-  Future<List<Tenant>> get tenants =>
-      Future.wait<Tenant>(
-          _tenants.keys.where(
-                  (dynamic tenantKey) => _tenants[tenantKey] == true
-          ).map(
-                  (dynamic tenKey) =>
-                  ref.parent.parent.getCollection('tenants').document(
-                      tenKey as String)
-          ).map((DocumentReference docRef) => docRef.get()
-          ).map((Future<DocumentSnapshot> snap) async =>
+  Future<List<Tenant>> get tenants => Future.wait<Tenant>(_tenants.keys
+      .where((dynamic tenantKey) => _tenants[tenantKey] == true)
+      .map((dynamic tenKey) =>
+          // ignore: avoid_as
+          ref.parent.parent.getCollection('tenants').document(tenKey as String))
+      .map((DocumentReference docRef) => docRef.get())
+      .map((Future<DocumentSnapshot> snap) async =>
           new Tenant.fromSnapshot(await snap)));
 
-  Future<List<Unit>> get units =>
-      Future.wait<Unit>(
-          _units.keys.where(
-                  (dynamic unitKey) => _units[unitKey] == true
-          ).map(
-                  (dynamic unitKey) =>
-                  propertyRef.getCollection('units').document(unitKey as String)
-          ).map((DocumentReference docRef) {
-            print('unit Ref: ${docRef.toString()}');
-            return docRef.get();
-          }
-          ).map((Future<DocumentSnapshot> snap) async =>
-          new Unit.fromSnapshot(await snap)));
+  Future<List<Unit>> get units => Future.wait<Unit>(_units.keys
+          .where((dynamic unitKey) => _units[unitKey] == true)
+          .map((dynamic unitKey) =>
+              // ignore: avoid_as
+              propertyRef.getCollection('units').document(unitKey as String))
+          .map((DocumentReference docRef) {
+        print('unit Ref: ${docRef.toString()}');
+        return docRef.get();
+      }).map((Future<DocumentSnapshot> snap) async =>
+              new Unit.fromSnapshot(await snap)));
 
   Future<Null> load() async {
-    final List<dynamic> loads = await Future.wait<dynamic>(<Future<dynamic>>[tenants, units]);
-    loadedTenants = loads[0];
-    loadedUnits = loads[1];
+    loadedTenants = await tenants;
     return null;
   }
 

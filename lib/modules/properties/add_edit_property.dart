@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wpm/data/app_state.dart';
 import 'package:wpm/data/models.dart';
-import 'package:collection/collection.dart';
 
 class AddEditProperty extends StatefulWidget {
   final Property property;
@@ -38,8 +37,8 @@ class _AddEditPropertyState extends State<AddEditProperty>
 
   @override
   void dispose() {
-    _propertyNameController.dispose();
-    _unitAddressController.dispose();
+    _propertyNameController?.dispose();
+    _unitAddressController?.dispose();
     super.dispose();
   }
 
@@ -112,6 +111,7 @@ class _AddEditPropertyState extends State<AddEditProperty>
                         labelText: 'Add Unit (address)',
                       ),
                       onSubmitted: (String value) async {
+                        print('addProperty new Unit onSubmitted');
                         _updateLoading(true);
                         await _property.addUnit(<String, dynamic>{'address': value});
                         _updateLoading(false);

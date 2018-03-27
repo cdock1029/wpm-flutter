@@ -65,34 +65,34 @@ class _LeaseDetailState extends State<LeaseDetail> {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Text('A101'),
-                  Text('Smith, John'),
+                  new Text('A101'),
+                  new Text('Smith, John'),
                 ],
               ),
-              bottom: TabBar(
+              bottom: new TabBar(
                 isScrollable: false,
                 tabs: <Widget>[
-                  Tab(text: 'ACTIONS'),
-                  Tab(text: 'DETAILS'),
+                  new Tab(text: 'ACTIONS'),
+                  new Tab(text: 'DETAILS'),
                 ],
               ),
             ),
-            body: TabBarView(
+            body: new TabBarView(
               children: <Widget>[
-                ListView(
-                  padding: EdgeInsets.all(16.0),
+                new ListView(
+                  padding: new EdgeInsets.all(16.0),
                   children: <Widget>[
-                    ExpansionPanelList(
+                    new ExpansionPanelList(
                       expansionCallback: (int itemIndex, bool previous) =>
                           _onExpanded(0, itemIndex, previous),
                       children: <ExpansionPanel>[
-                        ExpansionPanel(
+                        new ExpansionPanel(
                           isExpanded: _expands[0][0],
                           headerBuilder: (
                             BuildContext context,
                             bool isExpanded,
                           ) =>
-                              ListTile(
+                              new ListTile(
                                   leading: Icon(
                                     Icons.attach_money,
                                     color: Colors.green,
@@ -101,7 +101,7 @@ class _LeaseDetailState extends State<LeaseDetail> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
-                                      Text(
+                                      new Text(
                                         'Payment',
                                         style: isExpanded
                                             ? Theme
@@ -114,18 +114,18 @@ class _LeaseDetailState extends State<LeaseDetail> {
                                                 )
                                             : null,
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 0.0),
-                                        child: Column(
+                                      new Padding(
+                                        padding: new EdgeInsets.only(left: 0.0),
+                                        child: new Column(
                                           children: <Widget>[
-                                            Text(
+                                            new Text(
                                               '799.43',
                                               style: Theme
                                                   .of(context)
                                                   .textTheme
                                                   .subhead,
                                             ),
-                                            Text(
+                                            new Text(
                                               'Balance',
                                               style: Theme
                                                   .of(context)
@@ -137,20 +137,20 @@ class _LeaseDetailState extends State<LeaseDetail> {
                                       )
                                     ],
                                   )),
-                          body: PaymentActionSection(),
+                          body: new PaymentActionSection(),
                         ),
-                        ExpansionPanel(
+                        new ExpansionPanel(
                           isExpanded: _expands[0][1],
                           headerBuilder: (
                             BuildContext context,
                             bool isExpanded,
                           ) =>
-                              ListTile(
-                                leading: Icon(
+                              new ListTile(
+                                leading: new Icon(
                                   Icons.attach_money,
                                   color: Colors.red,
                                 ),
-                                title: Text(
+                                title: new Text(
                                   'Charge',
                                   style: isExpanded
                                       ? Theme
@@ -164,51 +164,51 @@ class _LeaseDetailState extends State<LeaseDetail> {
                                       : null,
                                 ),
                               ),
-                          body: ChargeActionSection(),
+                          body: new ChargeActionSection(),
                         ),
                       ],
                     ),
                   ],
                 ),
-                ListView(
-                  padding: EdgeInsets.all(16.0),
+                new ListView(
+                  padding: new EdgeInsets.all(16.0),
                   children: <Widget>[
                     // heading
-                    MaterialSection(
+                    new MaterialSection(
                       title: 'Details',
-                      expansionPanelList: ExpansionPanelList(
+                      expansionPanelList: new ExpansionPanelList(
                         expansionCallback: (
                           int itemIndex,
                           bool previous,
                         ) =>
                             _onExpanded(1, itemIndex, previous),
                         children: <ExpansionPanel>[
-                          ExpansionPanel(
+                          new ExpansionPanel(
                             isExpanded: _expands[1][0],
                             headerBuilder: (
                               BuildContext context,
                               bool isExpanded,
                             ) =>
-                                ListTile(
-                                  leading: Icon(Icons.place),
-                                  title: Text('Address'),
+                               new ListTile(
+                                  leading: new Icon(Icons.place),
+                                  title: new Text('Address'),
                                 ),
                             body: Column(
                               children: <Widget>[
-                                ListTile(
-                                  leading: Icon(Icons.map),
-                                  title: Text('Columbiana Manor'),
-                                  subtitle: Text('Property'),
+                                new ListTile(
+                                  leading: new Icon(Icons.map),
+                                  title: new Text('Columbiana Manor'),
+                                  subtitle: new Text('Property'),
                                 ),
-                                ListTile(
-                                  leading: Icon(Icons.domain),
-                                  title: Text('A101'),
-                                  subtitle: Text('Unit'),
+                                new ListTile(
+                                  leading: new Icon(Icons.domain),
+                                  title: new Text('A101'),
+                                  subtitle: new Text('Unit'),
                                 ),
-                                ListTile(
-                                  leading: Icon(Icons.merge_type),
-                                  title: Text('Apartment'),
-                                  subtitle: Text('Type'),
+                                new ListTile(
+                                  leading: new Icon(Icons.merge_type),
+                                  title: new Text('Apartment'),
+                                  subtitle: new Text('Type'),
                                 ),
                               ],
                             ),
@@ -226,40 +226,40 @@ class _LeaseDetailState extends State<LeaseDetail> {
 class LeaseDetailHeader extends StatefulWidget {
   const LeaseDetailHeader();
 
-  static Widget headerBuilder(BuildContext context, bool isExpanded) =>
+  static Widget headerBuilder({BuildContext context, bool isExpanded}) =>
       ListTile(
-        leading: Icon(Icons.list),
-        title: Text('Details'),
+        leading: new Icon(Icons.list),
+        title: new Text('Details'),
       );
 
-  static Widget body() => LeaseDetailHeader();
+  static Widget body() => new LeaseDetailHeader();
 
   @override
-  LeaseDetailHeaderState createState() => LeaseDetailHeaderState();
+  LeaseDetailHeaderState createState() => new LeaseDetailHeaderState();
 }
 
 class LeaseDetailHeaderState extends State<LeaseDetailHeader> {
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) => new Column(
         children: <Widget>[
-          Row(
+          new Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              Flexible(
-                child: ListTile(
+              new Flexible(
+                child: new ListTile(
                   dense: true,
-                  leading: Icon(Icons.home),
-                  title: Text('A101'),
-                  subtitle: Text('Columbiana Manor'),
+                  leading: new Icon(Icons.home),
+                  title: new Text('A101'),
+                  subtitle: new Text('Columbiana Manor'),
                 ),
               ),
-              Flexible(
-                child: ListTile(
+              new Flexible(
+                child: new ListTile(
                   dense: true,
-                  leading: Icon(Icons.people),
-                  title: Text('Smith, John'),
-                  subtitle: Text('Smith, Jane'),
+                  leading: new Icon(Icons.people),
+                  title: new Text('Smith, John'),
+                  subtitle: new Text('Smith, Jane'),
                 ),
               ),
             ],
@@ -268,36 +268,36 @@ class LeaseDetailHeaderState extends State<LeaseDetailHeader> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              Flexible(
-                child: ListTile(
+              new Flexible(
+                child: new ListTile(
                   dense: true,
-                  leading: Icon(Icons.calendar_today),
-                  subtitle: Text('Start Date'),
-                  title: Text('2017-07-04'),
+                  leading: new Icon(Icons.calendar_today),
+                  subtitle: new Text('Start Date'),
+                  title: new Text('2017-07-04'),
                 ),
               ),
-              Flexible(
-                child: ListTile(
+              new Flexible(
+                child: new ListTile(
                   dense: true,
-                  leading: Icon(Icons.calendar_today),
-                  subtitle: Text('End Date'),
-                  title: Text('2018-07-03'),
+                  leading: new Icon(Icons.calendar_today),
+                  subtitle: new Text('End Date'),
+                  title: new Text('2018-07-03'),
                 ),
               ),
             ],
           ),
-          ListTile(
+          new ListTile(
             dense: true,
-            leading: Icon(Icons.attach_money),
-            title: Text('550.00'),
-            subtitle: Text('Rent'),
+            leading: new Icon(Icons.attach_money),
+            title: new Text('550.00'),
+            subtitle: new Text('Rent'),
           ),
-          Divider(),
-          ButtonBar(
+          new Divider(),
+          new ButtonBar(
             children: <Widget>[
-              FlatButton(
+              new FlatButton(
                 onPressed: () {},
-                child: Text('EDIT'),
+                child: new Text('EDIT'),
                 textTheme: ButtonTextTheme.accent,
               ),
             ],
@@ -309,8 +309,8 @@ class LeaseDetailHeaderState extends State<LeaseDetailHeader> {
 class ControlSection extends StatefulWidget {
   const ControlSection();
 
-  static Widget headerBuilder(BuildContext context, bool isExpanded) =>
-      ListTile(
+  static Widget headerBuilder({BuildContext context, bool isExpanded}) =>
+      new ListTile(
         leading: Icon(Icons.edit),
         title: Text('Actions'),
       );
@@ -414,7 +414,7 @@ class _ControlSectionState extends State<ControlSection> {
 class LeaseDetailBottomSection extends StatefulWidget {
   const LeaseDetailBottomSection();
 
-  static Widget headerBuilder(BuildContext context, bool isExpanded) =>
+  static Widget headerBuilder({BuildContext context, bool isExpanded}) =>
       ListTile(
         leading: Icon(Icons.dashboard),
         title: Text('Transactions'),
@@ -627,6 +627,7 @@ class _ChargeActionSectionState extends State<ChargeActionSection> {
 
   @override
   void initState() {
+    super.initState();
     // TODO think about how to handle currency values.. important!
 
     final DateTime now = DateTime.now();
@@ -701,13 +702,13 @@ class _ChargeActionSectionState extends State<ChargeActionSection> {
             ),
             ListTile(
               leading: Container(), //Icon(Icons.monetization_on),
-              title: Row(
+              title: new Row(
                 children: <Widget>[
-                  Expanded(
-                    child: Text('Amount'),
+                  new Expanded(
+                    child: new Text('Amount'),
                   ),
-                  Flexible(
-                    child: TextField(
+                  new Flexible(
+                    child: new TextField(
                       keyboardType: TextInputType.number,
                       controller: _chargeController,
                       textAlign: TextAlign.center,
@@ -715,9 +716,9 @@ class _ChargeActionSectionState extends State<ChargeActionSection> {
                             color: Theme.of(context).accentColor,
                             fontWeight: FontWeight.bold,
                           ), */
-                      decoration: InputDecoration(
+                      decoration: new InputDecoration(
                         // icon: Icon(Icons.attach_money),
-                        prefixIcon: Icon(
+                        prefixIcon: new Icon(
                           Icons.attach_money,
                           color: Theme.of(context).iconTheme.color,
                         ),
@@ -734,70 +735,70 @@ class _ChargeActionSectionState extends State<ChargeActionSection> {
                   onPressed: () async {
                     final bool result = await showDialog<bool>(
                       context: context,
-                      child: AlertDialog(
-                        title: Text('Confirm charge'),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('CANCEL'),
-                            onPressed: () => Navigator.of(context).pop(false),
-                          ),
-                          FlatButton(
-                            child: Text('SAVE'),
-                            onPressed: () => Navigator.of(context).pop(true),
-                          )
-                        ],
-                        content: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  'Date',
-                                  style: Theme.of(context).textTheme.caption,
-                                ),
-                                Text(widget.dateFormat.format(_chargeDate))
-                              ],
-                              //mainAxisSize: MainAxisSize.min,
+                      builder: (BuildContext context) => new AlertDialog(
+                          title: new Text('Confirm charge'),
+                          actions: <Widget>[
+                            new FlatButton(
+                              child: new Text('CANCEL'),
+                              onPressed: () => Navigator.of(context).pop(false),
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                            new FlatButton(
+                              child: new Text('SAVE'),
+                              onPressed: () => Navigator.of(context).pop(true),
+                            )
+                          ],
+                          content: new Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              new Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  Text(
-                                    'Type',
+                                  new Text(
+                                    'Date',
                                     style: Theme.of(context).textTheme.caption,
                                   ),
-                                  Text(_chargeType
-                                      .toString()
-                                      .split(r'.')[1]
-                                      .splitMapJoin('_', onMatch: (_) => ' ')
-                                      .toUpperCase()),
+                                  new Text(widget.dateFormat.format(_chargeDate))
                                 ],
                                 //mainAxisSize: MainAxisSize.min,
                               ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  'Amount',
-                                  style: Theme.of(context).textTheme.caption,
+                              new Padding(
+                                padding: new EdgeInsets.symmetric(vertical: 8.0),
+                                child: new Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    new Text(
+                                      'Type',
+                                      style: Theme.of(context).textTheme.caption,
+                                    ),
+                                    new Text(_chargeType
+                                        .toString()
+                                        .split(r'.')[1]
+                                        .splitMapJoin('_', onMatch: (_) => ' ')
+                                        .toUpperCase()),
+                                  ],
+                                  //mainAxisSize: MainAxisSize.min,
                                 ),
-                                Text(_chargeController.text),
-                              ],
-                              //mainAxisSize: MainAxisSize.min,
-                            ),
-                          ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  new Text(
+                                    'Amount',
+                                    style: Theme.of(context).textTheme.caption,
+                                  ),
+                                  new Text(_chargeController.text),
+                                ],
+                                //mainAxisSize: MainAxisSize.min,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
                     );
                     print('result was: $result');
                   },
-                  child: Text('SAVE CHARGE'),
+                  child: new Text('SAVE CHARGE'),
                   textTheme: ButtonTextTheme.primary,
                   // color: Colors.redAccent,
                 ),
