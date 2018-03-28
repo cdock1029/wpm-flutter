@@ -7,8 +7,6 @@ import { Component, Element } from '@stencil/core'
 export class MorePopover {
   @Element() el: HTMLElement
 
-  componentWillUnload() {}
-
   dismiss = (doSignOut?: boolean) => {
     ;(this.el.closest('ion-popover') as any).dismiss(doSignOut)
   }

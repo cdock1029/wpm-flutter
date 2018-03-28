@@ -79,26 +79,33 @@ export class MyApp {
   renderRouter = () => {
     return (
       <ion-router useHash={false}>
-        <ion-route url="/login" component="app-login" />,
+        <ion-route url="/login" component="app-login" />
         <ion-route-redirect from="*" to={!this.user.data ? '/login' : null} />
-        <ion-route url="/home" component="app-home" />
-        <ion-route url="/properties" component="properties-page" />>
-        <ion-route url="/properties/:propertyId" component="property-detail" />
-        <ion-route
-          url="/properties/:propertyId/units/:unitId"
-          component="unit-detail"
-        />
-        <ion-route url="/tenants" component="tenants-page" />
-        {/* <ion-route component="page-tabs">
+
+        <ion-route component="page-tabs">
           <ion-route url="/properties" component="tab-properties">
+            <ion-route component="properties-page" />
             <ion-route url="/:propertyId" component="property-detail" />
             <ion-route
               url="/:propertyId/units/:unitId"
               component="unit-detail"
             />
           </ion-route>
-        </ion-route> */}
-        <ion-route-redirect from="/" to="/home" />,
+
+          <ion-route url="/tenants" component="tab-tenants">
+            <ion-route component="tenants-page" />
+          </ion-route>
+          <ion-route url="/" component="tab-home">
+            <ion-route component="app-home" />
+          </ion-route>
+        </ion-route>
+
+        {/* <ion-route url="/properties" component="properties-page" />
+        <ion-route url="/properties/:propertyId" component="property-detail" />
+        <ion-route
+          url="/properties/:propertyId/units/:unitId"
+          component="unit-detail"
+        /> */}
       </ion-router>
     )
   }
@@ -120,16 +127,7 @@ export class MyApp {
               </ion-toolbar>
             </ion-header>
             <ion-content>
-              <ion-list>
-                {appPages.map(p => (
-                  <ion-menu-toggle autoHide={false}>
-                    <ion-item href={p.url}>
-                      <ion-icon slot="start" name={p.icon} />
-                      <ion-label>{p.title}</ion-label>
-                    </ion-item>
-                  </ion-menu-toggle>
-                ))}
-              </ion-list>
+              <nav-menu />
             </ion-content>
           </ion-menu>
           <ion-nav swipeBackEnabled={false} main />
@@ -167,20 +165,20 @@ export class MyApp {
   }
 }
 
-const appPages = [
-  {
-    title: 'Home',
-    url: '/home',
-    icon: 'home'
-  },
-  {
-    title: 'Properties',
-    url: '/properties',
-    icon: 'planet'
-  },
-  {
-    title: 'Tenants',
-    url: '/tenants',
-    icon: 'people'
-  }
-]
+// const appPages = [
+//   {
+//     title: 'Home',
+//     url: '/',
+//     icon: 'home'
+//   },
+//   {
+//     title: 'Properties',
+//     url: '/properties',
+//     icon: 'planet'
+//   },
+//   {
+//     title: 'Tenants',
+//     url: '/tenants',
+//     icon: 'people'
+//   }
+// ]

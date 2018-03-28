@@ -21,7 +21,7 @@ export class PropertyPopover {
     })
   }
 
-  componentWillUnload() {
+  componentDidUnload() {
     this.unsub()
   }
 

@@ -169,6 +169,33 @@ declare global {
 
 
 declare global {
+  interface HTMLCommonToolbarElement extends HTMLStencilElement {
+    'title': string;
+  }
+  var HTMLCommonToolbarElement: {
+    prototype: HTMLCommonToolbarElement;
+    new (): HTMLCommonToolbarElement;
+  };
+  interface HTMLElementTagNameMap {
+    'common-toolbar': HTMLCommonToolbarElement;
+  }
+  interface ElementTagNameMap {
+    'common-toolbar': HTMLCommonToolbarElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'common-toolbar': JSXElements.CommonToolbarAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface CommonToolbarAttributes extends HTMLAttributes {
+      'title'?: string;
+    }
+  }
+}
+
+
+declare global {
   interface HTMLLoadingSpinnerElement extends HTMLStencilElement {
 
   }
@@ -328,6 +355,33 @@ declare global {
       'alt'?: string;
       'onLazyImgloaded'?: (event: CustomEvent<HTMLImageElement>) => void;
       'src'?: string;
+    }
+  }
+}
+
+
+declare global {
+  interface HTMLNavMenuElement extends HTMLStencilElement {
+
+  }
+  var HTMLNavMenuElement: {
+    prototype: HTMLNavMenuElement;
+    new (): HTMLNavMenuElement;
+  };
+  interface HTMLElementTagNameMap {
+    'nav-menu': HTMLNavMenuElement;
+  }
+  interface ElementTagNameMap {
+    'nav-menu': HTMLNavMenuElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'nav-menu': JSXElements.NavMenuAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface NavMenuAttributes extends HTMLAttributes {
+
     }
   }
 }

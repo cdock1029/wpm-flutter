@@ -52,15 +52,7 @@ export class PropertiesPage {
     return [
       <ion-page>
         <ion-header>
-          <ion-toolbar>
-            <ion-buttons slot="start">
-              <ion-menu-button />
-            </ion-buttons>
-            <ion-title>Properties</ion-title>
-            <ion-buttons slot="end">
-              <more-popover-button />
-            </ion-buttons>
-          </ion-toolbar>
+          <common-toolbar title="PROPERTIES" />
         </ion-header>
         <ion-content>
           <ion-list>
