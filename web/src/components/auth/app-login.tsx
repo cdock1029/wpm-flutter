@@ -1,20 +1,25 @@
 import { Component, Prop, State } from '@stencil/core'
 
 import { NavControllerBase } from '@ionic/core'
-
-import { FirebaseNamespace } from '@firebase/app-types'
-declare const firebase: FirebaseNamespace
+import { IDatabaseInjector, IDatabase } from '../services/database-injector'
 
 @Component({ tag: 'app-login', styleUrl: 'app-login.scss' })
 export class AppLogin {
   @Prop({ connect: 'ion-nav' })
   nav: NavControllerBase
 
+  @Prop({ connect: 'database-injector' })
+  dbInjector: IDatabaseInjector
+
   @State() username = ''
   @State() password = ''
   @State() error = ''
 
-  private auth = firebase.auth()
+  private db: IDatabase
+
+  componentWillLoad = async () => {
+    this.db = await this.dbInjector.create()
+  }
 
   handleUsername = e => {
     this.username = e.target.value
@@ -25,15 +30,12 @@ export class AppLogin {
 
   onLogin = async e => {
     e.preventDefault()
+    const navCtrl: NavControllerBase = await (this
+      .nav as any).componentOnReady()
     try {
-      const user = await this.auth.signInWithEmailAndPassword(
-        this.username,
-        this.password
-      )
-
+      const user = await this.db.signIn(this.username, this.password)
       if (user) {
-        const navCtrl: NavControllerBase = await (this
-          .nav as any).componentOnReady()
+        console.log('login returned user, nav setting root..')
         navCtrl.setRoot('page-tabs')
       }
     } catch (e) {

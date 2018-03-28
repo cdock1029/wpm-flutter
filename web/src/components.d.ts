@@ -30,6 +30,9 @@ import {
   EventEmitter,
 } from '@stencil/core';
 import {
+  AppUser,
+} from './components/services/database-injector';
+import {
   IDatabase,
 } from './components/services/database-injector';
 
@@ -362,7 +365,7 @@ declare global {
 
 declare global {
   interface HTMLNavMenuElement extends HTMLStencilElement {
-
+    'appUser': AppUser;
   }
   var HTMLNavMenuElement: {
     prototype: HTMLNavMenuElement;
@@ -381,7 +384,7 @@ declare global {
   }
   namespace JSXElements {
     export interface NavMenuAttributes extends HTMLAttributes {
-
+      'appUser'?: AppUser;
     }
   }
 }

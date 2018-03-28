@@ -1,8 +1,7 @@
 import { Component, Prop } from '@stencil/core'
 import { NavControllerBase } from '@ionic/core'
-import { FirebaseNamespace } from '@firebase/app-types'
 
-declare var firebase: FirebaseNamespace
+import { IDatabase, IDatabaseInjector } from '../services/database-injector'
 
 @Component({
   tag: 'logout-button'
@@ -11,13 +10,20 @@ export class LogoutButton {
   @Prop({ connect: 'ion-nav' })
   nav: NavControllerBase
 
+  @Prop({ connect: 'database-injector' })
+  dbInjector: IDatabaseInjector
+  private db: IDatabase
+
+  async componentWillLoad() {
+    this.db = await this.dbInjector.create()
+  }
+
   logOutHandler = async () => {
     console.log('logouthandler click')
-    const auth = firebase.auth()
     const navCtrl: NavControllerBase = await (this
       .nav as any).componentOnReady()
 
-    await auth.signOut()
+    await this.db.signOut()
 
     navCtrl.setRoot('app-login')
   }

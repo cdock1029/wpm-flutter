@@ -7,10 +7,11 @@ import {
   ToastController,
   LoadingController
 } from '@ionic/core'
-import { FirebaseNamespace } from '@firebase/app-types'
-import { User } from '@firebase/auth-types'
-
-declare const firebase: FirebaseNamespace
+import {
+  AppUser,
+  IDatabaseInjector,
+  IDatabase
+} from '../services/database-injector'
 
 @Component({
   tag: 'my-app',
@@ -26,46 +27,47 @@ export class MyApp {
   @Prop({ connect: 'ion-loading-controller' })
   loadCtrl: LoadingController
 
-  @State()
-  user: {
-    data: User
-    loaded: boolean
-  } = { data: null, loaded: false }
+  @Prop({ connect: 'database-injector' })
+  dbInjector: IDatabaseInjector
 
-  private unsub
+  @State()
+  auth: {
+    appUser: AppUser
+    loaded: boolean
+  } = { appUser: { authData: null, userData: null }, loaded: false }
+
+  private db: IDatabase
+  private unsub: () => void
+
   private loadingEl: HTMLIonLoadingElement
 
-  authStateChanged = async (user: User) => {
-    console.log('handle authStateChange user? =>', Boolean(user))
-    // await new Promise(resolve => setTimeout(resolve, 1000))
-    await this.loadingEl.dismiss()
-    this.user = {
-      data: user,
+  authStateChanged = (appUser: AppUser) => {
+    console.log('my-app authStateChange appUser =>', appUser)
+    this.loadingEl.dismiss()
+    this.auth = {
+      appUser: appUser,
       loaded: true
     }
   }
 
   async componentWillLoad() {
+    console.log('my-app componentWillLoad')
     this.loadingEl = await this.loadCtrl.create({
       content: 'Loading..',
       spinner: 'crescent',
       translucent: true
     })
     await this.loadingEl.present()
+    this.db = await this.dbInjector.create()
   }
 
   componentDidLoad() {
-    const auth = firebase.auth()
-    console.log('my-app componentWillLoad')
-    this.unsub = auth.onAuthStateChanged(this.authStateChanged)
-
-    console.log('my-app componentDidLoad')
-    // const auth = await this.authInjector.create()
-    const currentUser = auth.currentUser
+    // auth.onAuthStateChanged(this.authStateChanged)
     console.log(
-      'my-app componentWillLoad currentUser => ',
-      Boolean(currentUser)
+      'my-app componentDidLoad appUser.authData => ',
+      Boolean(this.auth.appUser.authData)
     )
+    this.unsub = this.db.onUserStateChanged(this.authStateChanged)
     this.setupToastController()
   }
 
@@ -80,7 +82,10 @@ export class MyApp {
     return (
       <ion-router useHash={false}>
         <ion-route url="/login" component="app-login" />
-        <ion-route-redirect from="*" to={!this.user.data ? '/login' : null} />
+        <ion-route-redirect
+          from="*"
+          to={!this.auth.appUser.authData ? '/login' : null}
+        />
 
         <ion-route component="page-tabs">
           <ion-route url="/properties" component="tab-properties">
@@ -111,12 +116,9 @@ export class MyApp {
   }
 
   render() {
-    console.log(
-      'render my-app / [isReady, userData]? =>',
-      this.user.loaded,
-      this.user.data
-    )
-    return !this.user.loaded ? null : (
+    const { appUser, loaded } = this.auth
+    console.log('render my-app / [isReady, appUser]? =>', loaded, appUser)
+    return !loaded ? null : (
       <ion-app>
         {this.renderRouter()}
         <ion-split-pane>
@@ -127,9 +129,11 @@ export class MyApp {
               </ion-toolbar>
             </ion-header>
             <ion-content>
-              <nav-menu />
+              {appUser.authData &&
+                appUser.userData && <nav-menu appUser={appUser} />}
             </ion-content>
           </ion-menu>
+          {/* <ion-router-outlet main /> */}
           <ion-nav swipeBackEnabled={false} main />
         </ion-split-pane>
       </ion-app>

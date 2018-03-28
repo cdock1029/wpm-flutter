@@ -17,7 +17,7 @@
     "prettier": "prettier src/**/*.{js,tsx,ts,css,scss} --write"
   },
   "dependencies": {
-    "@ionic/core": "^0.1.5-2",
+    "@ionic/core": "^0.1.5-4",
     "@stencil/core": "0.7.8"
   },
   "devDependencies": {

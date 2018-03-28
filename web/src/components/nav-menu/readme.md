@@ -5,6 +5,20 @@
 <!-- Auto Generated Below -->
 
 
+## Properties
+
+#### appUser
+
+
+
+
+## Attributes
+
+#### app-user
+
+
+
+
 
 ----------------------------------------------
 
