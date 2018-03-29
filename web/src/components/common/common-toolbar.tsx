@@ -10,7 +10,7 @@ export class CommonToolbar {
     return [
       <ion-toolbar color="primary">
         <ion-buttons slot="start">
-          <ion-menu-button />
+          <ion-menu-button autoHide={true} menu="left" />
         </ion-buttons>
         <ion-title>{this.title}</ion-title>
         <ion-buttons slot="end">

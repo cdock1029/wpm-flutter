@@ -1,19 +1,26 @@
-import { Component, Element, State } from '@stencil/core'
+import { Component, Prop, State } from '@stencil/core'
 import { Property } from '../services/database-injector'
 
 @Component({
   tag: 'add-property'
 })
 export class AddProperty {
-  @Element() el: any
+  @Prop({ connect: 'ion-modal-controller' })
+  modalCtrl: HTMLIonModalControllerElement
 
   @State() name = { value: null, valid: false }
 
   @State() submitted = false
 
+  private modal
+
+  async componentDidLoad() {
+    this.modal = await this.modalCtrl.componentOnReady()
+  }
+
   dismiss = (prop?: Property) => {
-    const modal = this.el.closest('ion-modal')
-    modal.dismiss(prop)
+    // const modal = this.el.closest('ion-modal')
+    this.modal.dismiss(prop)
   }
 
   onSaveProperty = (e: MouseEvent) => {
@@ -51,11 +58,10 @@ export class AddProperty {
     return [
       <ion-page>
         <ion-header>
-          <ion-toolbar>
+          <ion-toolbar color="secondary">
             <ion-buttons slot="left">
               <ion-button onClick={() => this.dismiss()}>CANCEL</ion-button>
             </ion-buttons>
-
             <ion-title>Add Property</ion-title>
           </ion-toolbar>
         </ion-header>
@@ -87,6 +93,7 @@ export class AddProperty {
                   onClick={this.onSaveProperty}
                   expand="block"
                   type="submit"
+                  color="secondary"
                 >
                   SAVE
                 </ion-button>

@@ -3,13 +3,13 @@
   "private": true,
   "version": "0.0.1",
   "description": "Stencil App Starter",
-  "files": ["dist/"],
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "build": "stencil build --prerender",
-    "dev":
-      "sd concurrent \"stencil build --dev --watch\" \"stencil-dev-server\" ",
-    "devWithSW":
-      "sd concurrent \"stencil build --dev --service-worker --watch\" \"stencil-dev-server\" ",
+    "dev": "sd concurrent \"stencil build --dev --watch\" \"stencil-dev-server\" ",
+    "devWithSW": "sd concurrent \"stencil build --dev --service-worker --watch\" \"stencil-dev-server\" ",
     "serve": "stencil-dev-server",
     "start": "npm run dev",
     "test": "jest --no-cache",
@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@ionic/core": "^0.1.5-4",
-    "@stencil/core": "0.7.8"
+    "@stencil/core": "^0.7.10"
   },
   "devDependencies": {
     "@firebase/app-types": "^0.1.2",
@@ -46,11 +46,16 @@
   "homepage": "https://github.com/ionic-team/stencil",
   "jest": {
     "transform": {
-      "^.+\\.(js|ts|tsx)$":
-        "<rootDir>/node_modules/@stencil/core/testing/jest.preprocessor.js"
+      "^.+\\.(js|ts|tsx)$": "<rootDir>/node_modules/@stencil/core/testing/jest.preprocessor.js"
     },
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(tsx?|jsx?)$",
-    "moduleFileExtensions": ["ts", "tsx", "js", "json", "jsx"]
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json",
+      "jsx"
+    ]
   },
   "prettier": {
     "semi": false,

@@ -127,6 +127,7 @@ class Database implements IDatabase {
   }
 
   property = async (pid: string): Promise<Property> => {
+    console.log('get property w/ id=', pid)
     const cid = (await this.getActiveCompany()).id
     const snap = await this.fs.doc(`companies/${cid}/properties/${pid}`).get()
     const data = snap.data()

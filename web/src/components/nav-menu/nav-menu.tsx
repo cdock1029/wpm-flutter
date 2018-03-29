@@ -5,6 +5,7 @@ import {
   Property,
   AppUser
 } from '../services/database-injector'
+import { OverlayEventDetail } from '@ionic/core'
 
 @Component({
   tag: 'nav-menu'
@@ -12,6 +13,9 @@ import {
 export class NavMenu {
   @Prop({ connect: 'database-injector' })
   dbInjector: IDatabaseInjector
+
+  @Prop({ connect: 'ion-modal-controller' })
+  modalCtrl: HTMLIonModalControllerElement
 
   @Prop() appUser: AppUser
 
@@ -33,6 +37,23 @@ export class NavMenu {
     }
   }
 
+  addPropertyModal = async () => {
+    const modal = await this.modalCtrl.create({
+      component: 'add-property'
+    })
+    modal.onDidDismiss(this.modalDidDismiss)
+    await modal.present()
+  }
+
+  modalDidDismiss = (detail: OverlayEventDetail) => {
+    const prop: Property | null = detail.data
+
+    console.log('modal dismiss data: prop=', prop)
+    if (prop) {
+      this.db.addProperty(prop)
+    }
+  }
+
   render() {
     console.log('page tabs render')
     const { authData } = this.appUser
@@ -46,14 +67,19 @@ export class NavMenu {
           <ion-label>PROPERTIES</ion-label>
         </ion-list-header>
         {this.properties.map(p => (
-          <ion-menu-toggle autoHide={false}>
+          <ion-menu-toggle autoHide={false} menu="left">
             <ion-item href={`/properties/${p.id}`}>
               {/* <ion-icon name="home" slot="start" /> */}
               <ion-label>{p.name}</ion-label>
             </ion-item>
           </ion-menu-toggle>
         ))}
-      </ion-list>
+      </ion-list>,
+      <ion-fab id="addProperty" vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button onClick={this.addPropertyModal} color="secondary">
+          <ion-icon name="add" />
+        </ion-fab-button>
+      </ion-fab>
     ]
   }
 }

@@ -6,14 +6,14 @@ import { Component } from '@stencil/core'
 export class PageTabs {
   render() {
     return [
-      <ion-tabs>
-        <ion-tab title="Units" icon="home" name="tab-units">
+      <ion-tabs color="primary" tabbarPlacement="bottom" tabbarHighlight>
+        <ion-tab title="Leases" icon="planet" name="tab-property-leases">
           <ion-nav />
         </ion-tab>
-        <ion-tab title="Properties" icon="planet" name="tab-properties">
+        <ion-tab title="Units" icon="home" name="tab-property-units">
           <ion-nav />
         </ion-tab>
-        <ion-tab title="Tenants" icon="people" name="tab-tenants">
+        <ion-tab title="Tenants" icon="people" name="tab-property-tenants">
           <ion-nav />
         </ion-tab>
       </ion-tabs>

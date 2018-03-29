@@ -4,12 +4,17 @@ import {
   Property,
   Unit
 } from '../services/database-injector'
+import { NavControllerBase } from '@ionic/core'
 
 @Component({
   tag: 'property-detail'
 })
 export class PropertyDetail {
   @Prop() propertyId: string
+
+  @Prop({ connect: 'ion-nav' })
+  nav: any
+  navCtrl: NavControllerBase
 
   @Prop({ connect: 'database-injector' })
   dbInjector: IDatabaseInjector
@@ -21,12 +26,21 @@ export class PropertyDetail {
   @State() units: Unit[] = []
   unsub: () => void
 
+  async componentWillLoad() {
+    this.navCtrl = await this.nav.componentOnReady()
+    console.log('navCtrl =>', this.navCtrl)
+  }
+
   async componentDidLoad() {
     const db = await this.dbInjector.create()
-    this.property = await db.property(this.propertyId)
-    this.unsub = await db.units(this.property.id, units => {
-      this.units = units
-    })
+    const [prop, unsub] = await Promise.all([
+      db.property(this.propertyId),
+      db.units(this.property.id, units => {
+        this.units = units
+      })
+    ])
+    this.property = prop
+    this.unsub = unsub
   }
   componentDidUnload() {
     this.unsub()

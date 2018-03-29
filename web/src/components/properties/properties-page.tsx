@@ -1,4 +1,4 @@
-import { Component, Prop, State, Listen } from '@stencil/core'
+import { Component, Prop, State } from '@stencil/core'
 import {
   IDatabaseInjector,
   IDatabase,
@@ -38,15 +38,15 @@ export class PropertiesPage {
     await modal.present()
   }
 
-  @Listen('body:ionModalDidDismiss')
-  modalDidDismiss(event: CustomEvent) {
-    const prop: Property | null = event.detail.data
+  // @Listen('body:ionModalDidDismiss')
+  // modalDidDismiss(event: CustomEvent) {
+  //   const prop: Property | null = event.detail.data
 
-    // console.log('prop=', prop)
-    if (prop) {
-      this.db.addProperty(prop)
-    }
-  }
+  //   // console.log('prop=', prop)
+  //   if (prop) {
+  //     this.db.addProperty(prop)
+  //   }
+  // }
 
   render() {
     return [
