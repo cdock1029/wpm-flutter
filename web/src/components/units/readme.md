@@ -5,30 +5,6 @@
 <!-- Auto Generated Below -->
 
 
-## Properties
-
-#### propertyId
-
-string
-
-
-#### unitId
-
-string
-
-
-## Attributes
-
-#### property-id
-
-string
-
-
-#### unit-id
-
-string
-
-
 
 ----------------------------------------------
 

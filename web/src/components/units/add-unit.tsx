@@ -1,14 +1,14 @@
 import { Component, Prop, State } from '@stencil/core'
-import { Property } from '../services/database-injector'
+import { Unit } from '../services/database-injector'
 
 @Component({
-  tag: 'add-property'
+  tag: 'add-unit'
 })
-export class AddProperty {
+export class AddUnit {
   @Prop({ connect: 'ion-modal-controller' })
   modalCtrl: HTMLIonModalControllerElement
 
-  @State() name = { value: null, valid: false }
+  @State() address = { value: null, valid: false }
 
   @State() submitted = false
 
@@ -18,38 +18,36 @@ export class AddProperty {
     this.modal = await this.modalCtrl.componentOnReady()
   }
 
-  dismiss = (prop?: Property) => {
-    // const modal = this.el.closest('ion-modal')
-    this.modal.dismiss(prop)
+  dismiss = (unit?: Unit) => {
+    this.modal.dismiss(unit)
   }
 
-  onSaveProperty = (e: MouseEvent) => {
+  onSaveUnit = (e: MouseEvent) => {
     e.preventDefault()
-    this.validatePropertyName()
+    this.validateUnitAddress()
     this.submitted = true
 
-    if (this.name.valid) {
-      this.dismiss({ name: this.name.value })
+    if (this.address.valid) {
+      this.dismiss({ address: this.address.value })
     }
   }
   onInput = e => {
-    this.name = {
-      ...this.name,
+    this.address = {
+      ...this.address,
       value: e.target.value
     }
-    this.validatePropertyName()
+    this.validateUnitAddress()
   }
-  validatePropertyName() {
-    console.log('validation name=', this.name.value)
-    if (this.name.value && this.name.value.trim().length > 0) {
-      this.name = {
-        ...this.name,
+  validateUnitAddress() {
+    if (this.address.value && this.address.value.trim().length > 0) {
+      this.address = {
+        ...this.address,
         valid: true
       }
       return
     }
-    this.name = {
-      ...this.name,
+    this.address = {
+      ...this.address,
       valid: false
     }
   }
@@ -62,17 +60,17 @@ export class AddProperty {
             <ion-buttons slot="left">
               <ion-button onClick={() => this.dismiss()}>CANCEL</ion-button>
             </ion-buttons>
-            <ion-title>Add Property</ion-title>
+            <ion-title>Add Unit</ion-title>
           </ion-toolbar>
         </ion-header>
         <ion-content>
           <form novalidate>
             <ion-list>
               <ion-item>
-                <ion-label fixed>Property name</ion-label>
+                <ion-label fixed>Unit Address</ion-label>
                 <ion-input
-                  name="name"
-                  value={this.name.value}
+                  name="address"
+                  value={this.address.value}
                   type="text"
                   onInput={this.onInput}
                   autofocus={true}
@@ -81,16 +79,16 @@ export class AddProperty {
               </ion-item>
               <ion-text color="danger">
                 <p
-                  hidden={this.name.valid || this.submitted === false}
+                  hidden={this.address.valid || this.submitted === false}
                   padding-left
                 >
-                  Username is required
+                  Unit address is required
                 </p>
               </ion-text>
 
               <div padding>
                 <ion-button
-                  onClick={this.onSaveProperty}
+                  onClick={this.onSaveUnit}
                   expand="block"
                   type="submit"
                   color="danger"

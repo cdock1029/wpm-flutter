@@ -1,13 +1,26 @@
-page-login .login-logo {
-  padding: 20px 0;
-  min-height: 200px;
-  text-align: center;
-}
+app-login {
+  .login-logo {
+    padding: 20px 0;
+    min-height: 200px;
+    text-align: center;
 
-page-login .login-logo img {
-  max-width: 150px;
-}
+    img {
+      max-width: 150px;
+    }
+  }
 
-page-login .list {
-  margin-bottom: 0;
+  .list {
+    margin-bottom: 0;
+  }
+
+  form {
+    max-width: 550px;
+  }
+
+  ion-scroll {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 }

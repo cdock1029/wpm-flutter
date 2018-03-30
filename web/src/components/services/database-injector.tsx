@@ -3,9 +3,15 @@ import { Component, Method } from '@stencil/core'
 import { FirebaseFirestore, DocumentReference } from '@firebase/firestore-types'
 import { FirebaseAuth, User } from '@firebase/auth-types'
 
-function stringy(object: {}): string {
-  return JSON.stringify(object, null, 2)
-}
+declare var firebase: any
+const collator = new Intl.Collator(undefined, {
+  numeric: true,
+  sensitivity: 'base'
+})
+
+// function stringy(object: {}): string {
+//   return JSON.stringify(object, null, 2)
+// }
 
 export interface IDatabase {
   // properties(options: { once: boolean; (data: any): any }): Promise<Property[]>
@@ -13,80 +19,37 @@ export interface IDatabase {
   units(propertyId: string, cb: (units: Unit[]) => void): Promise<() => void>
   tenants(cb: (tens: Tenant[]) => void): Promise<() => void>
   addProperty(data: Property): Promise<DocumentReference>
+  addUnit(unit: Unit, propertyId: string): Promise<DocumentReference>
   addTenant(data: Tenant): Promise<DocumentReference>
   property(id: string): Promise<Property>
   unit(ids: { propertyId: string; unitId: string }): Promise<Unit>
+  leasesForUnit(
+    unitId: string,
+    cb: (leases: Lease[]) => void
+  ): Promise<() => void>
 
-  onUserStateChanged(cb: (user: AppUser) => void): () => void
-  getAppUser(): AppUser
+  onUserStateChanged(cb: (user: User) => void): () => void
+  getUser(): User
 
   signIn(email: string, password: string): Promise<void>
   signOut(): Promise<void>
   // activeProperty(cb: (activeProp: Property) => void): Promise<() => void>
 }
 
-declare var firebase: any
-
-let appUser: AppUser = { authData: null, userData: null }
-
-firebase.auth().onAuthStateChanged(fbUser => {
-  if (fbUser === null) {
-    appUser = { authData: null, userData: null }
-  }
-})
-
 class Database implements IDatabase {
   private fs: FirebaseFirestore = firebase.firestore()
   private auth: FirebaseAuth = firebase.auth()
 
-  private getActiveCompany = async (): Promise<Company> => {
-    if (appUser.userData != null) {
-      return appUser.userData.activeCompany
-    }
-    const snap = await this.fs
-      .collection('users')
-      .doc(appUser.authData.uid)
-      .get()
-    const userData = snap.data()
-    return userData['activeCompany']
-  }
-
-  private subscribeUserData = (
-    user: User,
-    cb: (userData: any) => void
-  ): (() => void) => {
-    const uid = user.uid
-    const unsub = this.fs
+  private getActiveCompany = async (): Promise<DocumentReference> => {
+    const uid = this.auth.currentUser.uid
+    const userDataSnap = await this.fs
       .collection('users')
       .doc(uid)
-      .onSnapshot(userDataSnap => {
-        const userData = userDataSnap.data()
-        cb(userData)
-      })
-    return unsub
+      .get()
+    const userData = userDataSnap.data()
+    const companyRef: DocumentReference = userData.activeCompany.ref
+    return companyRef
   }
-
-  // properties = async ({ once = false, cb = null }): Promise<Property[]> => {
-  //   const companyId = await this.getActiveCompany()
-  //   const ref = await this.fs
-  //     .collection('companies')
-  //     .doc(companyId)
-  //     .collection('properties')
-
-  //   if (once) {
-  //     const snap = await ref.get()
-  //     return snap.docs.map(doc => {
-  //       const data = doc.data()
-  //       return { id: doc.id, name: data['name'] }
-  //     })
-  //   }
-  //   ref.onSnapshot(snapshot => {
-  //     snapshot.docs.map(doc => {
-  //       const data = doc.data()
-  //       return {id: doc.id, name: data['name']}
-  //     })
-  //   })
-  // }
 
   signIn(email, password) {
     return this.auth.signInWithEmailAndPassword(email, password)
@@ -118,11 +81,30 @@ class Database implements IDatabase {
       .collection('units')
 
     return ref.onSnapshot(snapshot => {
-      const units: Unit[] = snapshot.docs.map(doc => {
-        const data = doc.data()
-        return { id: doc.id, address: data.address }
-      })
+      const units: Unit[] = snapshot.docs
+        .map(doc => {
+          const data = doc.data()
+          return { id: doc.id, address: data.address }
+        })
+        .sort((a: { address: string }, b: { address: string }) => {
+          return collator.compare(a.address, b.address)
+        })
       cb(units)
+    })
+  }
+
+  leasesForUnit = async (unitId: string, cb): Promise<() => void> => {
+    const companyRef = await this.getActiveCompany()
+    const query = companyRef
+      .collection('leases')
+      .where(`units.${unitId}`, '==', true)
+
+    return query.onSnapshot(snap => {
+      const leases: Lease[] = snap.docs.map(doc => {
+        const l = doc.data()
+        return { id: doc.id, rent: l.rent, units: l.units, balance: l.balance }
+      })
+      cb(leases)
     })
   }
 
@@ -134,36 +116,13 @@ class Database implements IDatabase {
     return { id: snap.id, name: data['name'] }
   }
 
-  onUserStateChanged = (cb: (user: AppUser) => void): (() => void) => {
-    let userDataUnsub = () => {}
-    const authUnsub = this.auth.onAuthStateChanged(authData => {
-      console.log(
-        `inner onAuthStateChanged callback appUser=${stringy(appUser)}`
-      )
-      console.log(
-        `inner onAuthStateChanged callback authData=${Boolean(authData)}`
-      )
-      appUser = { ...appUser, authData }
-      cb(appUser)
-      if (authData !== null) {
-        userDataUnsub = this.subscribeUserData(authData, (userData: any) => {
-          console.log(
-            `inner subscribeUserData callback appUser=${stringy(appUser)}`
-          )
-          console.log(
-            `inner subscribeUserData callback userData=${stringy(userData)}`
-          )
-          appUser = { ...appUser, userData }
-          cb(appUser)
-        })
-      }
+  onUserStateChanged = (cb: (user: User) => void): (() => void) => {
+    const authUnsub = this.auth.onAuthStateChanged((user: User) => {
+      cb(user)
     })
-    return () => {
-      authUnsub()
-      userDataUnsub()
-    }
+    return authUnsub
   }
-  getAppUser = () => appUser
+  getUser = () => this.auth.currentUser
 
   async unit({ unitId, propertyId }): Promise<Unit> {
     const cid = (await this.getActiveCompany()).id
@@ -183,6 +142,20 @@ class Database implements IDatabase {
       .doc()
 
     await ref.set({ name: data.name.trim() })
+    return ref
+  }
+  addUnit = async (
+    unit: Unit,
+    propertyId: string
+  ): Promise<DocumentReference> => {
+    // console.log(`addUnit propertyId=${propertyId}, unit=`, unit)
+    const comp = await this.getActiveCompany()
+    const ref = comp
+      .collection('properties')
+      .doc(propertyId)
+      .collection('units')
+      .doc()
+    await ref.set({ address: unit.address.toUpperCase().trim() })
     return ref
   }
   addTenant = async (data: Tenant): Promise<DocumentReference> => {
@@ -253,13 +226,20 @@ export interface Tenant extends Model {
   firstName: string
   lastName: string
 }
+export interface User extends User {}
 
-export interface AppUser extends Model {
-  authData: User
-  userData: UserData
+export interface Lease extends Model {
+  rent: number
+  balance: number
+  units: { [unitId: string]: boolean }
 }
+
+// export interface AppUser extends Model {
+//   authData: User
+//   userData: UserData
+// }
 
 export interface UserData {
   activeCompany: Company
-  activeProperty: Property
+  // activeProperty: Property
 }

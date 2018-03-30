@@ -2,7 +2,8 @@ import { Component, Prop, State, Listen } from '@stencil/core'
 import {
   IDatabaseInjector,
   Property,
-  Unit
+  Unit,
+  Lease
 } from '../services/database-injector'
 
 @Component({
@@ -20,23 +21,25 @@ export class UnitDetail {
 
   @State() unit: Unit
   @State() property: Property
-  unsub: () => void
+  @State() leases: Lease[] = []
+  leasesUnsub: () => void
 
   async componentDidLoad() {
     const db = await this.dbInjector.create()
-    const [property, unit] = await Promise.all([
+    const [property, unit, leasesUnsub] = await Promise.all([
       db.property(this.propertyId),
-      db.unit({ propertyId: this.propertyId, unitId: this.unitId })
+      db.unit({ propertyId: this.propertyId, unitId: this.unitId }),
+      db.leasesForUnit(this.unitId, leases => {
+        this.leases = leases
+      })
     ])
     this.unit = unit
     this.property = property
-    /* this.unsub = await db.units(this.property.id, units => {
-      this.units = units
-    })*/
+    this.leasesUnsub = leasesUnsub
   }
   componentDidUnload() {
-    if (this.unsub) {
-      this.unsub()
+    if (this.leasesUnsub) {
+      this.leasesUnsub()
     }
   }
 
@@ -58,18 +61,16 @@ export class UnitDetail {
   }
 
   render() {
-    const propName = this.property && this.property.name
+    // const propName = this.property && this.property.name
     const unitAddr = this.unit && this.unit.address
     return [
       <ion-page>
         <ion-header>
-          <ion-toolbar>
+          <ion-toolbar color="primary">
             <ion-buttons slot="start">
               <ion-back-button defaultHref={`/properties/${this.propertyId}`} />
             </ion-buttons>
-            <ion-title>
-              {propName && unitAddr && `${propName} / ${unitAddr}`}
-            </ion-title>
+            <ion-title>{unitAddr && unitAddr}</ion-title>
             <ion-buttons slot="end">
               <more-popover-button />
             </ion-buttons>
@@ -79,12 +80,19 @@ export class UnitDetail {
           <p>Unit detail</p>
           <h3>{unitAddr}</h3>
           <ion-list>
-            <ion-list-header>Leases/Tenant/etc..</ion-list-header>
-            {/* {this.units.map(u => (
-              <ion-item>
-                <ion-label>{u.address}</ion-label>
-              </ion-item>
-            ))} */}
+            <ion-list-header>Leases</ion-list-header>
+            {this.leases.map(l => [
+              <ion-card>
+                <ion-card-header>
+                  <ion-card-title>Lease x</ion-card-title>
+                  <ion-card-subtitle>subtitle</ion-card-subtitle>
+                </ion-card-header>
+                <ion-card-content>
+                  <div>RENT: {l.rent}</div>
+                  <div>BALANCE: {l.balance}</div>
+                </ion-card-content>
+              </ion-card>
+            ])}
           </ion-list>
         </ion-content>
       </ion-page>

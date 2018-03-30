@@ -30,7 +30,7 @@ import {
   EventEmitter,
 } from '@stencil/core';
 import {
-  AppUser,
+  User,
 } from './components/services/database-injector';
 import {
   IDatabase,
@@ -364,8 +364,89 @@ declare global {
 
 
 declare global {
+  interface HTMLLeaseTableElement extends HTMLStencilElement {
+
+  }
+  var HTMLLeaseTableElement: {
+    prototype: HTMLLeaseTableElement;
+    new (): HTMLLeaseTableElement;
+  };
+  interface HTMLElementTagNameMap {
+    'lease-table': HTMLLeaseTableElement;
+  }
+  interface ElementTagNameMap {
+    'lease-table': HTMLLeaseTableElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'lease-table': JSXElements.LeaseTableAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface LeaseTableAttributes extends HTMLAttributes {
+
+    }
+  }
+}
+
+
+declare global {
+  interface HTMLTenantPopoverButtonElement extends HTMLStencilElement {
+    'names': string[];
+  }
+  var HTMLTenantPopoverButtonElement: {
+    prototype: HTMLTenantPopoverButtonElement;
+    new (): HTMLTenantPopoverButtonElement;
+  };
+  interface HTMLElementTagNameMap {
+    'tenant-popover-button': HTMLTenantPopoverButtonElement;
+  }
+  interface ElementTagNameMap {
+    'tenant-popover-button': HTMLTenantPopoverButtonElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'tenant-popover-button': JSXElements.TenantPopoverButtonAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface TenantPopoverButtonAttributes extends HTMLAttributes {
+      'names'?: string[];
+    }
+  }
+}
+
+
+declare global {
+  interface HTMLTenantPopoverElement extends HTMLStencilElement {
+    'names': string[];
+  }
+  var HTMLTenantPopoverElement: {
+    prototype: HTMLTenantPopoverElement;
+    new (): HTMLTenantPopoverElement;
+  };
+  interface HTMLElementTagNameMap {
+    'tenant-popover': HTMLTenantPopoverElement;
+  }
+  interface ElementTagNameMap {
+    'tenant-popover': HTMLTenantPopoverElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'tenant-popover': JSXElements.TenantPopoverAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface TenantPopoverAttributes extends HTMLAttributes {
+      'names'?: string[];
+    }
+  }
+}
+
+
+declare global {
   interface HTMLNavMenuElement extends HTMLStencilElement {
-    'appUser': AppUser;
+    'user': User;
   }
   var HTMLNavMenuElement: {
     prototype: HTMLNavMenuElement;
@@ -384,7 +465,7 @@ declare global {
   }
   namespace JSXElements {
     export interface NavMenuAttributes extends HTMLAttributes {
-      'appUser'?: AppUser;
+      'user'?: User;
     }
   }
 }
@@ -573,6 +654,33 @@ declare global {
   }
   namespace JSXElements {
     export interface TenantsPageAttributes extends HTMLAttributes {
+
+    }
+  }
+}
+
+
+declare global {
+  interface HTMLAddUnitElement extends HTMLStencilElement {
+
+  }
+  var HTMLAddUnitElement: {
+    prototype: HTMLAddUnitElement;
+    new (): HTMLAddUnitElement;
+  };
+  interface HTMLElementTagNameMap {
+    'add-unit': HTMLAddUnitElement;
+  }
+  interface ElementTagNameMap {
+    'add-unit': HTMLAddUnitElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'add-unit': JSXElements.AddUnitAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface AddUnitAttributes extends HTMLAttributes {
 
     }
   }

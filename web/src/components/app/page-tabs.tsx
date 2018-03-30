@@ -14,13 +14,16 @@ export class PageTabs {
     console.log('page tabs render')
     return [
       <ion-tabs color="primary" tabbarPlacement="bottom" tabbarHighlight>
-        <ion-tab title="HOME" icon="home" name="tab-home">
+        <ion-tab tabTitle="HOME" tabIcon="home" name="tab-home">
           <ion-nav />
         </ion-tab>
-        <ion-tab title="PROPERTIES" icon="planet" name="tab-properties">
+        <ion-tab tabTitle="PROPERTIES" tabIcon="planet" name="tab-properties">
           <ion-nav />
         </ion-tab>
-        <ion-tab title="TENANTS" icon="people" name="tab-tenants">
+        <ion-tab tabTitle="TENANTS" tabIcon="people" name="tab-tenants">
+          <ion-nav />
+        </ion-tab>
+        <ion-tab tabTitle="LEASES" tabIcon="paper" name="tab-leases">
           <ion-nav />
         </ion-tab>
       </ion-tabs>

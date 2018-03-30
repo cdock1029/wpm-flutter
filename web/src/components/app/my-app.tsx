@@ -4,7 +4,7 @@ import '@stencil/core'
 import { Component, Prop, Listen, State } from '@stencil/core'
 import { ToastController, LoadingController } from '@ionic/core'
 import {
-  AppUser,
+  User,
   IDatabaseInjector,
   IDatabase
 } from '../services/database-injector'
@@ -28,20 +28,20 @@ export class MyApp {
 
   @State()
   auth: {
-    appUser: AppUser
+    user: User
     loaded: boolean
-  } = { appUser: { authData: null, userData: null }, loaded: false }
+  } = { user: null, loaded: false }
 
   private db: IDatabase
   private unsub: () => void
 
   private loadingEl: HTMLIonLoadingElement
 
-  authStateChanged = (appUser: AppUser) => {
-    console.log('my-app authStateChange appUser =>', appUser)
+  authStateChanged = (user: User) => {
+    console.log('my-app authStateChange User =>', user)
     this.loadingEl.dismiss()
     this.auth = {
-      appUser: appUser,
+      user,
       loaded: true
     }
   }
@@ -49,9 +49,7 @@ export class MyApp {
   async componentWillLoad() {
     console.log('my-app componentWillLoad')
     const loaderProm = this.loadCtrl.create({
-      content: 'Loading..',
-      spinner: 'crescent',
-      translucent: true
+      content: 'Loading..'
     })
     const dbProm = this.dbInjector.create()
     const [_loadingEl, _db] = await Promise.all([loaderProm, dbProm])
@@ -61,10 +59,7 @@ export class MyApp {
   }
 
   componentDidLoad() {
-    console.log(
-      'my-app componentDidLoad appUser.authData => ',
-      Boolean(this.auth.appUser.authData)
-    )
+    console.log('my-app componentDidLoad user => ', Boolean(this.auth.user))
     this.unsub = this.db.onUserStateChanged(this.authStateChanged)
     this.setupToastController()
   }
@@ -80,12 +75,12 @@ export class MyApp {
     return (
       <ion-router useHash={false}>
         <ion-route url="/login" component="app-login" />
-        <ion-route-redirect
-          from="*"
-          to={!this.auth.appUser.authData ? '/login' : null}
-        />
+        <ion-route-redirect from="*" to={!this.auth.user ? '/login' : null} />
 
-        {/* <ion-route component="page-tabs">
+        <ion-route component="page-tabs">
+          <ion-route url="/" component="tab-home">
+            <ion-route component="app-home" />
+          </ion-route>
           <ion-route url="/properties" component="tab-properties">
             <ion-route component="properties-page" />
             <ion-route url="/:propertyId" component="property-detail" />
@@ -98,13 +93,12 @@ export class MyApp {
           <ion-route url="/tenants" component="tab-tenants">
             <ion-route component="tenants-page" />
           </ion-route>
-          <ion-route url="/" component="tab-home">
-            <ion-route component="app-home" />
+          <ion-route url="/leases" component="tab-leases">
+            <ion-route component="lease-table" />
           </ion-route>
-        </ion-route> */}
-        <ion-route url="/" component="app-home" />
+        </ion-route>
 
-        <ion-route url="/property" component="property-tabs">
+        {/* <ion-route url="/property" component="property-tabs">
           <ion-route url="/:propertyId" component="tab-property-units">
             <ion-route component="property-detail" />
           </ion-route>
@@ -114,7 +108,7 @@ export class MyApp {
           <ion-route url="/leases" component="tab-property-leases">
             <ion-route component="app-home" />
           </ion-route>
-        </ion-route>
+        </ion-route> */}
 
         {/* <ion-route url="/properties" component="properties-page" />
         <ion-route url="/properties/:propertyId" component="property-detail" />
@@ -127,25 +121,29 @@ export class MyApp {
   }
 
   render() {
-    const { appUser, loaded } = this.auth
-    const hasData = appUser.authData && appUser.userData
+    const { user, loaded } = this.auth
     console.log(
-      `render my-app => loaded=[${loaded}], hasData=[${Boolean(hasData)}]]?`
+      `render my-app => loaded=[${loaded}], user=[${Boolean(user)}]]?`
     )
     return !loaded ? null : (
       <ion-app>
         {this.renderRouter()}
         <ion-split-pane>
-          <ion-menu side="left">
-            <ion-header>
-              <ion-toolbar color="primary">
-                <ion-title>WPM</ion-title>
-              </ion-toolbar>
-            </ion-header>
-            <ion-content>
-              {hasData && <nav-menu appUser={appUser} />}
-            </ion-content>
-          </ion-menu>
+          {user && (
+            <ion-menu side="left">
+              <ion-header>
+                <ion-toolbar color="primary">
+                  <ion-title>WPM</ion-title>
+                  <ion-buttons slot="end">
+                    <more-popover-button />
+                  </ion-buttons>
+                </ion-toolbar>
+              </ion-header>
+              <ion-content>
+                <nav-menu user={user} />
+              </ion-content>
+            </ion-menu>
+          )}
           {/* <ion-router-outlet main /> */}
           <ion-nav swipeBackEnabled={false} main />
         </ion-split-pane>
@@ -181,21 +179,3 @@ export class MyApp {
     })
   }
 }
-
-// const appPages = [
-//   {
-//     title: 'Home',
-//     url: '/',
-//     icon: 'home'
-//   },
-//   {
-//     title: 'Properties',
-//     url: '/properties',
-//     icon: 'planet'
-//   },
-//   {
-//     title: 'Tenants',
-//     url: '/tenants',
-//     icon: 'people'
-//   }
-// ]

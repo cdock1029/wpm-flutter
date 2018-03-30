@@ -13,9 +13,9 @@ export class CommonToolbar {
           <ion-menu-button autoHide={true} menu="left" />
         </ion-buttons>
         <ion-title>{this.title}</ion-title>
-        <ion-buttons slot="end">
+        {/* <ion-buttons slot="end">
           <more-popover-button />
-        </ion-buttons>
+        </ion-buttons> */}
       </ion-toolbar>,
       <ion-toolbar color="primary">
         <ion-searchbar />

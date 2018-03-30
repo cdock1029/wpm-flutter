@@ -5,6 +5,8 @@ import {
   Property
 } from '../services/database-injector'
 
+// import { OverlayEventDetail } from '@ionic/core'
+
 @Component({
   tag: 'properties-page'
 })
@@ -37,12 +39,18 @@ export class PropertiesPage {
     })
     await modal.present()
   }
+  // addPropertyModal = async () => {
+  //   const modal = await this.modalCtrl.create({
+  //     component: 'add-property'
+  //   })
+  //   modal.onDidDismiss(this.modalDidDismiss)
+  //   await modal.present()
+  // }
 
-  // @Listen('body:ionModalDidDismiss')
-  // modalDidDismiss(event: CustomEvent) {
-  //   const prop: Property | null = event.detail.data
+  // modalDidDismiss = (detail: OverlayEventDetail) => {
+  //   const prop: Property | null = detail.data
 
-  //   // console.log('prop=', prop)
+  //   console.log('modal dismiss data: prop=', prop)
   //   if (prop) {
   //     this.db.addProperty(prop)
   //   }
@@ -69,7 +77,7 @@ export class PropertiesPage {
             horizontal="end"
             slot="fixed"
           >
-            <ion-fab-button onClick={this.addPropertyModal}>
+            <ion-fab-button onClick={this.addPropertyModal} color="danger">
               <ion-icon name="add" />
             </ion-fab-button>
           </ion-fab>

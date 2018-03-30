@@ -19,6 +19,8 @@ export class TenantsPage {
 
   @State() tenants: Tenant[] = []
 
+  @State() filter: string
+
   db: IDatabase
   unsub: () => void
 
@@ -39,16 +41,30 @@ export class TenantsPage {
     await modal.present()
   }
 
-  @Listen('body:ionModalDidDismiss')
-  modalDidDismiss(event: CustomEvent) {
-    const tenant: Tenant | null = event.detail.data
+  // @Listen('body:ionModalDidDismiss')
+  // modalDidDismiss(event: CustomEvent) {
+  //   const tenant: Tenant | null = event.detail.data
 
-    // console.log('prop=', prop)
-    if (tenant) {
-      this.db.addTenant(tenant)
-    }
+  //   if (tenant) {
+  //     this.db.addTenant(tenant)
+  //   }
+  // }
+
+  @Listen('ionInput')
+  onIonInput(event: CustomEvent) {
+    const el: HTMLInputElement = event.detail.srcElement
+    console.log('ionInput value=', el.value)
+    this.filter = el.value && el.value.toUpperCase()
   }
+
   render() {
+    const tenants = this.filter
+      ? this.tenants.filter(
+          t =>
+            t.firstName.toUpperCase().includes(this.filter) ||
+            t.lastName.toUpperCase().includes(this.filter)
+        )
+      : this.tenants
     return (
       <ion-page>
         <ion-header>
@@ -57,7 +73,7 @@ export class TenantsPage {
         <ion-content>
           <ion-list>
             <ion-list-header>Tenants</ion-list-header>
-            {this.tenants.map(t => (
+            {tenants.map(t => (
               <ion-item>
                 <ion-label>
                   {t.lastName}, {t.firstName}

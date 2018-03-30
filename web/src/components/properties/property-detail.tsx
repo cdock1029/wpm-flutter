@@ -1,10 +1,11 @@
-import { Component, Prop, State, Listen } from '@stencil/core'
+import { Component, Prop, State } from '@stencil/core'
 import {
   IDatabaseInjector,
+  IDatabase,
   Property,
   Unit
 } from '../services/database-injector'
-import { NavControllerBase } from '@ionic/core'
+import { NavControllerBase, OverlayEventDetail } from '@ionic/core'
 
 @Component({
   tag: 'property-detail'
@@ -18,63 +19,65 @@ export class PropertyDetail {
 
   @Prop({ connect: 'database-injector' })
   dbInjector: IDatabaseInjector
+  private db: IDatabase
 
   @Prop({ connect: 'ion-modal-controller' })
   modalCtrl: HTMLIonModalControllerElement
 
   @State() property: Property
   @State() units: Unit[] = []
-  unsub: () => void
+  private unitsUnsub: () => void
 
   async componentWillLoad() {
+    console.log('property detail propertyId=', this.propertyId)
     this.navCtrl = await this.nav.componentOnReady()
     console.log('navCtrl =>', this.navCtrl)
   }
 
   async componentDidLoad() {
-    const db = await this.dbInjector.create()
-    const [prop, unsub] = await Promise.all([
-      db.property(this.propertyId),
-      db.units(this.property.id, units => {
+    this.db = await this.dbInjector.create()
+    const [prop, unitsUnsub] = await Promise.all([
+      this.db.property(this.propertyId),
+      this.db.units(this.propertyId, units => {
         this.units = units
       })
     ])
     this.property = prop
-    this.unsub = unsub
+    this.unitsUnsub = unitsUnsub
   }
   componentDidUnload() {
-    this.unsub()
+    if (this.unitsUnsub) {
+      this.unitsUnsub()
+    }
   }
 
-  addPropertyModal = async () => {
+  addUnitModal = async () => {
     const modal = await this.modalCtrl.create({
-      component: 'add-property'
+      component: 'add-unit'
     })
+    modal.onDidDismiss(this.modalDidDismiss)
     await modal.present()
   }
 
-  @Listen('body:ionModalDidDismiss')
-  modalDidDismiss(event: CustomEvent) {
-    console.log(event)
-    /*
-    if (event) {
-      this.excludeTracks = event.detail.data;
-      this.updateSchedule();
-    } */
+  modalDidDismiss = (detail: OverlayEventDetail) => {
+    const unit: Unit | null = detail.data
+    if (unit) {
+      this.db.addUnit(unit, this.propertyId)
+    }
   }
 
   render() {
     return [
       <ion-page>
         <ion-header>
-          <ion-toolbar>
+          <ion-toolbar color="primary">
             <ion-buttons slot="start">
               <ion-back-button defaultHref="/properties" />
             </ion-buttons>
             <ion-title>{this.property && this.property.name}</ion-title>
-            <ion-buttons slot="end">
+            {/* <ion-buttons slot="end">
               <more-popover-button />
-            </ion-buttons>
+            </ion-buttons> */}
           </ion-toolbar>
         </ion-header>
         <ion-content>
@@ -82,11 +85,16 @@ export class PropertyDetail {
           <ion-list>
             <ion-list-header>UNITS</ion-list-header>
             {this.units.map(u => (
-              <ion-item href={`/properties/${this.property.id}/units/${u.id}`}>
+              <ion-item href={`/properties/${this.propertyId}/units/${u.id}`}>
                 <ion-label>{u.address}</ion-label>
               </ion-item>
             ))}
           </ion-list>
+          <ion-fab id="addUnit" vertical="bottom" horizontal="end" slot="fixed">
+            <ion-fab-button onClick={this.addUnitModal} color="danger">
+              <ion-icon name="add" />
+            </ion-fab-button>
+          </ion-fab>
         </ion-content>
       </ion-page>
     ]

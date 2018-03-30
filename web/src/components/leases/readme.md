@@ -1,22 +1,8 @@
-# nav-menu
+# lease-table
 
 
 
 <!-- Auto Generated Below -->
-
-
-## Properties
-
-#### user
-
-
-
-
-## Attributes
-
-#### user
-
-
 
 
 

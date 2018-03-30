@@ -30,13 +30,13 @@ export class AppLogin {
 
   onLogin = async e => {
     e.preventDefault()
-    const navCtrl: NavControllerBase = await (this
-      .nav as any).componentOnReady()
+    // const navCtrl: NavControllerBase = await (this.nav as any).componentOnReady()
     try {
       const user = await this.db.signIn(this.username, this.password)
       if (user) {
         console.log('login returned user, nav setting root..')
-        navCtrl.setRoot('page-tabs')
+        // navCtrl.setRoot('page-tabs')
+        window.location.replace('/')
       }
     } catch (e) {
       console.log(e)
@@ -47,16 +47,15 @@ export class AppLogin {
   render() {
     return [
       <ion-header>
-        <ion-toolbar>
+        <ion-toolbar color="primary">
           <ion-buttons slot="start">
             <ion-menu-button />
           </ion-buttons>
-
-          <ion-title>Login</ion-title>
+          <ion-title>WPM</ion-title>
         </ion-toolbar>
       </ion-header>,
 
-      <ion-content padding>
+      <ion-content>
         {/* <div class="login-logo">
           <img src="assets/img/appicon.svg" alt="Ionic logo" />
         </div> */}
@@ -69,9 +68,9 @@ export class AppLogin {
               </ion-text>
             )}
 
-            <ion-item>
-              <ion-label stacked color="primary">
-                Username
+            <ion-item padding>
+              <ion-label floating color="primary">
+                EMAIL
               </ion-label>
               <ion-input
                 name="username"
@@ -84,9 +83,9 @@ export class AppLogin {
               />
             </ion-item>
 
-            <ion-item>
+            <ion-item padding>
               <ion-label stacked color="primary">
-                Password
+                PASSWORD
               </ion-label>
               <ion-input
                 name="password"
@@ -98,12 +97,15 @@ export class AppLogin {
             </ion-item>
           </ion-list>
 
-          <ion-row responsive-sm>
-            <ion-col>
-              <ion-button onClick={this.onLogin} type="submit" expand="block">
-                Login
-              </ion-button>
-            </ion-col>
+          <div padding>
+            <ion-button
+              size="large"
+              onClick={this.onLogin}
+              type="submit"
+              expand="block"
+            >
+              Login
+            </ion-button>
             {/* <ion-col>
               <ion-button
                 onClick={e => this.onSignup(e)}
@@ -113,7 +115,7 @@ export class AppLogin {
                 Signup
               </ion-button>
             </ion-col> */}
-          </ion-row>
+          </div>
         </form>
       </ion-content>
     ]

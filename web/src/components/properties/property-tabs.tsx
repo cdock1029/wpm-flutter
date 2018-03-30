@@ -7,13 +7,17 @@ export class PageTabs {
   render() {
     return [
       <ion-tabs color="primary" tabbarPlacement="bottom" tabbarHighlight>
-        <ion-tab title="Leases" icon="planet" name="tab-property-leases">
+        <ion-tab tabTitle="Leases" tabIcon="planet" name="tab-property-leases">
           <ion-nav />
         </ion-tab>
-        <ion-tab title="Units" icon="home" name="tab-property-units">
+        <ion-tab tabTitle="Units" tabIcon="home" name="tab-property-units">
           <ion-nav />
         </ion-tab>
-        <ion-tab title="Tenants" icon="people" name="tab-property-tenants">
+        <ion-tab
+          tabTitle="Tenants"
+          tabIcon="people"
+          name="tab-property-tenants"
+        >
           <ion-nav />
         </ion-tab>
       </ion-tabs>
