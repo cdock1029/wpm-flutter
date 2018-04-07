@@ -4,7 +4,7 @@ import { Component, Prop } from '@stencil/core'
   tag: 'common-toolbar'
 })
 export class CommonToolbar {
-  @Prop() title: string
+  @Prop() pageTitle: string
 
   render() {
     return [
@@ -12,10 +12,7 @@ export class CommonToolbar {
         <ion-buttons slot="start">
           <ion-menu-button autoHide={true} menu="left" />
         </ion-buttons>
-        <ion-title>{this.title}</ion-title>
-        {/* <ion-buttons slot="end">
-          <more-popover-button />
-        </ion-buttons> */}
+        <ion-title>{this.pageTitle}</ion-title>
       </ion-toolbar>,
       <ion-toolbar color="primary">
         <ion-searchbar />

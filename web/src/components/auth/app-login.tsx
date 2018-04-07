@@ -1,13 +1,9 @@
 import { Component, Prop, State } from '@stencil/core'
 
-import { NavControllerBase } from '@ionic/core'
 import { IDatabaseInjector, IDatabase } from '../services/database-injector'
 
 @Component({ tag: 'app-login', styleUrl: 'app-login.scss' })
 export class AppLogin {
-  @Prop({ connect: 'ion-nav' })
-  nav: NavControllerBase
-
   @Prop({ connect: 'database-injector' })
   dbInjector: IDatabaseInjector
 
@@ -30,12 +26,10 @@ export class AppLogin {
 
   onLogin = async e => {
     e.preventDefault()
-    // const navCtrl: NavControllerBase = await (this.nav as any).componentOnReady()
     try {
       const user = await this.db.signIn(this.username, this.password)
       if (user) {
         console.log('login returned user, nav setting root..')
-        // navCtrl.setRoot('page-tabs')
         window.location.replace('/')
       }
     } catch (e) {

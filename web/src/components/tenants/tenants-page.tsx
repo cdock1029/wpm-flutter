@@ -68,7 +68,7 @@ export class TenantsPage {
     return (
       <ion-page>
         <ion-header>
-          <common-toolbar title="TENANTS" />
+          <common-toolbar pageTitle="TENANTS" />
         </ion-header>
         <ion-content>
           <ion-list>
@@ -87,7 +87,7 @@ export class TenantsPage {
             horizontal="end"
             slot="fixed"
           >
-            <ion-fab-button onClick={this.addTenantModal}>
+            <ion-fab-button color="danger" onClick={this.addTenantModal}>
               <ion-icon name="add" />
             </ion-fab-button>
           </ion-fab>

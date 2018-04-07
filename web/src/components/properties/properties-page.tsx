@@ -60,7 +60,7 @@ export class PropertiesPage {
     return [
       <ion-page>
         <ion-header>
-          <common-toolbar title="PROPERTIES" />
+          <common-toolbar pageTitle="PROPERTIES" />
         </ion-header>
         <ion-content>
           <ion-list>

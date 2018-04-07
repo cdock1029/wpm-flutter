@@ -71,9 +71,6 @@ export class UnitDetail {
               <ion-back-button defaultHref={`/properties/${this.propertyId}`} />
             </ion-buttons>
             <ion-title>{unitAddr && unitAddr}</ion-title>
-            <ion-buttons slot="end">
-              <more-popover-button />
-            </ion-buttons>
           </ion-toolbar>
         </ion-header>
         <ion-content>

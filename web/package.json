@@ -11,14 +11,19 @@
     "dev": "sd concurrent \"stencil build --dev --watch\" \"stencil-dev-server\" ",
     "devWithSW": "sd concurrent \"stencil build --dev --service-worker --watch\" \"stencil-dev-server\" ",
     "serve": "stencil-dev-server",
-    "start": "npm run dev",
+    "start": "npm run dev --no-open",
     "test": "jest --no-cache",
     "test.watch": "jest --watch --no-cache",
     "prettier": "prettier src/**/*.{js,tsx,ts,css,scss} --write"
   },
   "dependencies": {
-    "@ionic/core": "^0.1.5",
-    "@stencil/core": "^0.7.10"
+    "@ionic/core": "^4.0.0-alpha.1",
+    "@stencil/core": "^0.7.18",
+    "apollo-cache-inmemory": "^1.1.12",
+    "apollo-client": "^2.2.8",
+    "apollo-link-http": "^1.5.3",
+    "graphql": "^0.13.2",
+    "graphql-tag": "^2.8.0"
   },
   "devDependencies": {
     "@firebase/app-types": "^0.1.2",

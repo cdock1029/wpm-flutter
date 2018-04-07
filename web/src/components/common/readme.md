@@ -5,20 +5,6 @@
 <!-- Auto Generated Below -->
 
 
-## Properties
-
-#### title
-
-string
-
-
-## Attributes
-
-#### title
-
-string
-
-
 
 ----------------------------------------------
 

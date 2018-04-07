@@ -1,5 +1,5 @@
 import { Component, Prop } from '@stencil/core'
-import { PopoverController, NavControllerBase } from '@ionic/core'
+import { PopoverController, Nav } from '@ionic/core'
 import { FirebaseNamespace } from '@firebase/app-types'
 
 declare var firebase: FirebaseNamespace
@@ -12,7 +12,7 @@ export class MorePopoverButton {
   popoverCtrl: PopoverController
 
   @Prop({ connect: 'ion-nav' })
-  nav: NavControllerBase
+  nav
 
   private popover: HTMLIonPopoverElement
 
@@ -27,8 +27,7 @@ export class MorePopoverButton {
 
     if (data) {
       const auth = firebase.auth()
-      const navCtrl: NavControllerBase = await (this
-        .nav as any).componentOnReady()
+      const navCtrl: Nav = await (this.nav as any).componentOnReady()
 
       await auth.signOut()
 

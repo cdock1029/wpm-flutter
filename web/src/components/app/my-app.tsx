@@ -17,9 +17,6 @@ export class MyApp {
   @Prop({ connect: 'ion-toast-controller' })
   toastCtrl: ToastController
 
-  // @Prop({ connect: 'ion-nav' })
-  // nav: NavControllerBase
-
   @Prop({ connect: 'ion-loading-controller' })
   loadCtrl: LoadingController
 
@@ -49,10 +46,12 @@ export class MyApp {
   async componentWillLoad() {
     console.log('my-app componentWillLoad')
     const loaderProm = this.loadCtrl.create({
-      content: 'Loading..'
+      content: 'Loading..',
+      spinner: 'lines'
     })
     const dbProm = this.dbInjector.create()
     const [_loadingEl, _db] = await Promise.all([loaderProm, dbProm])
+    // console.log(_loadingEl)
     this.loadingEl = _loadingEl
     this.db = _db
     await this.loadingEl.present()
@@ -134,7 +133,7 @@ export class MyApp {
               <ion-header>
                 <ion-toolbar color="primary">
                   <ion-title>WPM</ion-title>
-                  <ion-buttons slot="end">
+                  <ion-buttons slot="right">
                     <more-popover-button />
                   </ion-buttons>
                 </ion-toolbar>

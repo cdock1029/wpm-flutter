@@ -1,46 +1,12 @@
 :root {
-  /* default --ion-color-primary: #3880ff; */
-  /* ant.design --ion-color-primary: #10239e;
-  */
-  // --ion-color-primary: #0d47a1;
-  --ion-color-primary: #283593;
-  --ion-color-secondary: #009688;
+  // --ion-color-primary: #283593;
+  // --ion-color-secondary: #009688;
 
-  // --ion-background-color: #d5d5d5;
-  // --ion-background-color: rgb(244, 245, 248);
+  // --ion-item-background-color: #fff;
+
   --ion-background-color: #eceff1;
-
-  --ion-item-background-color: #fff;
+  --ion-color-primary: #5851ff;
   --ion-tabbar-md-text-color: rgba(255, 255, 255, 0.7);
-
-  /* --ion-color-md-primary-contrast: red; */
-  /* --ion-background-color: #E1E2E1; */
-  /* --ion-color-secondary: #0cd1e8;
-  --ion-color-tertiary: #7044ff;
-  --ion-color-success: #10dc60;
-  --ion-color-warning: #ffce00;
-  --ion-color-danger: #f04141;
-  --ion-color-light: #f4f5f8;
-  --ion-color-medium: #989aa2;
-  --ion-color-dark: #222428;
-
-  --ion-color-favorite: #69bb7b;
-  --ion-color-twitter: #1da1f4;
-  --ion-color-google: #dc4a38;
-  --ion-color-vimeo: #23b6ea;
-  --ion-color-facebook: #3b5998;
-
-  --ion-color-angular: #ac282b;
-  --ion-color-communication: #8e8d93;
-  --ion-color-tooling: #fe4c52;
-  --ion-color-services: #fd8b2d;
-  --ion-color-design: #fed035;
-  --ion-color-workshop: #69bb7b;
-  --ion-color-food: #3bc7c4;
-  --ion-color-documentation: #b16be3;
-  --ion-color-navigation: #6600cc; */
-  /* --ion-toolbar-md-background-color: var(--ion-color-primary);
-  --ion-toolbar-md-text-color: #fff; */
 }
 
 ion-page {
@@ -54,7 +20,6 @@ ion-page {
   display: flex;
 
   flex-direction: column;
-  justify-content: space-between;
 
   width: 100%;
   height: 100%;

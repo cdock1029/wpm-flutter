@@ -79,7 +79,7 @@ export class AddTenant {
     return [
       <ion-page>
         <ion-header>
-          <ion-toolbar>
+          <ion-toolbar color="danger">
             <ion-buttons slot="left">
               <ion-button onClick={() => this.dismiss()}>CANCEL</ion-button>
             </ion-buttons>

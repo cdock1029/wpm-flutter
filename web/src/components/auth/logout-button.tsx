@@ -1,5 +1,5 @@
 import { Component, Prop } from '@stencil/core'
-import { NavControllerBase } from '@ionic/core'
+import { Nav } from '@ionic/core'
 
 import { IDatabase, IDatabaseInjector } from '../services/database-injector'
 
@@ -8,7 +8,7 @@ import { IDatabase, IDatabaseInjector } from '../services/database-injector'
 })
 export class LogoutButton {
   @Prop({ connect: 'ion-nav' })
-  nav: NavControllerBase
+  nav
 
   @Prop({ connect: 'database-injector' })
   dbInjector: IDatabaseInjector
@@ -20,8 +20,7 @@ export class LogoutButton {
 
   logOutHandler = async () => {
     console.log('logouthandler click')
-    const navCtrl: NavControllerBase = await (this
-      .nav as any).componentOnReady()
+    const navCtrl: Nav = await (this.nav as any).componentOnReady()
 
     await this.db.signOut()
 

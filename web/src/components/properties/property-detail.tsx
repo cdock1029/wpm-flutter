@@ -5,7 +5,7 @@ import {
   Property,
   Unit
 } from '../services/database-injector'
-import { NavControllerBase, OverlayEventDetail } from '@ionic/core'
+import { Nav, OverlayEventDetail } from '@ionic/core'
 
 @Component({
   tag: 'property-detail'
@@ -14,8 +14,8 @@ export class PropertyDetail {
   @Prop() propertyId: string
 
   @Prop({ connect: 'ion-nav' })
-  nav: any
-  navCtrl: NavControllerBase
+  nav
+  navCtrl: Nav
 
   @Prop({ connect: 'database-injector' })
   dbInjector: IDatabaseInjector

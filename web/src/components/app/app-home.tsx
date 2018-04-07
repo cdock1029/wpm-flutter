@@ -9,7 +9,7 @@ export class AppHome {
     return (
       <ion-page>
         <ion-header>
-          <common-toolbar title="WPM" />
+          <common-toolbar page-title="WPM" />
         </ion-header>
         <ion-content>
           <p>Have setup actions here.</p>

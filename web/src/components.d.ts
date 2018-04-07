@@ -173,7 +173,7 @@ declare global {
 
 declare global {
   interface HTMLCommonToolbarElement extends HTMLStencilElement {
-    'title': string;
+    'pageTitle': string;
   }
   var HTMLCommonToolbarElement: {
     prototype: HTMLCommonToolbarElement;
@@ -192,7 +192,7 @@ declare global {
   }
   namespace JSXElements {
     export interface CommonToolbarAttributes extends HTMLAttributes {
-      'title'?: string;
+      'pageTitle'?: string;
     }
   }
 }
