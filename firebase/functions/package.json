@@ -16,7 +16,7 @@
     "@types/google-cloud__storage": "1.1.7",
     "algoliasearch": "3.24.11",
     "csv-parse": "2.0.4",
-    "firebase-admin": "5.8.2",
+    "firebase-admin": "5.13.1",
     "firebase-functions": "0.9.1",
     "path": "0.12.7",
     "stream-transform": "1.0.2",
