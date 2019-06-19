@@ -19,7 +19,7 @@
     "firebase-admin": "7.0.0",
     "firebase-functions": "2.2.0",
     "path": "0.12.7",
-    "stream-transform": "1.0.2",
+    "stream-transform": "2.0.1",
     "validator": "10.11.0"
   },
   "devDependencies": {
