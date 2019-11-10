@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@types/algoliasearch": "3.24.9",
-    "tslint": "5.9.1",
+    "tslint": "5.20.1",
     "typescript": "3.3.3333"
   },
   "private": true
