@@ -14,7 +14,7 @@
     "@google-cloud/firestore": "0.11.2",
     "@google-cloud/storage": "2.4.2",
     "@types/google-cloud__storage": "1.1.7",
-    "algoliasearch": "3.24.11",
+    "algoliasearch": "4.1.0",
     "csv-parse": "4.3.3",
     "firebase-admin": "7.0.0",
     "firebase-functions": "2.2.0",
