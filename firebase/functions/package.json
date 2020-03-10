@@ -20,7 +20,7 @@
     "firebase-functions": "2.2.0",
     "path": "0.12.7",
     "stream-transform": "1.0.2",
-    "validator": "10.11.0"
+    "validator": "12.2.0"
   },
   "devDependencies": {
     "@types/algoliasearch": "3.24.9",
